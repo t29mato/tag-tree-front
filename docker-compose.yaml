@@ -1,0 +1,12 @@
+version: '3'
+services:
+  front:
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: yarn dev
