@@ -17,7 +17,7 @@
 		"terminal.integrated.shell.linux": null
 	},
 
-	"postCreateCommand": "yarn install",
+	"postCreateCommand": "yarn install && yarn dev",
 	"workspaceFolder": "/app",
 
 	// Add the IDs of extensions you want installed when the container is created.
