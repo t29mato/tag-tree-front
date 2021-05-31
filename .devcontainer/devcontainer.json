@@ -22,12 +22,21 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+    // Vue
+		"octref.vetur",
+    "shenjiaolong.vue-helper",
+
+    // Git
 		"eamodio.gitlens",
+
+    // lint & beautify
 		"EditorConfig.EditorConfig",
 		"HookyQR.beautify",
 		"mohsen1.prettify-json",
-		"octref.vetur",
-		"eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // npm
     "eg2.vscode-npm-script",
 	],
 
