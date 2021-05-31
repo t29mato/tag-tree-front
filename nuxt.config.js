@@ -35,11 +35,18 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    'nuxt-basic-auth-module',
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
   ],
+
+  basic: {
+    name: process.env.BASIC_AUTH_USERNAME || 'admin',
+    pass: process.env.BASIC_AUTH_PASSWORD || 'admin',
+    enabled: process.env.BASIC_AUTH_IS_ENABLED === 'true'
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
