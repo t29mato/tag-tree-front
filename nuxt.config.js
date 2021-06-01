@@ -31,6 +31,7 @@ export default {
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
+    '@nuxtjs/tailwindcss',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -45,7 +46,7 @@ export default {
   basic: {
     name: process.env.BASIC_AUTH_USERNAME || 'admin',
     pass: process.env.BASIC_AUTH_PASSWORD || 'admin',
-    enabled: process.env.BASIC_AUTH_IS_ENABLED === 'true'
+    enabled: process.env.BASIC_AUTH_IS_ENABLED === 'true',
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
