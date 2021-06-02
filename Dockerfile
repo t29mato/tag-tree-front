@@ -1,7 +1,3 @@
-# ベースイメージを指定
 FROM node:16
 
-WORKDIR /app
-
-COPY package.json /app
-RUN yarn install
+RUN npm install -g @stoplight/prism-cli
