@@ -1,5 +1,23 @@
 {
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
-  }
+  },
+  "cSpell.words": [
+    "commitlint",
+    "dbaeumer",
+    "devcontainer",
+    "eamodio",
+    "esbenp",
+    "gitlens",
+    "mohsen",
+    "nuxt",
+    "nuxtjs",
+    "octref",
+    "ptrace",
+    "seccomp",
+    "shenjiaolong",
+    "stylelint",
+    "tailwindcss",
+    "vetur"
+  ]
 }
