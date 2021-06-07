@@ -1,20 +1,24 @@
 {
-	"name": "Existing Dockerfile",
-	"context": "..",
-	"dockerFile": "./Dockerfile",
-	"postCreateCommand": "./.devcontainer/start.sh",
-	"extensions": [
-	"octref.vetur",
-  "shenjiaolong.vue-helper",
-	"eamodio.gitlens",
-	"EditorConfig.EditorConfig",
-	"HookyQR.beautify",
-	"mohsen1.prettify-json",
-  "esbenp.prettier-vscode",
-  "dbaeumer.vscode-eslint",
-  "streetsidesoftware.code-spell-checker",
-  "eg2.vscode-npm-script",
-	],
-	"forwardPorts": [ 3000, 8080 ],
-  "mounts": ["source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind"]
+    "name": "Existing Dockerfile",
+    "context": "..",
+    "dockerFile": "./Dockerfile",
+    "postCreateCommand": "./.devcontainer/start.sh",
+    "extensions": [
+        "octref.vetur",
+        "shenjiaolong.vue-helper",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "HookyQR.beautify",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "streetsidesoftware.code-spell-checker",
+        "eg2.vscode-npm-script"
+    ],
+    "forwardPorts": [
+        3000,
+        8080
+    ],
+    "mounts": [
+        "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind"
+    ]
 }
