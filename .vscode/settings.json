@@ -17,7 +17,6 @@
     "seccomp",
     "shenjiaolong",
     "stylelint",
-    "tailwindcss",
     "vetur"
   ]
 }
