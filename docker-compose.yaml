@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  node: &app_base
+    image: node:16
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+    restart: always
+
+  nuxtjs:
+    <<: *app_base
+    ports:
+      - 3000:3000
+    command: yarn dev
+
+  api:
+    image: stoplight/prism:4
+    ports:
+      - 4010:4010
+    command: mock -h 0.0.0.0 /workspace/api/Starrydata-API.yaml
+    volumes:
+      - ./api:/workspace/api
+    tty: true
+    restart: always
