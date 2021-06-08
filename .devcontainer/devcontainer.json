@@ -19,6 +19,7 @@
         4010
     ],
     "mounts": [
-        "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind"
+        "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind",
+        "target=${containerWorkspaceFolder}/node_modules"
     ]
 }
