@@ -24,8 +24,6 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.1",
-    "bootstrap": "^4.6.0",
-    "bootstrap-vue": "^2.21.2",
     "core-js": "^3.9.1",
     "nuxt": "^2.15.3",
     "nuxt-basic-auth-module": "^1.4.0",
