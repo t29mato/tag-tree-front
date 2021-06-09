@@ -144,7 +144,7 @@ paths:
                   dateOfBirth: '1996-08-24'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
-  /papers/:
+  /papers:
     get:
       summary: Get Papers
       tags: []
@@ -160,80 +160,30 @@ paths:
                 uniqueItems: true
                 x-examples:
                   example-1:
-                    - SID: 1
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 2
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 3
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 4
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 5
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 6
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
+                    - type: articles
+                      id: '1'
+                      attributes:
+                        title: Rails is Omakase
+                      relationships:
+                        author:
+                          links:
+                            self: /articles/1/relationships/author
+                            related: /articles/1/author
+                          data:
+                            type: people
+                            id: '9'
                 items:
                   type: object
                   properties:
-                    SID:
-                      type: number
-                      minimum: 1
-                      maximum: 100
-                      default: 0
-                    title:
+                    type:
                       type: string
                       minLength: 1
-                    authors:
+                      default: paper
+                    id:
                       type: string
                       minLength: 1
-                    identifier:
-                      type: string
-                      minLength: 1
-                    DOI:
-                      type: string
-                      minLength: 1
-                    figures:
-                      type: number
-                    samples:
-                      type: number
-                  required:
-                    - SID
-                    - title
-                    - authors
-                    - identifier
-                    - DOI
-                    - figures
-                    - samples
+                    attributes:
+                      $ref: '#/components/schemas/Paper'
               examples:
                 example-1:
                   value:
@@ -283,45 +233,105 @@ paths:
           description: Created
       operationId: get-papers
       x-internal: false
+    parameters: []
+  '/papers/{paperId}':
+    parameters:
+      - schema:
+          type: string
+        name: paperId
+        in: path
+        required: true
+    get:
+      summary: get paper
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    type: articles
+                    id: '1'
+                    attributes:
+                      title: Rails is Omakase
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      id:
+                        type: string
+                      attributes:
+                        $ref: '#/components/schemas/Paper'
+      operationId: get-papers-paperId
+  /projects:
+    get:
+      summary: get databases
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - type: articles
+                      id: '1'
+                      attributes:
+                        title: Rails is Omakase
+                      relationships:
+                        author:
+                          links:
+                            self: /articles/1/relationships/author
+                            related: /articles/1/author
+                          data:
+                            type: people
+                            id: '9'
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                    id:
+                      type: string
+                      minLength: 1
+                    attributes:
+                      $ref: '#/components/schemas/Project'
+                  required:
+                    - type
+                    - id
+                    - attributes
+      operationId: get-databases
+    parameters: []
 components:
   schemas:
-    User:
-      title: User
+    Paper:
+      title: Paper
       type: object
       description: ''
-      examples:
-        - id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
-          emailVerified: true
-          signUpDate: '2019-08-24'
       properties:
         id:
-          type: integer
-          description: Unique identifier for the given user.
-        firstName:
           type: string
-        lastName:
+        DOI:
           type: string
-        email:
+        title:
           type: string
-          format: email
-        dateOfBirth:
+    Project:
+      title: Project
+      type: object
+      properties:
+        id:
           type: string
-          format: date
-          example: '1997-10-31'
-        emailVerified:
-          type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
+        name:
           type: string
-          format: date
-          description: The date that the user was created.
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
-        - emailVerified
