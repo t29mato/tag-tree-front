@@ -3,7 +3,7 @@
 
   <v-app>
     <v-navigation-drawer app>
-      <sidebar />
+      <Sidebar />
     </v-navigation-drawer>
 
     <v-app-bar app>

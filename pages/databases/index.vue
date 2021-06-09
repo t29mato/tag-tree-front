@@ -3,9 +3,12 @@
     <v-data-table
       :headers="headers"
       :items="items"
-      item-key="id"
+      item-key="ID"
       class="elevation-1"
     >
+      <template #[`item.papers`]="{ item }">
+        <p>{{ item }}</p>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -20,9 +23,8 @@ export default class DatabasesScreen extends Vue {
   get headers() {
     return [
       { text: 'ID', value: 'ID' },
-      { text: 'Database', value: 'Database' },
-      { text: 'Papers', value: 'Papers' },
-      { text: 'Papers with data', value: 'Papers with data' },
+      { text: 'Database', value: 'database' },
+      { text: 'Papers', value: 'papers' },
       { text: 'Figures', value: 'Figures' },
       { text: 'Samples', value: 'Samples' },
       { text: 'My lists', value: 'My lists' },
@@ -31,81 +33,99 @@ export default class DatabasesScreen extends Vue {
 
   items: {
     ID: number
-    Database: string
-    Papers: number
-    'Papers with data': number
+    database: string
+    papers: {
+      count: number
+      countWithData: number
+    }
     Figures: number
     Samples: number
     'My lists': number
   }[] = [
     {
-      Database: 'General DB',
+      database: 'General DB',
       ID: 1,
-      Papers: 30449,
-      'Papers with data': 7333,
+      papers: {
+        count: 30449,
+        countWithData: 7333,
+      },
       Figures: 31480,
       Samples: 40458,
       'My lists': 80,
     },
     {
-      Database: 'Thermoelectric Materials',
+      database: 'Thermoelectric Materials',
       ID: 2,
-      Papers: 23870,
-      'Papers with data': 6319,
+      papers: {
+        count: 23870,
+        countWithData: 6319,
+      },
       Figures: 29260,
       Samples: 34513,
       'My lists': 1,
     },
     {
-      Database: 'Magnetic Materials',
+      database: 'Magnetic Materials',
       ID: 3,
-      Papers: 4103,
-      'Papers with data': 714,
+      papers: {
+        count: 4103,
+        countWithData: 714,
+      },
       Figures: 1494,
       Samples: 3849,
       'My lists': 1,
     },
     {
-      Database: 'Condensed Matter',
+      database: 'Condensed Matter',
       ID: 4,
-      Papers: 394,
-      'Papers with data': 132,
+      papers: {
+        count: 394,
+        countWithData: 132,
+      },
       Figures: 509,
       Samples: 1374,
       'My lists': 1,
     },
     {
-      Database: 'High Thermal Conductivity Materials',
+      database: 'High Thermal Conductivity Materials',
       ID: 5,
-      Papers: 179,
-      'Papers with data': 124,
+      papers: {
+        count: 179,
+        countWithData: 124,
+      },
       Figures: 250,
       Samples: 519,
       'My lists': 0,
     },
     {
-      Database: 'Piezoelectric Materials',
+      database: 'Piezoelectric Materials',
       ID: 6,
-      Papers: 134,
-      'Papers with data': 0,
+      papers: {
+        count: 134,
+        countWithData: 0,
+      },
       Figures: 0,
       Samples: 0,
       'My lists': 0,
     },
     {
-      Database: 'Hyper Material',
+      database: 'Hyper Material',
       ID: 7,
-      Papers: 76,
-      'Papers with data': 55,
+      papers: {
+        count: 76,
+        countWithData: 55,
+      },
       Figures: 146,
       Samples: 262,
       'My lists': 0,
     },
     {
-      Database: 'Project TtoH',
+      database: 'Project TtoH',
       ID: 8,
-      Papers: 0,
-      'Papers with data': 0,
+      papers: {
+        count: 0,
+        countWithData: 0,
+      },
       Figures: 0,
       Samples: 0,
       'My lists': 0,
