@@ -293,6 +293,37 @@ paths:
                             meta:
                               totalSamples: 0
                             data: []
+                example-2:
+                  value:
+                    data:
+                      - type: string
+                        id: 0
+                        attributes:
+                          name: string
+                        relationships:
+                          papers:
+                            data:
+                              - type: string
+                                id: 0
+                                attributes:
+                                  DOI: string
+                                  title: string
+                            meta:
+                              totalPapers: 0
+                          figures:
+                            data:
+                              - type: string
+                                id: string
+                                attributes: {}
+                            meta:
+                              totalFigures: 0
+                          samples:
+                            data:
+                              - type: string
+                                id: string
+                                attributes: {}
+                            meta:
+                              totalSamples: 0
       operationId: get-projects
       description: 論文一覧取得
     parameters: []
