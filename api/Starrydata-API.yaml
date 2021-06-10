@@ -122,9 +122,9 @@ paths:
                       attributes:
                         $ref: '#/components/schemas/Paper'
       operationId: get-papers-paperId
-  /projects:
+  /databases:
     get:
-      summary: get projects
+      summary: get databases
       tags: []
       responses:
         '200':
@@ -152,12 +152,12 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Project'
+                      $ref: '#/components/schemas/Database'
               examples:
                 example-1:
                   value:
                     data:
-                      - type: projects
+                      - type: databases
                         id: 1
                         attributes:
                           name: General DB
@@ -174,7 +174,7 @@ paths:
                             meta:
                               totalSamples: 40458
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 2
                         attributes:
                           name: Thermoelectric Materials DB
@@ -191,7 +191,7 @@ paths:
                             meta:
                               totalSamples: 34513
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 3
                         attributes:
                           name: Magnetic Materials DB
@@ -208,7 +208,7 @@ paths:
                             meta:
                               totalSamples: 3849
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 4
                         attributes:
                           name: Condensed Matter DB
@@ -225,7 +225,7 @@ paths:
                             meta:
                               totalSamples: 1374
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 5
                         attributes:
                           name: High Thermal Conductivity Materials DB
@@ -242,7 +242,7 @@ paths:
                             meta:
                               totalSamples: 519
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 6
                         attributes:
                           name: Piezoelectric Materials
@@ -259,7 +259,7 @@ paths:
                             meta:
                               totalSamples: 0
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 7
                         attributes:
                           name: Hyper Material
@@ -276,7 +276,7 @@ paths:
                             meta:
                               totalSamples: 262
                             data: []
-                      - type: projects
+                      - type: databases
                         id: 8
                         attributes:
                           name: Project TtoH
@@ -324,7 +324,7 @@ paths:
                                 attributes: {}
                             meta:
                               totalSamples: 0
-      operationId: get-projects
+      operationId: get-databases
       description: 論文一覧取得
     parameters: []
 components:
@@ -345,8 +345,8 @@ components:
               type: string
             title:
               type: string
-    Project:
-      title: Project
+    Database:
+      title: Database
       type: object
       properties:
         type:
@@ -401,7 +401,7 @@ components:
       x-examples:
         example-1:
           value:
-            type: projects
+            type: databases
             id: 1
             attributes:
               name: General DB

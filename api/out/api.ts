@@ -24,6 +24,171 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface Database
+ */
+export interface Database {
+    /**
+     * 
+     * @type {string}
+     * @memberof Database
+     */
+    type?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Database
+     */
+    id?: number;
+    /**
+     * 
+     * @type {DatabaseAttributes}
+     * @memberof Database
+     */
+    attributes?: DatabaseAttributes;
+    /**
+     * 
+     * @type {DatabaseRelationships}
+     * @memberof Database
+     */
+    relationships?: DatabaseRelationships;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseAttributes
+ */
+export interface DatabaseAttributes {
+    /**
+     * 
+     * @type {string}
+     * @memberof DatabaseAttributes
+     */
+    name?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationships
+ */
+export interface DatabaseRelationships {
+    /**
+     * 
+     * @type {DatabaseRelationshipsPapers}
+     * @memberof DatabaseRelationships
+     */
+    papers?: DatabaseRelationshipsPapers;
+    /**
+     * 
+     * @type {DatabaseRelationshipsFigures}
+     * @memberof DatabaseRelationships
+     */
+    figures?: DatabaseRelationshipsFigures;
+    /**
+     * 
+     * @type {DatabaseRelationshipsSamples}
+     * @memberof DatabaseRelationships
+     */
+    samples?: DatabaseRelationshipsSamples;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsFigures
+ */
+export interface DatabaseRelationshipsFigures {
+    /**
+     * 
+     * @type {Array<Figure>}
+     * @memberof DatabaseRelationshipsFigures
+     */
+    data?: Array<Figure>;
+    /**
+     * 
+     * @type {DatabaseRelationshipsFiguresMeta}
+     * @memberof DatabaseRelationshipsFigures
+     */
+    meta?: DatabaseRelationshipsFiguresMeta;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsFiguresMeta
+ */
+export interface DatabaseRelationshipsFiguresMeta {
+    /**
+     * 
+     * @type {number}
+     * @memberof DatabaseRelationshipsFiguresMeta
+     */
+    totalFigures?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsPapers
+ */
+export interface DatabaseRelationshipsPapers {
+    /**
+     * 
+     * @type {Array<Paper>}
+     * @memberof DatabaseRelationshipsPapers
+     */
+    data?: Array<Paper>;
+    /**
+     * 
+     * @type {DatabaseRelationshipsPapersMeta}
+     * @memberof DatabaseRelationshipsPapers
+     */
+    meta?: DatabaseRelationshipsPapersMeta;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsPapersMeta
+ */
+export interface DatabaseRelationshipsPapersMeta {
+    /**
+     * 
+     * @type {number}
+     * @memberof DatabaseRelationshipsPapersMeta
+     */
+    totalPapers?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsSamples
+ */
+export interface DatabaseRelationshipsSamples {
+    /**
+     * 
+     * @type {Array<Sample>}
+     * @memberof DatabaseRelationshipsSamples
+     */
+    data?: Array<Sample>;
+    /**
+     * 
+     * @type {DatabaseRelationshipsSamplesMeta}
+     * @memberof DatabaseRelationshipsSamples
+     */
+    meta?: DatabaseRelationshipsSamplesMeta;
+}
+/**
+ * 
+ * @export
+ * @interface DatabaseRelationshipsSamplesMeta
+ */
+export interface DatabaseRelationshipsSamplesMeta {
+    /**
+     * 
+     * @type {number}
+     * @memberof DatabaseRelationshipsSamplesMeta
+     */
+    totalSamples?: number;
+}
+/**
+ * 
+ * @export
  * @interface Figure
  */
 export interface Figure {
@@ -105,10 +270,10 @@ export interface InlineResponse2001Data {
 export interface InlineResponse2002 {
     /**
      * 
-     * @type {Array<Project>}
+     * @type {Array<Database>}
      * @memberof InlineResponse2002
      */
-    data?: Array<Project>;
+    data?: Array<Database>;
 }
 /**
  * 
@@ -157,171 +322,6 @@ export interface PaperAttributes {
 /**
  * 
  * @export
- * @interface Project
- */
-export interface Project {
-    /**
-     * 
-     * @type {string}
-     * @memberof Project
-     */
-    type?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Project
-     */
-    id?: number;
-    /**
-     * 
-     * @type {ProjectAttributes}
-     * @memberof Project
-     */
-    attributes?: ProjectAttributes;
-    /**
-     * 
-     * @type {ProjectRelationships}
-     * @memberof Project
-     */
-    relationships?: ProjectRelationships;
-}
-/**
- * 
- * @export
- * @interface ProjectAttributes
- */
-export interface ProjectAttributes {
-    /**
-     * 
-     * @type {string}
-     * @memberof ProjectAttributes
-     */
-    name?: string;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationships
- */
-export interface ProjectRelationships {
-    /**
-     * 
-     * @type {ProjectRelationshipsPapers}
-     * @memberof ProjectRelationships
-     */
-    papers?: ProjectRelationshipsPapers;
-    /**
-     * 
-     * @type {ProjectRelationshipsFigures}
-     * @memberof ProjectRelationships
-     */
-    figures?: ProjectRelationshipsFigures;
-    /**
-     * 
-     * @type {ProjectRelationshipsSamples}
-     * @memberof ProjectRelationships
-     */
-    samples?: ProjectRelationshipsSamples;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsFigures
- */
-export interface ProjectRelationshipsFigures {
-    /**
-     * 
-     * @type {Array<Figure>}
-     * @memberof ProjectRelationshipsFigures
-     */
-    data?: Array<Figure>;
-    /**
-     * 
-     * @type {ProjectRelationshipsFiguresMeta}
-     * @memberof ProjectRelationshipsFigures
-     */
-    meta?: ProjectRelationshipsFiguresMeta;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsFiguresMeta
- */
-export interface ProjectRelationshipsFiguresMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof ProjectRelationshipsFiguresMeta
-     */
-    totalFigures?: number;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsPapers
- */
-export interface ProjectRelationshipsPapers {
-    /**
-     * 
-     * @type {Array<Paper>}
-     * @memberof ProjectRelationshipsPapers
-     */
-    data?: Array<Paper>;
-    /**
-     * 
-     * @type {ProjectRelationshipsPapersMeta}
-     * @memberof ProjectRelationshipsPapers
-     */
-    meta?: ProjectRelationshipsPapersMeta;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsPapersMeta
- */
-export interface ProjectRelationshipsPapersMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof ProjectRelationshipsPapersMeta
-     */
-    totalPapers?: number;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsSamples
- */
-export interface ProjectRelationshipsSamples {
-    /**
-     * 
-     * @type {Array<Sample>}
-     * @memberof ProjectRelationshipsSamples
-     */
-    data?: Array<Sample>;
-    /**
-     * 
-     * @type {ProjectRelationshipsSamplesMeta}
-     * @memberof ProjectRelationshipsSamples
-     */
-    meta?: ProjectRelationshipsSamplesMeta;
-}
-/**
- * 
- * @export
- * @interface ProjectRelationshipsSamplesMeta
- */
-export interface ProjectRelationshipsSamplesMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof ProjectRelationshipsSamplesMeta
-     */
-    totalSamples?: number;
-}
-/**
- * 
- * @export
  * @interface Sample
  */
 export interface Sample {
@@ -351,6 +351,36 @@ export interface Sample {
  */
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 論文一覧取得
+         * @summary get databases
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDatabases: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/databases`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Get Papers
@@ -415,36 +445,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 論文一覧取得
-         * @summary get projects
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getProjects: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/projects`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -455,6 +455,16 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 論文一覧取得
+         * @summary get databases
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDatabases(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse2002>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDatabases(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
         /**
          * 
          * @summary Get Papers
@@ -476,16 +486,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getPapersPaperId(paperId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
-        /**
-         * 論文一覧取得
-         * @summary get projects
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getProjects(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse2002>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getProjects(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
     }
 };
 
@@ -496,6 +496,15 @@ export const DefaultApiFp = function(configuration?: Configuration) {
 export const DefaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = DefaultApiFp(configuration)
     return {
+        /**
+         * 論文一覧取得
+         * @summary get databases
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDatabases(options?: any): AxiosPromise<InlineResponse2002> {
+            return localVarFp.getDatabases(options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @summary Get Papers
@@ -515,15 +524,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         getPapersPaperId(paperId: string, options?: any): AxiosPromise<InlineResponse2001> {
             return localVarFp.getPapersPaperId(paperId, options).then((request) => request(axios, basePath));
         },
-        /**
-         * 論文一覧取得
-         * @summary get projects
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getProjects(options?: any): AxiosPromise<InlineResponse2002> {
-            return localVarFp.getProjects(options).then((request) => request(axios, basePath));
-        },
     };
 };
 
@@ -534,6 +534,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
+    /**
+     * 論文一覧取得
+     * @summary get databases
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getDatabases(options?: any) {
+        return DefaultApiFp(this.configuration).getDatabases(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Get Papers
@@ -555,17 +566,6 @@ export class DefaultApi extends BaseAPI {
      */
     public getPapersPaperId(paperId: string, options?: any) {
         return DefaultApiFp(this.configuration).getPapersPaperId(paperId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 論文一覧取得
-     * @summary get projects
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getProjects(options?: any) {
-        return DefaultApiFp(this.configuration).getProjects(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
