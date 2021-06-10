@@ -6,144 +6,6 @@ info:
 servers:
   - url: 'http://localhost:3100'
 paths:
-  '/users/{userId}':
-    parameters:
-      - schema:
-          type: integer
-        name: userId
-        in: path
-        required: true
-        description: Id of an existing user.
-    get:
-      summary: Get User Info by User ID
-      tags: []
-      responses:
-        '200':
-          description: User Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Get User Alice Smith:
-                  value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
-        '404':
-          description: User Not Found
-      operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
-    patch:
-      summary: Update User Information
-      operationId: patch-users-userId
-      responses:
-        '200':
-          description: User Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Updated User Rebecca Baker:
-                  value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: '1985-10-02'
-                    emailVerified: false
-                    createDate: '2019-08-24'
-        '404':
-          description: User Not Found
-        '409':
-          description: Email Already Taken
-      description: Update the information of an existing user.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                  description: 'If a new email is given, the user''s email verified property will be set to false.'
-                dateOfBirth:
-                  type: string
-            examples:
-              Update First Name:
-                value:
-                  firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
-              Update Last Name & Date of Birth:
-                value:
-                  lastName: Baker
-                  dateOfBirth: '1985-10-02'
-        description: Patch user properties to update.
-  /user:
-    post:
-      summary: Create New User
-      operationId: post-user
-      responses:
-        '200':
-          description: User Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
-        '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                dateOfBirth:
-                  type: string
-                  format: date
-              required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
-            examples:
-              Create User Bob Fellow:
-                value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: '1996-08-24'
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
   /papers:
     get:
       summary: Get Papers
@@ -154,10 +16,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
+                type: object
                 description: ''
-                minItems: 1
-                uniqueItems: true
                 x-examples:
                   example-1:
                     - type: articles
@@ -172,17 +32,10 @@ paths:
                           data:
                             type: people
                             id: '9'
-                items:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      minLength: 1
-                      default: paper
-                    id:
-                      type: string
-                      minLength: 1
-                    attributes:
+                properties:
+                  data:
+                    type: array
+                    items:
                       $ref: '#/components/schemas/Paper'
               examples:
                 example-1:
@@ -271,7 +124,7 @@ paths:
       operationId: get-papers-paperId
   /projects:
     get:
-      summary: get databases
+      summary: get projects
       tags: []
       responses:
         '200':
@@ -279,10 +132,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 description: ''
-                minItems: 1
-                uniqueItems: true
                 x-examples:
                   example-1:
                     - type: articles
@@ -297,22 +147,153 @@ paths:
                           data:
                             type: people
                             id: '9'
-                items:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      minLength: 1
-                    id:
-                      type: string
-                      minLength: 1
-                    attributes:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
                       $ref: '#/components/schemas/Project'
-                  required:
-                    - type
-                    - id
-                    - attributes
-      operationId: get-databases
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - type: projects
+                        id: 1
+                        attributes:
+                          name: General DB
+                        relationships:
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 31480
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 30449
+                          samples:
+                            meta:
+                              totalSamples: 40458
+                            data: []
+                      - type: projects
+                        id: 2
+                        attributes:
+                          name: Thermoelectric Materials DB
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 23870
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 29260
+                          samples:
+                            meta:
+                              totalSamples: 34513
+                            data: []
+                      - type: projects
+                        id: 3
+                        attributes:
+                          name: Magnetic Materials DB
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 4103
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 1494
+                          samples:
+                            meta:
+                              totalSamples: 3849
+                            data: []
+                      - type: projects
+                        id: 4
+                        attributes:
+                          name: Condensed Matter DB
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 349
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 509
+                          samples:
+                            meta:
+                              totalSamples: 1374
+                            data: []
+                      - type: projects
+                        id: 5
+                        attributes:
+                          name: High Thermal Conductivity Materials DB
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 179
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 250
+                          samples:
+                            meta:
+                              totalSamples: 519
+                            data: []
+                      - type: projects
+                        id: 6
+                        attributes:
+                          name: Piezoelectric Materials
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 134
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 0
+                          samples:
+                            meta:
+                              totalSamples: 0
+                            data: []
+                      - type: projects
+                        id: 7
+                        attributes:
+                          name: Hyper Material
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 76
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 146
+                          samples:
+                            meta:
+                              totalSamples: 262
+                            data: []
+                      - type: projects
+                        id: 8
+                        attributes:
+                          name: Project TtoH
+                        relationships:
+                          papers:
+                            data: []
+                            meta:
+                              totalPapers: 0
+                          figures:
+                            data: []
+                            meta:
+                              totalFigures: 0
+                          samples:
+                            meta:
+                              totalSamples: 0
+                            data: []
+      operationId: get-projects
     parameters: []
 components:
   schemas:
@@ -321,17 +302,139 @@ components:
       type: object
       description: ''
       properties:
+        type:
+          type: string
         id:
-          type: string
-        DOI:
-          type: string
-        title:
-          type: string
+          type: number
+        attributes:
+          type: object
+          properties:
+            DOI:
+              type: string
+            title:
+              type: string
     Project:
       title: Project
       type: object
+      examples:
+        - type: projects
+          id: 1
+          attributes:
+            name: General DB
+          relationships:
+            figures:
+              data: []
+              meta:
+                totalFigures: 31480
+            papers:
+              data: []
+              meta:
+                totalPapers: 30449
+            samples:
+              meta:
+                totalSamples: 40458
+              data: []
+        - type: projects
+          id: 2
+          attributes:
+            name: Thermoelectric Materials DB
+          relationships:
+            papers:
+              data: []
+              meta:
+                totalPapers: 23870
+            figures:
+              data: []
+              meta:
+                totalFigures: 29260
+            samples:
+              meta:
+                totalSamples: 34513
+              data: []
+        - type: projects
+          id: 2
+          attributes:
+            name: General DB
+          relationships:
+            figures:
+              data: []
+              meta:
+                totalFigures: 31480
+            papers:
+              data: []
+              meta:
+                totalPapers: 30449
+            samples:
+              meta:
+                totalSamples: 40458
+              data: []
       properties:
+        type:
+          type: string
+        id:
+          type: number
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+        relationships:
+          type: object
+          properties:
+            papers:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Paper'
+                meta:
+                  type: object
+                  properties:
+                    totalPapers:
+                      type: number
+            figures:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Figure'
+                meta:
+                  type: object
+                  properties:
+                    totalFigures:
+                      type: number
+            samples:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Sample'
+                meta:
+                  type: object
+                  properties:
+                    totalSamples:
+                      type: number
+      description: ''
+    Figure:
+      title: Figure
+      type: object
+      properties:
+        type:
+          type: string
         id:
           type: string
-        name:
+        attributes:
+          type: object
+    Sample:
+      title: Sample
+      type: object
+      properties:
+        type:
           type: string
+        id:
+          type: string
+        attributes:
+          type: object
