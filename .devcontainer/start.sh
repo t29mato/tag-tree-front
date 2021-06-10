@@ -1,4 +1,4 @@
 #/bin/sh
 
 yarn install
-yarn dev & prism mock -d ./api/Starrydata-API.yaml
+yarn dev & prism mock ./api/Starrydata-API.yaml
