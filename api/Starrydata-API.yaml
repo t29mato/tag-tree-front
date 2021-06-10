@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Starrydata API
   version: '3.0'
@@ -294,6 +294,7 @@ paths:
                               totalSamples: 0
                             data: []
       operationId: get-projects
+      description: 論文一覧取得
     parameters: []
 components:
   schemas:
@@ -316,58 +317,6 @@ components:
     Project:
       title: Project
       type: object
-      examples:
-        - type: projects
-          id: 1
-          attributes:
-            name: General DB
-          relationships:
-            figures:
-              data: []
-              meta:
-                totalFigures: 31480
-            papers:
-              data: []
-              meta:
-                totalPapers: 30449
-            samples:
-              meta:
-                totalSamples: 40458
-              data: []
-        - type: projects
-          id: 2
-          attributes:
-            name: Thermoelectric Materials DB
-          relationships:
-            papers:
-              data: []
-              meta:
-                totalPapers: 23870
-            figures:
-              data: []
-              meta:
-                totalFigures: 29260
-            samples:
-              meta:
-                totalSamples: 34513
-              data: []
-        - type: projects
-          id: 2
-          attributes:
-            name: General DB
-          relationships:
-            figures:
-              data: []
-              meta:
-                totalFigures: 31480
-            papers:
-              data: []
-              meta:
-                totalPapers: 30449
-            samples:
-              meta:
-                totalSamples: 40458
-              data: []
       properties:
         type:
           type: string
@@ -418,6 +367,26 @@ components:
                     totalSamples:
                       type: number
       description: ''
+      x-examples:
+        example-1:
+          value:
+            type: projects
+            id: 1
+            attributes:
+              name: General DB
+            relationships:
+              figures:
+                data: []
+                meta:
+                  totalFigures: 31480
+              papers:
+                data: []
+                meta:
+                  totalPapers: 30449
+              samples:
+                meta:
+                  totalSamples: 40458
+                data: []
     Figure:
       title: Figure
       type: object
