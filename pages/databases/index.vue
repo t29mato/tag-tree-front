@@ -16,6 +16,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { DefaultApiFactory, Database } from '@/api/out'
+import {} from 'dotenv'
 
 @Component
 export default class DatabasesScreen extends Vue {
