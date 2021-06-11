@@ -25,3 +25,9 @@ $ docker-compose up
 
 - Nuxt.js (User Front): http://localhost:3000/
 - Prism (API Mock): http://localhost:4010/
+
+## Mock Environment
+
+- User Front Mock: https://std3-user-front.vercel.app/
+- API Mock: https://virtserver.swaggerhub.com/t29mato/std3/1.0.0
+- API Docs: https://app.swaggerhub.com/apis/t29mato/std3/1.0.0
