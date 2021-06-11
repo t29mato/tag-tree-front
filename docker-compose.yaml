@@ -1,5 +1,7 @@
 version: '3'
 
+volumes:
+  node_modules_store:
 services:
   node: &app_base
     image: node:16
@@ -7,6 +9,7 @@ services:
     working_dir: /workspace
     volumes:
       - .:/workspace
+      - node_modules_store:/workspace/node_modules
     environment:
       HOST: 0.0.0.0
       PORT: 3000
