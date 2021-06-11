@@ -16,7 +16,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { DefaultApiFactory, Database } from '@/api/out'
-import {} from 'dotenv'
 
 @Component
 export default class DatabasesScreen extends Vue {
@@ -33,7 +32,7 @@ export default class DatabasesScreen extends Vue {
   }
 
   created() {
-    const api = DefaultApiFactory(undefined, 'http://localhost:4010')
+    const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
     const projects = api.getDatabases()
     projects.then((items) => {
       if (items.data.data) {
