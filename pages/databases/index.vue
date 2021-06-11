@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { DefaultApiFactory, Project } from '@/api/out'
+import { DefaultApiFactory, Database } from '@/api/out'
 
 @Component
 export default class DatabasesScreen extends Vue {
@@ -33,15 +33,15 @@ export default class DatabasesScreen extends Vue {
 
   created() {
     const api = DefaultApiFactory(undefined, 'http://localhost:4010')
-    const projects = api.getProjects()
+    const projects = api.getDatabases()
     projects.then((items) => {
       if (items.data.data) {
-        const projects: Project[] = items.data.data
+        const projects: Database[] = items.data.data
         this.items = projects
       }
     })
   }
 
-  items: Project[] = []
+  items: Database[] = []
 }
 </script>
