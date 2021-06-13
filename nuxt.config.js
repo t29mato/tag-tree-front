@@ -1,5 +1,4 @@
-require('dotenv').config()
-const { STARRYDATA_API_URL } = process.env
+const environment = process.env.NODE_ENV || 'development'
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -35,7 +34,7 @@ export default {
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
-    '@nuxtjs/dotenv',
+    ['@nuxtjs/dotenv', { filename: `.env.${environment}` }],
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -56,8 +55,4 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
-
-  env: {
-    STARRYDATA_API_URL,
-  },
 }
