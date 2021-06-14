@@ -78,7 +78,7 @@ paths:
                       - type: papers
                         id: 3
                         attributes:
-                          DOI: 00000003_Kim_2012
+                          DOI: 10.1021/am3002764
                           title: 'Significant Enhancement in the Thermoelectric Performance of a Bismuth Telluride Nanocompound through Brief Fabrication Procedures'
                           publisher: American Chemical Society (ACS)
                           authors:
@@ -92,6 +92,37 @@ paths:
                           samples:
                             meta:
                               total: 7
+                      - type: papers
+                        id: 4
+                        attributes:
+                          DOI: 10.1021/am401444w
+                          title: 'Wet-Chemical Synthesis and Consolidation of Stoichiometric Bismuth Telluride Nanoparticles for Improving the Thermoelectric Figure-of-Merit'
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                            - family: Stavila
+                              given: V.
+                            - family: Robinson
+                              given: D.B.
+                            - family: Hekmaty
+                              given: M.A.
+                            - family: Nishimoto
+                              given: R.
+                            - family: Medlin
+                              given: D.L.
+                            - family: Zhu
+                              given: S.
+                            - family: Tritt
+                              given: T.M.
+                            - family: Sharma
+                              given: P.A.
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 2
+                          samples:
+                            meta:
+                              total: 2
         '201':
           description: Created
       operationId: get-papers
