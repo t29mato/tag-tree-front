@@ -24,6 +24,25 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface Contributor
+ */
+export interface Contributor {
+    /**
+     * 
+     * @type {string}
+     * @memberof Contributor
+     */
+    family: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Contributor
+     */
+    given?: string;
+}
+/**
+ * 
+ * @export
  * @interface Database
  */
 export interface Database {
@@ -286,19 +305,25 @@ export interface Paper {
      * @type {string}
      * @memberof Paper
      */
-    type?: string;
+    type: string;
     /**
      * 
      * @type {number}
      * @memberof Paper
      */
-    id?: number;
+    id: number;
     /**
      * 
      * @type {PaperAttributes}
      * @memberof Paper
      */
-    attributes?: PaperAttributes;
+    attributes: PaperAttributes;
+    /**
+     * 
+     * @type {PaperRelationships}
+     * @memberof Paper
+     */
+    relationships?: PaperRelationships;
 }
 /**
  * 
@@ -311,13 +336,76 @@ export interface PaperAttributes {
      * @type {string}
      * @memberof PaperAttributes
      */
-    DOI?: string;
+    DOI: string;
     /**
      * 
      * @type {string}
      * @memberof PaperAttributes
      */
-    title?: string;
+    title: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaperAttributes
+     */
+    publisher: string;
+    /**
+     * 
+     * @type {Array<Contributor>}
+     * @memberof PaperAttributes
+     */
+    authors?: Array<Contributor>;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaperAttributes
+     */
+    container_title?: string;
+}
+/**
+ * 
+ * @export
+ * @interface PaperRelationships
+ */
+export interface PaperRelationships {
+    /**
+     * 
+     * @type {PaperRelationshipsFigures}
+     * @memberof PaperRelationships
+     */
+    figures?: PaperRelationshipsFigures;
+    /**
+     * 
+     * @type {PaperRelationshipsFigures}
+     * @memberof PaperRelationships
+     */
+    samples?: PaperRelationshipsFigures;
+}
+/**
+ * 
+ * @export
+ * @interface PaperRelationshipsFigures
+ */
+export interface PaperRelationshipsFigures {
+    /**
+     * 
+     * @type {PaperRelationshipsFiguresMeta}
+     * @memberof PaperRelationshipsFigures
+     */
+    meta?: PaperRelationshipsFiguresMeta;
+}
+/**
+ * 
+ * @export
+ * @interface PaperRelationshipsFiguresMeta
+ */
+export interface PaperRelationshipsFiguresMeta {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaperRelationshipsFiguresMeta
+     */
+    total?: number;
 }
 /**
  * 

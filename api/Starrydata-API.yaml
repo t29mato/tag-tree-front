@@ -38,50 +38,60 @@ paths:
                     items:
                       $ref: '#/components/schemas/Paper'
               examples:
-                example-1:
+                example-2:
                   value:
-                    - SID: 1
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 2
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 3
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 4
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 5
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
-                    - SID: 6
-                      title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                      authors: 'C. Xiao, Z. Li, K. Li, P. Huang, Y. Xie,'
-                      identifier: 00000001_Xiao_2014
-                      DOI: 10.1021/ar400290f
-                      figures: 1
-                      samples: 1
+                    data:
+                      - type: papers
+                        id: 1
+                        attributes:
+                          DOI: 10.1021/ar400290f
+                          title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                            - family: Xiao
+                              given: Chong
+                          container_title: Accounts of Chemical Research
+                        relationships:
+                          figures:
+                            meta:
+                              total: 1
+                          samples:
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 2
+                        attributes:
+                          DOI: 10.1021/am100654p
+                          title: 'Promising Thermoelectric Properties of Commercial PEDOT:PSS Materials and Their Bi2Te3Powder Composites'
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                            - family: Zhang
+                              given: B.
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 1
+                          samples:
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 3
+                        attributes:
+                          DOI: 00000003_Kim_2012
+                          title: 'Significant Enhancement in the Thermoelectric Performance of a Bismuth Telluride Nanocompound through Brief Fabrication Procedures'
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                            - family: Kim
+                              given: Cham
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 11
+                          samples:
+                            meta:
+                              total: 7
         '201':
           description: Created
       operationId: get-papers
@@ -340,14 +350,70 @@ components:
           type: number
         attributes:
           type: object
+          required:
+            - DOI
+            - title
+            - publisher
           properties:
             DOI:
               type: string
             title:
               type: string
+            publisher:
+              type: string
+            authors:
+              type: array
+              items:
+                $ref: '#/components/schemas/Contributor'
+            container_title:
+              type: string
+        relationships:
+          type: object
+          properties:
+            figures:
+              type: object
+              properties:
+                meta:
+                  type: object
+                  properties:
+                    total:
+                      type: number
+            samples:
+              type: object
+              properties:
+                meta:
+                  type: object
+                  properties:
+                    total:
+                      type: number
+      required:
+        - type
+        - id
+        - attributes
     Database:
       title: Database
       type: object
+      description: ''
+      x-examples:
+        example-1:
+          value:
+            type: databases
+            id: 1
+            attributes:
+              name: General DB
+            relationships:
+              figures:
+                data: []
+                meta:
+                  totalFigures: 31480
+              papers:
+                data: []
+                meta:
+                  totalPapers: 30449
+              samples:
+                meta:
+                  totalSamples: 40458
+                data: []
       properties:
         type:
           type: string
@@ -397,27 +463,6 @@ components:
                   properties:
                     totalSamples:
                       type: number
-      description: ''
-      x-examples:
-        example-1:
-          value:
-            type: databases
-            id: 1
-            attributes:
-              name: General DB
-            relationships:
-              figures:
-                data: []
-                meta:
-                  totalFigures: 31480
-              papers:
-                data: []
-                meta:
-                  totalPapers: 30449
-              samples:
-                meta:
-                  totalSamples: 40458
-                data: []
     Figure:
       title: Figure
       type: object
@@ -438,3 +483,13 @@ components:
           type: string
         attributes:
           type: object
+    Contributor:
+      title: Contributor
+      type: object
+      properties:
+        family:
+          type: string
+        given:
+          type: string
+      required:
+        - family
