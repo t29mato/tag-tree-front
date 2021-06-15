@@ -145,6 +145,62 @@ paths:
                             data:
                               - type: databases
                                 id: '1'
+                      - type: papers
+                        id: '26'
+                        attributes:
+                          DOI: 10.1107/s0108768108030152
+                          title: 'Original disorder–order transition related to electronic and magnetic properties in the thermoelectric misfit phase [Ca2CoO3][CoO2]1.62'
+                          publisher: International Union of Crystallography (IUCr)
+                          authors:
+                            - family: Muguerra
+                              given: Hervé
+                            - family: Grebille
+                              given: Dominique
+                          container_title: Acta Crystallographica Section B Structural Science
+                        relationships:
+                          figures:
+                            meta:
+                              total: 0
+                          samples:
+                            meta:
+                              total: 0
+                          databases:
+                            data:
+                              - type: databases
+                                id: '1'
+                              - type: databases
+                                id: '2'
+                      - type: papers
+                        id: '41'
+                        attributes:
+                          DOI: 10.1016/j.actamat.2010.10.046
+                          title: 'Magnetic influence on thermoelectric properties of CrO0.1N0.9'
+                          publisher: Elsevier BV
+                          authors:
+                            - family: Tomeš
+                              given: Petr
+                            - family: Logvinovich
+                              given: Dmitry
+                            - family: Hejtmánek
+                              given: Jiří
+                            - family: Aguirre
+                              given: Myriam H.
+                            - family: Weidenkaff
+                              given: Anke
+                          container_title: Acta Materialia
+                        relationships:
+                          figures:
+                            meta:
+                              total: 4
+                          samples:
+                            meta:
+                              total: 1
+                          databases:
+                            data:
+                              - type: databases
+                                id: '1'
+                              - type: databases
+                                id: '2'
         '201':
           description: Created
       operationId: get-papers
