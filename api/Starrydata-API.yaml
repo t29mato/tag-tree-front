@@ -1,14 +1,20 @@
 openapi: 3.0.3
+tags:
+  - name: Starrydata
 info:
   title: Starrydata API
   version: '3.0'
   description: '  '
+  contact:
+    name: MATO Tomoya
+    email: tomoya.matou@gmail.com
 servers:
   - url: 'http://localhost:3100'
 paths:
   /papers:
     get:
       summary: Get Papers
+      description: Get Papers
       tags: []
       responses:
         '200':
@@ -42,7 +48,7 @@ paths:
                   value:
                     data:
                       - type: papers
-                        id: 1
+                        id: '1'
                         attributes:
                           DOI: 10.1021/ar400290f
                           title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
@@ -61,9 +67,9 @@ paths:
                           databases:
                             data:
                               - type: databases
-                                id: 1
+                                id: '1'
                       - type: papers
-                        id: 2
+                        id: '2'
                         attributes:
                           DOI: 10.1021/am100654p
                           title: 'Promising Thermoelectric Properties of Commercial PEDOT:PSS Materials and Their Bi2Te3Powder Composites'
@@ -82,9 +88,9 @@ paths:
                           databases:
                             data:
                               - type: databases
-                                id: 1
+                                id: '1'
                       - type: papers
-                        id: 3
+                        id: '3'
                         attributes:
                           DOI: 10.1021/am3002764
                           title: 'Significant Enhancement in the Thermoelectric Performance of a Bismuth Telluride Nanocompound through Brief Fabrication Procedures'
@@ -103,9 +109,9 @@ paths:
                           databases:
                             data:
                               - type: databases
-                                id: 1
+                                id: '1'
                       - type: papers
-                        id: 4
+                        id: '4'
                         attributes:
                           DOI: 10.1021/am401444w
                           title: 'Wet-Chemical Synthesis and Consolidation of Stoichiometric Bismuth Telluride Nanoparticles for Improving the Thermoelectric Figure-of-Merit'
@@ -138,7 +144,7 @@ paths:
                           databases:
                             data:
                               - type: databases
-                                id: 1
+                                id: '1'
         '201':
           description: Created
       operationId: get-papers
@@ -153,6 +159,7 @@ paths:
         required: true
     get:
       summary: get paper
+      description: Get Paper
       tags: []
       responses:
         '200':
@@ -215,7 +222,7 @@ paths:
                   value:
                     data:
                       - type: databases
-                        id: 1
+                        id: '1'
                         attributes:
                           name: General DB
                         relationships:
@@ -232,7 +239,7 @@ paths:
                               totalSamples: 40458
                             data: []
                       - type: databases
-                        id: 2
+                        id: '2'
                         attributes:
                           name: Thermoelectric Materials DB
                         relationships:
@@ -249,7 +256,7 @@ paths:
                               totalSamples: 34513
                             data: []
                       - type: databases
-                        id: 3
+                        id: '3'
                         attributes:
                           name: Magnetic Materials DB
                         relationships:
@@ -266,7 +273,7 @@ paths:
                               totalSamples: 3849
                             data: []
                       - type: databases
-                        id: 4
+                        id: '4'
                         attributes:
                           name: Condensed Matter DB
                         relationships:
@@ -283,7 +290,7 @@ paths:
                               totalSamples: 1374
                             data: []
                       - type: databases
-                        id: 5
+                        id: '5'
                         attributes:
                           name: High Thermal Conductivity Materials DB
                         relationships:
@@ -300,7 +307,7 @@ paths:
                               totalSamples: 519
                             data: []
                       - type: databases
-                        id: 6
+                        id: '6'
                         attributes:
                           name: Piezoelectric Materials
                         relationships:
@@ -317,7 +324,7 @@ paths:
                               totalSamples: 0
                             data: []
                       - type: databases
-                        id: 7
+                        id: '7'
                         attributes:
                           name: Hyper Material
                         relationships:
@@ -334,7 +341,7 @@ paths:
                               totalSamples: 262
                             data: []
                       - type: databases
-                        id: 8
+                        id: '8'
                         attributes:
                           name: Project TtoH
                         relationships:
@@ -350,37 +357,6 @@ paths:
                             meta:
                               totalSamples: 0
                             data: []
-                example-2:
-                  value:
-                    data:
-                      - type: string
-                        id: 0
-                        attributes:
-                          name: string
-                        relationships:
-                          papers:
-                            data:
-                              - type: string
-                                id: 0
-                                attributes:
-                                  DOI: string
-                                  title: string
-                            meta:
-                              totalPapers: 0
-                          figures:
-                            data:
-                              - type: string
-                                id: string
-                                attributes: {}
-                            meta:
-                              totalFigures: 0
-                          samples:
-                            data:
-                              - type: string
-                                id: string
-                                attributes: {}
-                            meta:
-                              totalSamples: 0
       operationId: get-databases
       description: 論文一覧取得
     parameters: []
@@ -394,7 +370,7 @@ components:
         type:
           type: string
         id:
-          type: number
+          type: string
         attributes:
           type: object
           required:
@@ -477,7 +453,7 @@ components:
         type:
           type: string
         id:
-          type: number
+          type: string
         attributes:
           type: object
           properties:
