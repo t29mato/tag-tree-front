@@ -48,14 +48,28 @@ paths:
                   value:
                     data:
                       - type: papers
-                        id: '1'
+                        id: 1
                         attributes:
                           DOI: 10.1021/ar400290f
-                          title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
+                          title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric
+                            Materials
                           publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Xiao
-                              given: Chong
+                          - affiliation: []
+                            given: Chong
+                            family: Xiao
+                          - affiliation: []
+                            given: Zhou
+                            family: Li
+                          - affiliation: []
+                            given: Kun
+                            family: Li
+                          - affiliation: []
+                            given: Pengcheng
+                            family: Huang
+                          - affiliation: []
+                            given: Yi
+                            family: Xie
                           container_title: Accounts of Chemical Research
                         relationships:
                           figures:
@@ -66,17 +80,33 @@ paths:
                               total: 1
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
                       - type: papers
-                        id: '2'
+                        id: 2
                         attributes:
                           DOI: 10.1021/am100654p
-                          title: 'Promising Thermoelectric Properties of Commercial PEDOT:PSS Materials and Their Bi2Te3Powder Composites'
+                          title: Promising Thermoelectric Properties of Commercial PEDOT:PSS Materials and
+                            Their Bi2Te3Powder Composites
                           publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Zhang
-                              given: B.
+                          - affiliation: []
+                            given: B.
+                            family: Zhang
+                          - affiliation: []
+                            given: J.
+                            family: Sun
+                          - affiliation: []
+                            given: H. E.
+                            family: Katz
+                          - affiliation: []
+                            given: F.
+                            family: Fang
+                          - affiliation: []
+                            given: R. L.
+                            family: Opila
                           container_title: ACS Applied Materials & Interfaces
                         relationships:
                           figures:
@@ -87,17 +117,30 @@ paths:
                               total: 1
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
                       - type: papers
-                        id: '3'
+                        id: 3
                         attributes:
                           DOI: 10.1021/am3002764
-                          title: 'Significant Enhancement in the Thermoelectric Performance of a Bismuth Telluride Nanocompound through Brief Fabrication Procedures'
+                          title: Significant Enhancement in the Thermoelectric Performance of a Bismuth
+                            Telluride Nanocompound through Brief Fabrication Procedures
                           publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Kim
-                              given: Cham
+                          - affiliation: []
+                            given: Cham
+                            family: Kim
+                          - affiliation: []
+                            given: Dong Hwan
+                            family: Kim
+                          - affiliation: []
+                            given: Hoyoung
+                            family: Kim
+                          - affiliation: []
+                            given: Jong Shik
+                            family: Chung
                           container_title: ACS Applied Materials & Interfaces
                         relationships:
                           figures:
@@ -108,31 +151,44 @@ paths:
                               total: 7
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            - id: 5a730fc65464ad2cc2b08918
+                              type: databases
+                            meta:
+                              total: 2
                       - type: papers
-                        id: '4'
+                        id: 4
                         attributes:
                           DOI: 10.1021/am401444w
-                          title: 'Wet-Chemical Synthesis and Consolidation of Stoichiometric Bismuth Telluride Nanoparticles for Improving the Thermoelectric Figure-of-Merit'
+                          title: Wet-Chemical Synthesis and Consolidation of Stoichiometric Bismuth Telluride
+                            Nanoparticles for Improving the Thermoelectric Figure-of-Merit
                           publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Stavila
-                              given: V.
-                            - family: Robinson
-                              given: D.B.
-                            - family: Hekmaty
-                              given: M.A.
-                            - family: Nishimoto
-                              given: R.
-                            - family: Medlin
-                              given: D.L.
-                            - family: Zhu
-                              given: S.
-                            - family: Tritt
-                              given: T.M.
-                            - family: Sharma
-                              given: P.A.
+                          - affiliation: []
+                            given: V.
+                            family: Stavila
+                          - affiliation: []
+                            given: D.B.
+                            family: Robinson
+                          - affiliation: []
+                            given: M.A.
+                            family: Hekmaty
+                          - affiliation: []
+                            given: R.
+                            family: Nishimoto
+                          - affiliation: []
+                            given: D.L.
+                            family: Medlin
+                          - affiliation: []
+                            given: S.
+                            family: Zhu
+                          - affiliation: []
+                            given: T.M.
+                            family: Tritt
+                          - affiliation: []
+                            given: P.A.
+                            family: Sharma
                           container_title: ACS Applied Materials & Interfaces
                         relationships:
                           figures:
@@ -143,64 +199,657 @@ paths:
                               total: 2
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
                       - type: papers
-                        id: '26'
+                        id: 5
                         attributes:
-                          DOI: 10.1107/s0108768108030152
-                          title: 'Original disorder–order transition related to electronic and magnetic properties in the thermoelectric misfit phase [Ca2CoO3][CoO2]1.62'
-                          publisher: International Union of Crystallography (IUCr)
+                          DOI: 10.1021/am405035z
+                          title: Investigation of Reaction Mechanisms of Bismuth Tellurium Selenide Nanomaterials
+                            for Simple Reaction Manipulation Causing Effective Adjustment of Thermoelectric
+                            Properties
+                          publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Muguerra
-                              given: Hervé
-                            - family: Grebille
-                              given: Dominique
-                          container_title: Acta Crystallographica Section B Structural Science
+                          - affiliation: []
+                            given: Cham
+                            family: Kim
+                          - affiliation: []
+                            given: Dong Hwan
+                            family: Kim
+                          - affiliation: []
+                            given: Jong Tae
+                            family: Kim
+                          - affiliation: []
+                            given: Yoon Soo
+                            family: Han
+                          - affiliation: []
+                            given: Hoyoung
+                            family: Kim
+                          container_title: ACS Applied Materials & Interfaces
                         relationships:
                           figures:
                             meta:
-                              total: 0
+                              total: 1
                           samples:
                             meta:
-                              total: 0
+                              total: 3
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
-                              - type: databases
-                                id: '2'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
                       - type: papers
-                        id: '41'
+                        id: 6
                         attributes:
-                          DOI: 10.1016/j.actamat.2010.10.046
-                          title: 'Magnetic influence on thermoelectric properties of CrO0.1N0.9'
-                          publisher: Elsevier BV
+                          DOI: 10.1021/am405410e
+                          title: Exploration of Zn Resonance Levels and Thermoelectric Properties in I-Doped
+                            PbTe with ZnTe Nanostructures
+                          publisher: American Chemical Society (ACS)
                           authors:
-                            - family: Tomeš
-                              given: Petr
-                            - family: Logvinovich
-                              given: Dmitry
-                            - family: Hejtmánek
-                              given: Jiří
-                            - family: Aguirre
-                              given: Myriam H.
-                            - family: Weidenkaff
-                              given: Anke
-                          container_title: Acta Materialia
+                          - affiliation: []
+                            given: P. K.
+                            family: Rawat
+                          - affiliation: []
+                            given: B.
+                            family: Paul
+                          - affiliation: []
+                            given: P.
+                            family: Banerji
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 3
+                          samples:
+                            meta:
+                              total: 10
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 7
+                        attributes:
+                          DOI: 10.1021/am503477z
+                          title: 'Enhanced Thermoelectric Properties of Selenium-Deficient Layered TiSe2–x:
+                            A Charge-Density-Wave Material'
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Ranu
+                            family: Bhatt
+                          - affiliation: []
+                            given: Shovit
+                            family: Bhattacharya
+                          - affiliation: []
+                            given: Ranita
+                            family: Basu
+                          - affiliation: []
+                            given: Sajid
+                            family: Ahmad
+                          - affiliation: []
+                            given: A. K.
+                            family: Chauhan
+                          - affiliation: []
+                            given: G. S.
+                            family: Okram
+                          - affiliation: []
+                            given: Pramod
+                            family: Bhatt
+                          - affiliation: []
+                            given: Mainak
+                            family: Roy
+                          - affiliation: []
+                            given: M.
+                            family: Navaneethan
+                          - affiliation: []
+                            given: Y.
+                            family: Hayakawa
+                          - affiliation: []
+                            given: A. K.
+                            family: Debnath
+                          - affiliation: []
+                            given: Ajay
+                            family: Singh
+                          - affiliation: []
+                            given: D. K.
+                            family: Aswal
+                          - affiliation: []
+                            given: S. K.
+                            family: Gupta
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 3
+                          samples:
+                            meta:
+                              total: 4
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            - id: 5a730fc65464ad2cc2b08918
+                              type: databases
+                            meta:
+                              total: 2
+                      - type: papers
+                        id: 8
+                        attributes:
+                          DOI: 10.1021/acsami.5b00514
+                          title: Layered Bi2Se3Nanoplate/Polyvinylidene Fluoride Composite Based n-type
+                            Thermoelectric Fabrics
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Chaochao
+                            family: Dun
+                          - affiliation: []
+                            given: Corey A.
+                            family: Hewitt
+                          - affiliation: []
+                            given: Huihui
+                            family: Huang
+                          - affiliation: []
+                            given: Junwei
+                            family: Xu
+                          - affiliation: []
+                            given: David S.
+                            family: Montgomery
+                          - affiliation: []
+                            given: Wanyi
+                            family: Nie
+                          - affiliation: []
+                            given: Qike
+                            family: Jiang
+                          - affiliation: []
+                            given: David L.
+                            family: Carroll
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 3
+                          samples:
+                            meta:
+                              total: 1
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 9
+                        attributes:
+                          DOI: 10.1021/am509050a
+                          title: Thermoelectric Transport Properties of Fe-Enriched ZnO with High-Temperature
+                            Nanostructure Refinement
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Xin
+                            family: Liang
+                          container_title: ACS Applied Materials & Interfaces
                         relationships:
                           figures:
                             meta:
                               total: 4
                           samples:
                             meta:
+                              total: 5
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 10
+                        attributes:
+                          DOI: 10.1021/acsami.5b01460
+                          title: Interface-Located Photothermoelectric Effect of Organic Thermoelectric
+                            Materials in Enabling NIR Detection
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Dazhen
+                            family: Huang
+                          - affiliation: []
+                            given: Ye
+                            family: Zou
+                          - affiliation: []
+                            given: Fei
+                            family: Jiao
+                          - affiliation: []
+                            given: Fengjiao
+                            family: Zhang
+                          - affiliation: []
+                            given: Yaping
+                            family: Zang
+                          - affiliation: []
+                            given: Chong-an
+                            family: Di
+                          - affiliation: []
+                            given: Wei
+                            family: Xu
+                          - affiliation: []
+                            given: Daoben
+                            family: Zhu
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 1
+                          samples:
+                            meta:
                               total: 1
                           databases:
                             data:
-                              - type: databases
-                                id: '1'
-                              - type: databases
-                                id: '2'
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 11
+                        attributes:
+                          DOI: 10.1021/acsami.5b01960
+                          title: Enhanced Thermoelectric Properties of Poly(3,4-ethylenedioxythiophene):poly(styrenesulfonate)
+                            by Binary Secondary Dopants
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Chao
+                            family: Yi
+                          - affiliation: []
+                            given: Abigail
+                            family: Wilhite
+                          - affiliation: []
+                            given: Long
+                            family: Zhang
+                          - affiliation: []
+                            given: Rundong
+                            family: Hu
+                          - affiliation: []
+                            given: Steven S. C.
+                            family: Chuang
+                          - affiliation: []
+                            given: Jie
+                            family: Zheng
+                          - affiliation: []
+                            given: Xiong
+                            family: Gong
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 0
+                          samples:
+                            meta:
+                              total: 0
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 12
+                        attributes:
+                          DOI: 10.1021/acsami.5b01617
+                          title: Synthesis and Characterization of Nanostructured Stannite Cu2ZnSnSe4and
+                            Ag2ZnSnSe4for Thermoelectric Applications
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Kaya
+                            family: Wei
+                          - affiliation: []
+                            given: George S.
+                            family: Nolas
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 9
+                          samples:
+                            meta:
+                              total: 2
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            - id: 5a730fc65464ad2cc2b08918
+                              type: databases
+                            meta:
+                              total: 2
+                      - type: papers
+                        id: 13
+                        attributes:
+                          DOI: 10.1021/acsami.5b02504
+                          title: A Facile Surfactant-Assisted Reflux Method for the Synthesis of Single-Crystalline
+                            Sb2Te3Nanostructures with Enhanced Thermoelectric Performance
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Heng Quan
+                            family: Yang
+                          - affiliation: []
+                            given: Lei
+                            family: Miao
+                          - affiliation: []
+                            given: Cheng Yan
+                            family: Liu
+                          - affiliation: []
+                            given: Chao
+                            family: Li
+                          - affiliation: []
+                            given: Sawao
+                            family: Honda
+                          - affiliation: []
+                            given: Yuji
+                            family: Iwamoto
+                          - affiliation: []
+                            given: Rong
+                            family: Huang
+                          - affiliation: []
+                            given: Sakae
+                            family: Tanemura
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 5
+                          samples:
+                            meta:
+                              total: 3
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 14
+                        attributes:
+                          DOI: 10.1021/acsami.5b05860
+                          title: Tuning the Thermoelectric Properties of a Conducting Polymer through Blending
+                            with Open-Shell Molecular Dopants
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Edward P.
+                            family: Tomlinson
+                          - affiliation: []
+                            given: Matthew J.
+                            family: Willmore
+                          - affiliation: []
+                            given: Xiaoqin
+                            family: Zhu
+                          - affiliation: []
+                            given: Stuart W. A.
+                            family: Hilsmier
+                          - affiliation: []
+                            given: Bryan W.
+                            family: Boudouris
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 1
+                          samples:
+                            meta:
+                              total: 3
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 15
+                        attributes:
+                          DOI: 10.1021/acsami.5b04910
+                          title: Thermoelectric Properties of Ga/Ag Codoped Type-III Ba24Ge100Clathrates
+                            with in Situ Nanostructures
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Jiefei
+                            family: Fu
+                          - affiliation: []
+                            given: Xianli
+                            family: Su
+                          - affiliation: []
+                            given: Yun
+                            family: Zheng
+                          - affiliation: []
+                            given: Hongyao
+                            family: Xie
+                          - affiliation: []
+                            given: Yonggao
+                            family: Yan
+                          - affiliation: []
+                            given: Xinfeng
+                            family: Tang
+                          - affiliation: []
+                            given: Ctirad
+                            family: Uher
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 6
+                          samples:
+                            meta:
+                              total: 13
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 16
+                        attributes:
+                          DOI: 10.1021/acsami.5b06492
+                          title: Contrasting the Role of Mg and Ba Doping on the Microstructure and Thermoelectric
+                            Properties of p-Type AgSbSe2
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Zihang
+                            family: Liu
+                          - affiliation: []
+                            given: Jing
+                            family: Shuai
+                          - affiliation: []
+                            given: Huiyuan
+                            family: Geng
+                          - affiliation: []
+                            given: Jun
+                            family: Mao
+                          - affiliation: []
+                            given: Yan
+                            family: Feng
+                          - affiliation: []
+                            given: Xu
+                            family: Zhao
+                          - affiliation: []
+                            given: Xianfu
+                            family: Meng
+                          - affiliation: []
+                            given: Ran
+                            family: He
+                          - affiliation: []
+                            given: Wei
+                            family: Cai
+                          - affiliation: []
+                            given: Jiehe
+                            family: Sui
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 15
+                          samples:
+                            meta:
+                              total: 19
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 17
+                        attributes:
+                          DOI: 10.1021/acsami.5b07596
+                          title: Enhanced Thermoelectric Performance of Nanostructured Bi2Te3through Significant
+                            Phonon Scattering
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Lei
+                            family: Yang
+                          - affiliation: []
+                            given: Zhi-Gang
+                            family: Chen
+                          - affiliation: []
+                            given: Min
+                            family: Hong
+                          - affiliation: []
+                            given: Guang
+                            family: Han
+                          - affiliation: []
+                            given: Jin
+                            family: Zou
+                          container_title: ACS Applied Materials & Interfaces
+                        relationships:
+                          figures:
+                            meta:
+                              total: 3
+                          samples:
+                            meta:
+                              total: 2
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 18
+                        attributes:
+                          DOI: 10.1021/nn900986r
+                          title: 'Thermoelectric Efficiency in Nanojunctions: A Comparison between Atomic
+                            Junctions and Molecular Junctions'
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Yu-Shen
+                            family: Liu
+                          - affiliation: []
+                            given: Yi-Ren
+                            family: Chen
+                          - affiliation: []
+                            given: Yu-Chang
+                            family: Chen
+                          container_title: ACS Nano
+                        relationships:
+                          figures:
+                            meta:
+                              total: 1
+                          samples:
+                            meta:
+                              total: 4
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 19
+                        attributes:
+                          DOI: 10.1021/nn100490g
+                          title: Giant Thermoelectric Effect from Transmission Supernodes
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Justin P.
+                            family: Bergfield
+                          - affiliation: []
+                            given: Michelle A.
+                            family: Solis
+                          - affiliation: []
+                            given: Charles A.
+                            family: Stafford
+                          container_title: ACS Nano
+                        relationships:
+                          figures:
+                            meta:
+                              total: 0
+                          samples:
+                            meta:
+                              total: 0
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+                      - type: papers
+                        id: 20
+                        attributes:
+                          DOI: 10.1021/nn2017183
+                          title: Thermoelectric Properties of Lead Chalcogenide Core–Shell Nanostructures
+                          publisher: American Chemical Society (ACS)
+                          authors:
+                          - affiliation: []
+                            given: Marcus
+                            family: Scheele
+                          - affiliation: []
+                            given: Niels
+                            family: Oeschler
+                          - affiliation: []
+                            given: Igor
+                            family: Veremchuk
+                          - affiliation: []
+                            given: Sven-Ole
+                            family: Peters
+                          - affiliation: []
+                            given: Alexander
+                            family: Littig
+                          - affiliation: []
+                            given: Andreas
+                            family: Kornowski
+                          - affiliation: []
+                            given: Christian
+                            family: Klinke
+                          - affiliation: []
+                            given: Horst
+                            family: Weller
+                          container_title: ACS Nano
+                        relationships:
+                          figures:
+                            meta:
+                              total: 4
+                          samples:
+                            meta:
+                              total: 5
+                          databases:
+                            data:
+                            - id: 5a6962c25464ad06cf0c13e4
+                              type: databases
+                            meta:
+                              total: 1
+
         '201':
           description: Created
       operationId: get-papers
@@ -278,7 +927,7 @@ paths:
                   value:
                     data:
                       - type: databases
-                        id: '1'
+                        id: 1
                         attributes:
                           name: General DB
                         relationships:
@@ -295,7 +944,7 @@ paths:
                               totalSamples: 40458
                             data: []
                       - type: databases
-                        id: '2'
+                        id: 2
                         attributes:
                           name: Thermoelectric Materials DB
                         relationships:
@@ -312,7 +961,7 @@ paths:
                               totalSamples: 34513
                             data: []
                       - type: databases
-                        id: '3'
+                        id: 3
                         attributes:
                           name: Magnetic Materials DB
                         relationships:
@@ -329,7 +978,7 @@ paths:
                               totalSamples: 3849
                             data: []
                       - type: databases
-                        id: '4'
+                        id: 4
                         attributes:
                           name: Condensed Matter DB
                         relationships:
@@ -346,7 +995,7 @@ paths:
                               totalSamples: 1374
                             data: []
                       - type: databases
-                        id: '5'
+                        id: 5
                         attributes:
                           name: High Thermal Conductivity Materials DB
                         relationships:
@@ -363,7 +1012,7 @@ paths:
                               totalSamples: 519
                             data: []
                       - type: databases
-                        id: '6'
+                        id: 6
                         attributes:
                           name: Piezoelectric Materials
                         relationships:
@@ -380,7 +1029,7 @@ paths:
                               totalSamples: 0
                             data: []
                       - type: databases
-                        id: '7'
+                        id: 7
                         attributes:
                           name: Hyper Material
                         relationships:
@@ -397,7 +1046,7 @@ paths:
                               totalSamples: 262
                             data: []
                       - type: databases
-                        id: '8'
+                        id: 8
                         attributes:
                           name: Project TtoH
                         relationships:
@@ -426,13 +1075,15 @@ components:
         type:
           type: string
         id:
-          type: string
+          type: number
         attributes:
           type: object
           required:
             - DOI
             - title
             - publisher
+            - authors
+            - container_title
           properties:
             DOI:
               type: string
@@ -509,7 +1160,7 @@ components:
         type:
           type: string
         id:
-          type: string
+          type: number
         attributes:
           type: object
           properties:
@@ -561,7 +1212,7 @@ components:
         type:
           type: string
         id:
-          type: string
+          type: number
         attributes:
           type: object
     Sample:
@@ -571,7 +1222,7 @@ components:
         type:
           type: string
         id:
-          type: string
+          type: number
         attributes:
           type: object
     Contributor:
