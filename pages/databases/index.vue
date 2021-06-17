@@ -4,7 +4,8 @@
       :headers="headers"
       :items="items"
       item-key="ID"
-      class="elevation-1"
+      :loading="loading"
+      :loading-text="loadingText"
     >
       <template #[`item.relationships.papers.meta.total`]="{ item }">
         <nuxt-link :to="{ path: 'papers', query: { database: item.id } }">{{
@@ -25,6 +26,8 @@ export default Vue.extend({
       sortBy: 'age',
       sortDesc: false,
       items: [] as Database[],
+      loading: true,
+      loadingText: 'Loading... Please wait',
     }
   },
   computed: {
@@ -39,14 +42,27 @@ export default Vue.extend({
     },
   },
   created() {
-    const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
-    const projects = api.getDatabases()
-    projects.then((items) => {
-      if (items.data.data) {
-        const projects = items.data.data
-        this.items = projects
+    this.loadDatabases()
+  },
+  methods: {
+    async loadDatabases() {
+      this.loading = true
+      // wait 1 seconds for making a mock look like real applicatin.
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      try {
+        const { data } = await api.getDatabases()
+        if (data.data) {
+          this.items = data.data
+        }
+      } catch (error) {
+        alert(
+          'Failed to connect with API. If it recovers after reloading, please wait a while and try again'
+        )
+      } finally {
+        this.loading = false
       }
-    })
+    },
   },
 })
 </script>
