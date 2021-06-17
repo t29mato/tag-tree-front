@@ -6,8 +6,10 @@
       item-key="ID"
       class="elevation-1"
     >
-      <template #[`item.papers`]="{ item }">
-        <p>{{ item.papers + ' (' + item.papersWithData + ')' }}</p>
+      <template #[`item.relationships.papers.meta.total`]="{ item }">
+        <nuxt-link :to="{ path: 'papers', query: { database: item.id } }">{{
+          item.relationships.papers.meta.total
+        }}</nuxt-link>
       </template>
     </v-data-table>
   </div>
@@ -30,9 +32,9 @@ export default Vue.extend({
       return [
         { text: 'ID', value: 'id' },
         { text: 'Database', value: 'attributes.name' },
-        { text: 'Papers', value: 'relationships.papers.meta.totalPapers' },
-        { text: 'Figures', value: 'relationships.figures.meta.totalFigures' },
-        { text: 'Samples', value: 'relationships.samples.meta.totalSamples' },
+        { text: 'Papers', value: 'relationships.papers.meta.total' },
+        { text: 'Figures', value: 'relationships.figures.meta.total' },
+        { text: 'Samples', value: 'relationships.samples.meta.total' },
       ]
     },
   },

@@ -54,10 +54,10 @@ export interface Database {
     type?: string;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Database
      */
-    id?: number;
+    id?: string;
     /**
      * 
      * @type {DatabaseAttributes}
@@ -92,143 +92,22 @@ export interface DatabaseAttributes {
 export interface DatabaseRelationships {
     /**
      * 
-     * @type {DatabaseRelationshipsPapers}
+     * @type {PaperRelationshipsFigures}
      * @memberof DatabaseRelationships
      */
-    papers?: DatabaseRelationshipsPapers;
+    papers?: PaperRelationshipsFigures;
     /**
      * 
-     * @type {DatabaseRelationshipsFigures}
+     * @type {PaperRelationshipsFigures}
      * @memberof DatabaseRelationships
      */
-    figures?: DatabaseRelationshipsFigures;
+    figures?: PaperRelationshipsFigures;
     /**
      * 
-     * @type {DatabaseRelationshipsSamples}
+     * @type {PaperRelationshipsFigures}
      * @memberof DatabaseRelationships
      */
-    samples?: DatabaseRelationshipsSamples;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsFigures
- */
-export interface DatabaseRelationshipsFigures {
-    /**
-     * 
-     * @type {Array<Figure>}
-     * @memberof DatabaseRelationshipsFigures
-     */
-    data?: Array<Figure>;
-    /**
-     * 
-     * @type {DatabaseRelationshipsFiguresMeta}
-     * @memberof DatabaseRelationshipsFigures
-     */
-    meta?: DatabaseRelationshipsFiguresMeta;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsFiguresMeta
- */
-export interface DatabaseRelationshipsFiguresMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof DatabaseRelationshipsFiguresMeta
-     */
-    totalFigures?: number;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsPapers
- */
-export interface DatabaseRelationshipsPapers {
-    /**
-     * 
-     * @type {Array<Paper>}
-     * @memberof DatabaseRelationshipsPapers
-     */
-    data?: Array<Paper>;
-    /**
-     * 
-     * @type {DatabaseRelationshipsPapersMeta}
-     * @memberof DatabaseRelationshipsPapers
-     */
-    meta?: DatabaseRelationshipsPapersMeta;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsPapersMeta
- */
-export interface DatabaseRelationshipsPapersMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof DatabaseRelationshipsPapersMeta
-     */
-    totalPapers?: number;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsSamples
- */
-export interface DatabaseRelationshipsSamples {
-    /**
-     * 
-     * @type {Array<Sample>}
-     * @memberof DatabaseRelationshipsSamples
-     */
-    data?: Array<Sample>;
-    /**
-     * 
-     * @type {DatabaseRelationshipsSamplesMeta}
-     * @memberof DatabaseRelationshipsSamples
-     */
-    meta?: DatabaseRelationshipsSamplesMeta;
-}
-/**
- * 
- * @export
- * @interface DatabaseRelationshipsSamplesMeta
- */
-export interface DatabaseRelationshipsSamplesMeta {
-    /**
-     * 
-     * @type {number}
-     * @memberof DatabaseRelationshipsSamplesMeta
-     */
-    totalSamples?: number;
-}
-/**
- * 
- * @export
- * @interface Figure
- */
-export interface Figure {
-    /**
-     * 
-     * @type {string}
-     * @memberof Figure
-     */
-    type?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Figure
-     */
-    id?: number;
-    /**
-     * 
-     * @type {object}
-     * @memberof Figure
-     */
-    attributes?: object;
+    samples?: PaperRelationshipsFigures;
 }
 /**
  * 
@@ -444,31 +323,6 @@ export interface PaperRelationshipsFiguresMeta {
      * @memberof PaperRelationshipsFiguresMeta
      */
     total?: number;
-}
-/**
- * 
- * @export
- * @interface Sample
- */
-export interface Sample {
-    /**
-     * 
-     * @type {string}
-     * @memberof Sample
-     */
-    type?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Sample
-     */
-    id?: number;
-    /**
-     * 
-     * @type {object}
-     * @memberof Sample
-     */
-    attributes?: object;
 }
 
 /**

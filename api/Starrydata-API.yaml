@@ -926,142 +926,118 @@ paths:
                 example-1:
                   value:
                     data:
-                      - type: databases
-                        id: 1
+                      - id: 5a6962c25464ad06cf0c13e4
+                        type: databases
                         attributes:
-                          name: General DB
-                        relationships:
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 31480
-                          papers:
-                            data: []
-                            meta:
-                              totalPapers: 30449
-                          samples:
-                            meta:
-                              totalSamples: 40458
-                            data: []
-                      - type: databases
-                        id: 2
-                        attributes:
-                          name: Thermoelectric Materials DB
+                          name: ThermoelectricMaterials
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 23870
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 29260
+                              total: 23520
                           samples:
                             meta:
-                              totalSamples: 34513
-                            data: []
-                      - type: databases
-                        id: 3
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5a730fc65464ad2cc2b08918
+                        type: databases
                         attributes:
-                          name: Magnetic Materials DB
+                          name: GeneralDB
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 4103
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 1494
+                              total: 31480
                           samples:
                             meta:
-                              totalSamples: 3849
-                            data: []
-                      - type: databases
-                        id: 4
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5a8e38105464ad258f6ee3e7
+                        type: databases
                         attributes:
-                          name: Condensed Matter DB
+                          name: ProjectTtoH
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 349
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 509
+                              total: 0
                           samples:
                             meta:
-                              totalSamples: 1374
-                            data: []
-                      - type: databases
-                        id: 5
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5c1c32a951caf670a69d5b7d
+                        type: databases
                         attributes:
-                          name: High Thermal Conductivity Materials DB
+                          name: MagneticMaterials
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 179
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 250
+                              total: 4103
                           samples:
                             meta:
-                              totalSamples: 519
-                            data: []
-                      - type: databases
-                        id: 6
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5e16a2e297c6331a469e812d
+                        type: databases
                         attributes:
-                          name: Piezoelectric Materials
+                          name: PiezoelectricMaterials
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 134
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 0
+                              total: 134
                           samples:
                             meta:
-                              totalSamples: 0
-                            data: []
-                      - type: databases
-                        id: 7
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5eabc5c651caf673e8f29ad6
+                        type: databases
                         attributes:
-                          name: Hyper Material
+                          name: Hypermaterial
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 76
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 146
+                              total: 76
                           samples:
                             meta:
-                              totalSamples: 262
-                            data: []
-                      - type: databases
-                        id: 8
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 5fca339897c6335a556b5571
+                        type: databases
                         attributes:
-                          name: Project TtoH
+                          name: CondensedMatter
                         relationships:
                           papers:
-                            data: []
                             meta:
-                              totalPapers: 0
-                          figures:
-                            data: []
-                            meta:
-                              totalFigures: 0
+                              total: 394
                           samples:
                             meta:
-                              totalSamples: 0
-                            data: []
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
+                      - id: 600e146197c633398772b782
+                        type: databases
+                        attributes:
+                          name: HighThermalConductivityMaterials
+                        relationships:
+                          papers:
+                            meta:
+                              total: 84
+                          samples:
+                            meta:
+                              total: 999
+                          figures:
+                            meta:
+                              total: 999
       operationId: get-databases
       description: 論文一覧取得
     parameters: []
@@ -1136,31 +1112,11 @@ components:
       title: Database
       type: object
       description: ''
-      x-examples:
-        example-1:
-          value:
-            type: databases
-            id: 1
-            attributes:
-              name: General DB
-            relationships:
-              figures:
-                data: []
-                meta:
-                  totalFigures: 31480
-              papers:
-                data: []
-                meta:
-                  totalPapers: 30449
-              samples:
-                meta:
-                  totalSamples: 40458
-                data: []
       properties:
         type:
           type: string
         id:
-          type: number
+          type: string
         attributes:
           type: object
           properties:
@@ -1172,59 +1128,47 @@ components:
             papers:
               type: object
               properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Paper'
                 meta:
                   type: object
                   properties:
-                    totalPapers:
+                    total:
                       type: number
             figures:
               type: object
               properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Figure'
                 meta:
                   type: object
                   properties:
-                    totalFigures:
+                    total:
                       type: number
             samples:
               type: object
               properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Sample'
                 meta:
                   type: object
                   properties:
-                    totalSamples:
+                    total:
                       type: number
-    Figure:
-      title: Figure
-      type: object
-      properties:
-        type:
-          type: string
-        id:
-          type: number
-        attributes:
-          type: object
-    Sample:
-      title: Sample
-      type: object
-      properties:
-        type:
-          type: string
-        id:
-          type: number
-        attributes:
-          type: object
+    # Figure:
+    #   title: Figure
+    #   type: object
+    #   properties:
+    #     type:
+    #       type: string
+    #     id:
+    #       type: number
+    #     attributes:
+    #       type: object
+    # Sample:
+    #   title: Sample
+    #   type: object
+    #   properties:
+    #     type:
+    #       type: string
+    #     id:
+    #       type: number
+    #     attributes:
+    #       type: object
     Contributor:
       title: Contributor
       type: object

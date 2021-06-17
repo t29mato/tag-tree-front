@@ -18,7 +18,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Contributor, DefaultApiFactory, Paper } from '@/api/out'
+import {
+  Contributor,
+  DefaultApiFactory,
+  Paper,
+  PaperRelationshipsDatabasesData,
+} from '@/api/out'
 
 export default Vue.extend({
   filters: {
@@ -34,6 +39,7 @@ export default Vue.extend({
       sortBy: 'SID',
       sortDesc: false,
       items: [] as Paper[],
+      database: '',
     }
   },
   computed: {
@@ -45,12 +51,27 @@ export default Vue.extend({
         { text: 'author', value: 'attributes.authors' },
         { text: 'Journal', value: 'attributes.container_title' },
         { text: 'Publisher', value: 'attributes.publisher' },
+        {
+          text: 'Databases',
+          value: 'relationships.databases.data',
+          filter: (databases: PaperRelationshipsDatabasesData[]) => {
+            if (!this.database) {
+              return true
+            }
+            return databases.some((database) => {
+              return database.id === this.database
+            })
+          },
+        },
         { text: 'Figures', value: 'relationships.figures.meta.total' },
         { text: 'Samples', value: 'relationships.samples.meta.total' },
       ]
     },
   },
   created() {
+    if (typeof this.$route.query.database === 'string') {
+      this.database = this.$route.query.database
+    }
     const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
     const papers = api.getPapers()
     papers.then((items) => {
