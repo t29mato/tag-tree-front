@@ -1,11 +1,24 @@
 <template>
   <div>
-    <v-data-table
-      :headers="headers"
-      :items="items"
-      item-key="SID"
-      class="elevation-1"
-    >
+    <v-container fluid>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-select
+            v-model="database"
+            :items="databases"
+            item-value="id"
+            item-text="attributes.name"
+            label="Database"
+          ></v-select>
+        </v-col>
+        <!-- TODO: 後々、検索機能を追加したときに利用する枠組み -->
+        <!-- <v-col cols="12" sm="6">
+          <v-text-field v-model="author" label="Authors"></v-text-field>
+        </v-col> -->
+      </v-row>
+    </v-container>
+
+    <v-data-table :headers="headers" :items="items" item-key="SID">
       <template #[`item.attributes.authors`]="{ item }">
         {{ makeAuthorsOneLine(item.attributes.authors) }}
       </template>
@@ -23,6 +36,7 @@ import {
   DefaultApiFactory,
   Paper,
   PaperRelationshipsDatabasesData,
+  Database,
 } from '@/api/out'
 
 export default Vue.extend({
@@ -40,6 +54,8 @@ export default Vue.extend({
       sortDesc: false,
       items: [] as Paper[],
       database: '',
+      databases: [] as Database[],
+      author: '',
     }
   },
   computed: {
@@ -54,6 +70,8 @@ export default Vue.extend({
         {
           text: 'Databases',
           value: 'relationships.databases.data',
+          align: ' d-none',
+          // TODO: filteringはAPIの責務にするので、後々削除する。そうしないと数万オブジェクトの配列をメモリに展開することになるので。
           filter: (databases: PaperRelationshipsDatabasesData[]) => {
             if (!this.database) {
               return true
@@ -72,16 +90,36 @@ export default Vue.extend({
     if (typeof this.$route.query.database === 'string') {
       this.database = this.$route.query.database
     }
-    const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
-    const papers = api.getPapers()
-    papers.then((items) => {
-      if (items.data.data) {
-        const papers = items.data.data
-        this.items = papers
-      }
-    })
+    this.loadPapers()
+    this.loadDatabases()
   },
   methods: {
+    async loadPapers() {
+      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      try {
+        const { data: papers } = (await api.getPapers()).data
+        if (papers) {
+          this.items = papers
+        }
+      } catch {
+        //
+      } finally {
+        //
+      }
+    },
+    async loadDatabases() {
+      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      try {
+        const { data: projects } = (await api.getDatabases()).data
+        if (projects) {
+          this.databases = projects
+        }
+      } catch {
+        //
+      } finally {
+        //
+      }
+    },
     makeAuthorsOneLine(authors: Contributor[]): string {
       return authors.reduce((prev, cur, index, array) => {
         const result = prev + cur.family + ' ' + cur.given
