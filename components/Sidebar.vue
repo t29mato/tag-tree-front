@@ -36,6 +36,11 @@ export default class Sidebar extends Vue {
     { title: 'Dashboard', icon: 'mdi-view-dashboard', path: '/' },
     { title: 'Databasees', icon: 'mdi-image', path: '/databases' },
     { title: 'Papers', icon: 'mdi-help-box', path: '/papers' },
+    {
+      title: 'Fabrication Processes',
+      icon: 'mdi-help-box',
+      path: '/fabrication_processes',
+    },
   ]
 
   right = null

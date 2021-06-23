@@ -1041,6 +1041,26 @@ paths:
       operationId: get-databases
       description: 論文一覧取得
     parameters: []
+  /fabrication_processes:
+    get:
+      summary: get Fabrication Processes
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FabricationProcess'
+      operationId: get-fabrication_processes
+      description: 論文一覧取得
+    parameters: []
 components:
   schemas:
     Paper:
@@ -1149,26 +1169,33 @@ components:
                   properties:
                     total:
                       type: number
-    # Figure:
-    #   title: Figure
-    #   type: object
-    #   properties:
-    #     type:
-    #       type: string
-    #     id:
-    #       type: number
-    #     attributes:
-    #       type: object
-    # Sample:
-    #   title: Sample
-    #   type: object
-    #   properties:
-    #     type:
-    #       type: string
-    #     id:
-    #       type: number
-    #     attributes:
-    #       type: object
+    FabricationProcess:
+      title: FabricationProcess
+      type: object
+      description: ''
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          type: object
+          properties:
+            name_ja:
+              type: string
+        relationships:
+          type: object
+          properties:
+            parent_id:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    id:
+                      type: string
     Contributor:
       title: Contributor
       type: object

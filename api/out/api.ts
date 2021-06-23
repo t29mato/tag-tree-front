@@ -112,6 +112,76 @@ export interface DatabaseRelationships {
 /**
  * 
  * @export
+ * @interface FabricationProcess
+ */
+export interface FabricationProcess {
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcess
+     */
+    type?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcess
+     */
+    id?: string;
+    /**
+     * 
+     * @type {FabricationProcessAttributes}
+     * @memberof FabricationProcess
+     */
+    attributes?: FabricationProcessAttributes;
+    /**
+     * 
+     * @type {FabricationProcessRelationships}
+     * @memberof FabricationProcess
+     */
+    relationships?: FabricationProcessRelationships;
+}
+/**
+ * 
+ * @export
+ * @interface FabricationProcessAttributes
+ */
+export interface FabricationProcessAttributes {
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessAttributes
+     */
+    name_ja?: string;
+}
+/**
+ * 
+ * @export
+ * @interface FabricationProcessRelationships
+ */
+export interface FabricationProcessRelationships {
+    /**
+     * 
+     * @type {FabricationProcessRelationshipsParentId}
+     * @memberof FabricationProcessRelationships
+     */
+    parent_id?: FabricationProcessRelationshipsParentId;
+}
+/**
+ * 
+ * @export
+ * @interface FabricationProcessRelationshipsParentId
+ */
+export interface FabricationProcessRelationshipsParentId {
+    /**
+     * 
+     * @type {PaperRelationshipsDatabasesData}
+     * @memberof FabricationProcessRelationshipsParentId
+     */
+    data?: PaperRelationshipsDatabasesData;
+}
+/**
+ * 
+ * @export
  * @interface InlineResponse200
  */
 export interface InlineResponse200 {
@@ -172,6 +242,19 @@ export interface InlineResponse2002 {
      * @memberof InlineResponse2002
      */
     data?: Array<Database>;
+}
+/**
+ * 
+ * @export
+ * @interface InlineResponse2003
+ */
+export interface InlineResponse2003 {
+    /**
+     * 
+     * @type {Array<FabricationProcess>}
+     * @memberof InlineResponse2003
+     */
+    data?: Array<FabricationProcess>;
 }
 /**
  * 
@@ -362,6 +445,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * 論文一覧取得
+         * @summary get Fabrication Processes
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFabricationProcesses: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/fabrication_processes`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get Papers
          * @summary Get Papers
          * @param {*} [options] Override http request option.
@@ -446,6 +559,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * 論文一覧取得
+         * @summary get Fabrication Processes
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFabricationProcesses(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse2003>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFabricationProcesses(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get Papers
          * @summary Get Papers
          * @param {*} [options] Override http request option.
@@ -486,6 +609,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getDatabases(options).then((request) => request(axios, basePath));
         },
         /**
+         * 論文一覧取得
+         * @summary get Fabrication Processes
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFabricationProcesses(options?: any): AxiosPromise<InlineResponse2003> {
+            return localVarFp.getFabricationProcesses(options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get Papers
          * @summary Get Papers
          * @param {*} [options] Override http request option.
@@ -523,6 +655,17 @@ export class DefaultApi extends BaseAPI {
      */
     public getDatabases(options?: any) {
         return DefaultApiFp(this.configuration).getDatabases(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 論文一覧取得
+     * @summary get Fabrication Processes
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getFabricationProcesses(options?: any) {
+        return DefaultApiFp(this.configuration).getFabricationProcesses(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
