@@ -126,7 +126,7 @@ export interface FabricationProcess {
      * @type {string}
      * @memberof FabricationProcess
      */
-    id?: string;
+    id: string;
     /**
      * 
      * @type {FabricationProcessAttributes}
@@ -415,6 +415,39 @@ export interface PaperRelationshipsFiguresMeta {
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * 
+         * @param {string} fabricationProcessId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFabricationProcessesFabricationProcessId: async (fabricationProcessId: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fabricationProcessId' is not null or undefined
+            assertParamExists('deleteFabricationProcessesFabricationProcessId', 'fabricationProcessId', fabricationProcessId)
+            const localVarPath = `/fabrication_processes/{fabrication_process_id}`
+                .replace(`{${"fabrication_process_id"}}`, encodeURIComponent(String(fabricationProcessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 論文一覧取得
          * @summary get databases
          * @param {*} [options] Override http request option.
@@ -549,6 +582,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
     return {
         /**
+         * 
+         * @param {string} fabricationProcessId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteFabricationProcessesFabricationProcessId(fabricationProcessId: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFabricationProcessesFabricationProcessId(fabricationProcessId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * 論文一覧取得
          * @summary get databases
          * @param {*} [options] Override http request option.
@@ -600,6 +643,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = DefaultApiFp(configuration)
     return {
         /**
+         * 
+         * @param {string} fabricationProcessId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteFabricationProcessesFabricationProcessId(fabricationProcessId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFabricationProcessesFabricationProcessId(fabricationProcessId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 論文一覧取得
          * @summary get databases
          * @param {*} [options] Override http request option.
@@ -646,6 +698,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} fabricationProcessId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteFabricationProcessesFabricationProcessId(fabricationProcessId: string, options?: any) {
+        return DefaultApiFp(this.configuration).deleteFabricationProcessesFabricationProcessId(fabricationProcessId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 論文一覧取得
      * @summary get databases
