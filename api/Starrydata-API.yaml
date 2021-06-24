@@ -1089,7 +1089,6 @@ paths:
                   type: object
                   required:
                     - type
-                    - id
                     - attributes
                   properties:
                     type:
