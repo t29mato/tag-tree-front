@@ -196,7 +196,7 @@ export interface FabricationProcessesData {
      * @type {string}
      * @memberof FabricationProcessesData
      */
-    id: string;
+    id?: string;
     /**
      * 
      * @type {FabricationProcessesDataAttributes}
@@ -668,7 +668,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Content-Type'] = 'application/vnd.api+json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};

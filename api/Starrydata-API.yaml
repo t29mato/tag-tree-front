@@ -1070,7 +1070,7 @@ paths:
       description: ''
       requestBody:
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               description: ''
               type: object
