@@ -1252,6 +1252,8 @@ components:
           type: string
         attributes:
           type: object
+          required:
+            - name_ja
           properties:
             name_ja:
               type: string
@@ -1269,7 +1271,9 @@ components:
                     id:
                       type: string
       required:
+        - type
         - id
+        - attributes
     Contributor:
       title: Contributor
       type: object

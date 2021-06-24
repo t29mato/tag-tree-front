@@ -120,7 +120,7 @@ export interface FabricationProcess {
      * @type {string}
      * @memberof FabricationProcess
      */
-    type?: string;
+    type: string;
     /**
      * 
      * @type {string}
@@ -132,7 +132,7 @@ export interface FabricationProcess {
      * @type {FabricationProcessAttributes}
      * @memberof FabricationProcess
      */
-    attributes?: FabricationProcessAttributes;
+    attributes: FabricationProcessAttributes;
     /**
      * 
      * @type {FabricationProcessRelationships}
@@ -151,7 +151,7 @@ export interface FabricationProcessAttributes {
      * @type {string}
      * @memberof FabricationProcessAttributes
      */
-    name_ja?: string;
+    name_ja: string;
 }
 /**
  * 
