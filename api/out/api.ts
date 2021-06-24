@@ -182,6 +182,82 @@ export interface FabricationProcessRelationshipsParentId {
 /**
  * 
  * @export
+ * @interface FabricationProcessesData
+ */
+export interface FabricationProcessesData {
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessesData
+     */
+    type: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessesData
+     */
+    id: string;
+    /**
+     * 
+     * @type {FabricationProcessesDataAttributes}
+     * @memberof FabricationProcessesData
+     */
+    attributes: FabricationProcessesDataAttributes;
+}
+/**
+ * 
+ * @export
+ * @interface FabricationProcessesDataAttributes
+ */
+export interface FabricationProcessesDataAttributes {
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessesDataAttributes
+     */
+    name_ja: string;
+    /**
+     * 
+     * @type {FabricationProcessesDataAttributesParentId}
+     * @memberof FabricationProcessesDataAttributes
+     */
+    parent_id?: FabricationProcessesDataAttributesParentId;
+}
+/**
+ * 
+ * @export
+ * @interface FabricationProcessesDataAttributesParentId
+ */
+export interface FabricationProcessesDataAttributesParentId {
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessesDataAttributesParentId
+     */
+    type: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FabricationProcessesDataAttributesParentId
+     */
+    id: string;
+}
+/**
+ * 
+ * @export
+ * @interface InlineObject
+ */
+export interface InlineObject {
+    /**
+     * 
+     * @type {FabricationProcessesData}
+     * @memberof InlineObject
+     */
+    data: FabricationProcessesData;
+}
+/**
+ * 
+ * @export
  * @interface InlineResponse200
  */
 export interface InlineResponse200 {
@@ -571,6 +647,39 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {InlineObject} [inlineObject] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFabricationProcesses: async (inlineObject?: InlineObject, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/fabrication_processes`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(inlineObject, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -632,6 +741,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getPapersPaperId(paperId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * 
+         * @param {InlineObject} [inlineObject] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postFabricationProcesses(inlineObject?: InlineObject, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postFabricationProcesses(inlineObject, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -687,6 +806,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getPapersPaperId(paperId: string, options?: any): AxiosPromise<InlineResponse2001> {
             return localVarFp.getPapersPaperId(paperId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {InlineObject} [inlineObject] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postFabricationProcesses(inlineObject?: InlineObject, options?: any): AxiosPromise<void> {
+            return localVarFp.postFabricationProcesses(inlineObject, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -752,6 +880,17 @@ export class DefaultApi extends BaseAPI {
      */
     public getPapersPaperId(paperId: string, options?: any) {
         return DefaultApiFp(this.configuration).getPapersPaperId(paperId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {InlineObject} [inlineObject] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postFabricationProcesses(inlineObject?: InlineObject, options?: any) {
+        return DefaultApiFp(this.configuration).postFabricationProcesses(inlineObject, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

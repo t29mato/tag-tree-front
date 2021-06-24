@@ -1061,6 +1061,65 @@ paths:
       operationId: get-fabrication_processes
       description: 論文一覧取得
     parameters: []
+    post:
+      summary: ''
+      operationId: post-fabrication_processes
+      responses:
+        '200':
+          description: OK
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  data:
+                    type: FabricationProcess
+                    id: null
+                    attributes:
+                      name_ja: 溶解法
+                      parent_id:
+                        type: FabricationProcess
+                        id: '10'
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - id
+                    - attributes
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                    id:
+                      type: string
+                    attributes:
+                      type: object
+                      required:
+                        - name_ja
+                      properties:
+                        name_ja:
+                          type: string
+                          minLength: 1
+                        parent_id:
+                          type: object
+                          required:
+                            - type
+                            - id
+                          properties:
+                            type:
+                              type: string
+                              minLength: 1
+                            id:
+                          type: string
+                              minLength: 1
+                          required:
+                - data
+        description: ''
   '/fabrication_processes/{fabrication_process_id}':
     parameters:
       - schema:
