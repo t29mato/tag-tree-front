@@ -12,8 +12,12 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-input v-model="parentId"></v-input>
-          <v-btn color="error" text @click="createItem()"> Create </v-btn>
+          <v-text-field
+            v-model="newName"
+            label="Main input"
+            hide-details="auto"
+          ></v-text-field>
+          <v-btn color="error" text @click="addItem()"> Create </v-btn>
 
           <v-btn color="error" text @click="deleteItem(selectedItem.id)">
             Delete
@@ -32,16 +36,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  DefaultApiFactory,
-  FabricationProcess,
-  FabricationProcessesData,
-} from '@/api/out'
+import { StarrydataApiFactory, FabricationProcess } from '@/api/out'
 
 // FIX: nameは必須のはず
 type TreeViewItem = {
   id: string
-  name: string
+  name?: string
   children?: TreeViewItem[]
 }
 
@@ -60,6 +60,7 @@ export default Vue.extend({
       selectedItem: {} as TreeViewItem,
       dialog: false,
       parentId: '',
+      newName: '',
     }
   },
   computed: {},
@@ -72,9 +73,12 @@ export default Vue.extend({
       this.selectedItem = e
     },
     async deleteItem(id: string) {
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
-        await api.deleteFabricationProcessesFabricationProcessId(id)
+        await api.destroyApiFabricationProcessesId(id)
         this.dialog = false
         this.loadFabricationProcesses()
       } catch {
@@ -83,21 +87,18 @@ export default Vue.extend({
         //
       }
     },
-    async createItem() {
-      const item: FabricationProcessesData = {
-        type: 'FabricationProcess',
-        id: '', // FIXME: nullableのはず
-        attributes: {
-          name_ja: this.selectedItem.name,
-          parent_id: {
-            type: 'FabricationProcess',
-            id: this.selectedItem.id,
-          },
-        },
+    async addItem() {
+      const item: FabricationProcess = {
+        id: undefined, // FIXME: nullableのはず
+        name_ja: this.newName,
+        parent_id: Number(this.selectedItem.id), // FIXME: 無理なCAST
       }
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
-        await api.postFabricationProcesses({ data: item })
+        await api.createApiFabricationProcesses(item)
         this.dialog = false
         this.loadFabricationProcesses()
       } catch {
@@ -129,16 +130,19 @@ export default Vue.extend({
       return treeViewItem
     },
     async loadFabricationProcesses() {
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
         const { data: fabricationProcesses } = (
-          await api.getFabricationProcesses()
+          await api.listApiFabricationProcesses()
         ).data
         if (fabricationProcesses) {
           const parents = fabricationProcesses
             // 親が存在しないものが親
-            .filter((fabricationProcess) => {
-              return !fabricationProcess.relationships?.parent_id?.data
+            .filter((process) => {
+              return !process.relationships?.parent_id?.data
             })
             .map((parent) => {
               return {

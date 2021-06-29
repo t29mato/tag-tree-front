@@ -1,1265 +1,1600 @@
-openapi: 3.0.3
-tags:
-  - name: Starrydata
+openapi: 3.0.2
 info:
-  title: Starrydata API
-  version: '3.0'
-  description: '  '
-  contact:
-    name: MATO Tomoya
-    email: tomoya.matou@gmail.com
-servers:
-  - url: 'http://localhost:3100'
+  title: ''
+  version: ''
 paths:
-  /papers:
+  /api/fabrication_processes:
     get:
-      summary: Get Papers
-      description: Get Papers
-      tags: []
+      operationId: List/api/fabrication_processes
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: page[number]
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: page[size]
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
       responses:
         '200':
-          description: OK
+          description: List/api/fabrication_processes
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 type: object
-                description: ''
-                x-examples:
-                  example-1:
-                    - type: articles
-                      id: '1'
-                      attributes:
-                        title: Rails is Omakase
-                      relationships:
-                        author:
-                          links:
-                            self: /articles/1/relationships/author
-                            related: /articles/1/author
-                          data:
-                            type: people
-                            id: '9'
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Paper'
-              examples:
-                example-2:
-                  value:
-                    data:
-                      - type: papers
-                        id: 1
-                        attributes:
-                          DOI: 10.1021/ar400290f
-                          title: Decoupling Interrelated Parameters for Designing High Performance Thermoelectric Materials
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Chong
-                              family: Xiao
-                            - affiliation: []
-                              given: Zhou
-                              family: Li
-                            - affiliation: []
-                              given: Kun
-                              family: Li
-                            - affiliation: []
-                              given: Pengcheng
-                              family: Huang
-                            - affiliation: []
-                              given: Yi
-                              family: Xie
-                          container_title: Accounts of Chemical Research
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 1
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 2
-                        attributes:
-                          DOI: 10.1021/am100654p
-                          title: 'Promising Thermoelectric Properties of Commercial PEDOT:PSS Materials and Their Bi2Te3Powder Composites'
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: B.
-                              family: Zhang
-                            - affiliation: []
-                              given: J.
-                              family: Sun
-                            - affiliation: []
-                              given: H. E.
-                              family: Katz
-                            - affiliation: []
-                              given: F.
-                              family: Fang
-                            - affiliation: []
-                              given: R. L.
-                              family: Opila
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 1
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 3
-                        attributes:
-                          DOI: 10.1021/am3002764
-                          title: Significant Enhancement in the Thermoelectric Performance of a Bismuth Telluride Nanocompound through Brief Fabrication Procedures
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Cham
-                              family: Kim
-                            - affiliation: []
-                              given: Dong Hwan
-                              family: Kim
-                            - affiliation: []
-                              given: Hoyoung
-                              family: Kim
-                            - affiliation: []
-                              given: Jong Shik
-                              family: Chung
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 11
-                          samples:
-                            meta:
-                              total: 7
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                              - id: 5a730fc65464ad2cc2b08918
-                                type: databases
-                            meta:
-                              total: 2
-                      - type: papers
-                        id: 4
-                        attributes:
-                          DOI: 10.1021/am401444w
-                          title: Wet-Chemical Synthesis and Consolidation of Stoichiometric Bismuth Telluride Nanoparticles for Improving the Thermoelectric Figure-of-Merit
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: V.
-                              family: Stavila
-                            - affiliation: []
-                              given: D.B.
-                              family: Robinson
-                            - affiliation: []
-                              given: M.A.
-                              family: Hekmaty
-                            - affiliation: []
-                              given: R.
-                              family: Nishimoto
-                            - affiliation: []
-                              given: D.L.
-                              family: Medlin
-                            - affiliation: []
-                              given: S.
-                              family: Zhu
-                            - affiliation: []
-                              given: T.M.
-                              family: Tritt
-                            - affiliation: []
-                              given: P.A.
-                              family: Sharma
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 2
-                          samples:
-                            meta:
-                              total: 2
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 5
-                        attributes:
-                          DOI: 10.1021/am405035z
-                          title: Investigation of Reaction Mechanisms of Bismuth Tellurium Selenide Nanomaterials for Simple Reaction Manipulation Causing Effective Adjustment of Thermoelectric Properties
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Cham
-                              family: Kim
-                            - affiliation: []
-                              given: Dong Hwan
-                              family: Kim
-                            - affiliation: []
-                              given: Jong Tae
-                              family: Kim
-                            - affiliation: []
-                              given: Yoon Soo
-                              family: Han
-                            - affiliation: []
-                              given: Hoyoung
-                              family: Kim
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 3
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 6
-                        attributes:
-                          DOI: 10.1021/am405410e
-                          title: Exploration of Zn Resonance Levels and Thermoelectric Properties in I-Doped PbTe with ZnTe Nanostructures
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: P. K.
-                              family: Rawat
-                            - affiliation: []
-                              given: B.
-                              family: Paul
-                            - affiliation: []
-                              given: P.
-                              family: Banerji
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 3
-                          samples:
-                            meta:
-                              total: 10
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 7
-                        attributes:
-                          DOI: 10.1021/am503477z
-                          title: 'Enhanced Thermoelectric Properties of Selenium-Deficient Layered TiSe2–x: A Charge-Density-Wave Material'
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Ranu
-                              family: Bhatt
-                            - affiliation: []
-                              given: Shovit
-                              family: Bhattacharya
-                            - affiliation: []
-                              given: Ranita
-                              family: Basu
-                            - affiliation: []
-                              given: Sajid
-                              family: Ahmad
-                            - affiliation: []
-                              given: A. K.
-                              family: Chauhan
-                            - affiliation: []
-                              given: G. S.
-                              family: Okram
-                            - affiliation: []
-                              given: Pramod
-                              family: Bhatt
-                            - affiliation: []
-                              given: Mainak
-                              family: Roy
-                            - affiliation: []
-                              given: M.
-                              family: Navaneethan
-                            - affiliation: []
-                              given: Y.
-                              family: Hayakawa
-                            - affiliation: []
-                              given: A. K.
-                              family: Debnath
-                            - affiliation: []
-                              given: Ajay
-                              family: Singh
-                            - affiliation: []
-                              given: D. K.
-                              family: Aswal
-                            - affiliation: []
-                              given: S. K.
-                              family: Gupta
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 3
-                          samples:
-                            meta:
-                              total: 4
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                              - id: 5a730fc65464ad2cc2b08918
-                                type: databases
-                            meta:
-                              total: 2
-                      - type: papers
-                        id: 8
-                        attributes:
-                          DOI: 10.1021/acsami.5b00514
-                          title: Layered Bi2Se3Nanoplate/Polyvinylidene Fluoride Composite Based n-type Thermoelectric Fabrics
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Chaochao
-                              family: Dun
-                            - affiliation: []
-                              given: Corey A.
-                              family: Hewitt
-                            - affiliation: []
-                              given: Huihui
-                              family: Huang
-                            - affiliation: []
-                              given: Junwei
-                              family: Xu
-                            - affiliation: []
-                              given: David S.
-                              family: Montgomery
-                            - affiliation: []
-                              given: Wanyi
-                              family: Nie
-                            - affiliation: []
-                              given: Qike
-                              family: Jiang
-                            - affiliation: []
-                              given: David L.
-                              family: Carroll
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 3
-                          samples:
-                            meta:
-                              total: 1
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 9
-                        attributes:
-                          DOI: 10.1021/am509050a
-                          title: Thermoelectric Transport Properties of Fe-Enriched ZnO with High-Temperature Nanostructure Refinement
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Xin
-                              family: Liang
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 4
-                          samples:
-                            meta:
-                              total: 5
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 10
-                        attributes:
-                          DOI: 10.1021/acsami.5b01460
-                          title: Interface-Located Photothermoelectric Effect of Organic Thermoelectric Materials in Enabling NIR Detection
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Dazhen
-                              family: Huang
-                            - affiliation: []
-                              given: Ye
-                              family: Zou
-                            - affiliation: []
-                              given: Fei
-                              family: Jiao
-                            - affiliation: []
-                              given: Fengjiao
-                              family: Zhang
-                            - affiliation: []
-                              given: Yaping
-                              family: Zang
-                            - affiliation: []
-                              given: Chong-an
-                              family: Di
-                            - affiliation: []
-                              given: Wei
-                              family: Xu
-                            - affiliation: []
-                              given: Daoben
-                              family: Zhu
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 1
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 11
-                        attributes:
-                          DOI: 10.1021/acsami.5b01960
-                          title: 'Enhanced Thermoelectric Properties of Poly(3,4-ethylenedioxythiophene):poly(styrenesulfonate) by Binary Secondary Dopants'
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Chao
-                              family: Yi
-                            - affiliation: []
-                              given: Abigail
-                              family: Wilhite
-                            - affiliation: []
-                              given: Long
-                              family: Zhang
-                            - affiliation: []
-                              given: Rundong
-                              family: Hu
-                            - affiliation: []
-                              given: Steven S. C.
-                              family: Chuang
-                            - affiliation: []
-                              given: Jie
-                              family: Zheng
-                            - affiliation: []
-                              given: Xiong
-                              family: Gong
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 0
-                          samples:
-                            meta:
-                              total: 0
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 12
-                        attributes:
-                          DOI: 10.1021/acsami.5b01617
-                          title: Synthesis and Characterization of Nanostructured Stannite Cu2ZnSnSe4and Ag2ZnSnSe4for Thermoelectric Applications
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Kaya
-                              family: Wei
-                            - affiliation: []
-                              given: George S.
-                              family: Nolas
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 9
-                          samples:
-                            meta:
-                              total: 2
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                              - id: 5a730fc65464ad2cc2b08918
-                                type: databases
-                            meta:
-                              total: 2
-                      - type: papers
-                        id: 13
-                        attributes:
-                          DOI: 10.1021/acsami.5b02504
-                          title: A Facile Surfactant-Assisted Reflux Method for the Synthesis of Single-Crystalline Sb2Te3Nanostructures with Enhanced Thermoelectric Performance
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Heng Quan
-                              family: Yang
-                            - affiliation: []
-                              given: Lei
-                              family: Miao
-                            - affiliation: []
-                              given: Cheng Yan
-                              family: Liu
-                            - affiliation: []
-                              given: Chao
-                              family: Li
-                            - affiliation: []
-                              given: Sawao
-                              family: Honda
-                            - affiliation: []
-                              given: Yuji
-                              family: Iwamoto
-                            - affiliation: []
-                              given: Rong
-                              family: Huang
-                            - affiliation: []
-                              given: Sakae
-                              family: Tanemura
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 5
-                          samples:
-                            meta:
-                              total: 3
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 14
-                        attributes:
-                          DOI: 10.1021/acsami.5b05860
-                          title: Tuning the Thermoelectric Properties of a Conducting Polymer through Blending with Open-Shell Molecular Dopants
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Edward P.
-                              family: Tomlinson
-                            - affiliation: []
-                              given: Matthew J.
-                              family: Willmore
-                            - affiliation: []
-                              given: Xiaoqin
-                              family: Zhu
-                            - affiliation: []
-                              given: Stuart W. A.
-                              family: Hilsmier
-                            - affiliation: []
-                              given: Bryan W.
-                              family: Boudouris
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 3
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 15
-                        attributes:
-                          DOI: 10.1021/acsami.5b04910
-                          title: Thermoelectric Properties of Ga/Ag Codoped Type-III Ba24Ge100Clathrates with in Situ Nanostructures
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Jiefei
-                              family: Fu
-                            - affiliation: []
-                              given: Xianli
-                              family: Su
-                            - affiliation: []
-                              given: Yun
-                              family: Zheng
-                            - affiliation: []
-                              given: Hongyao
-                              family: Xie
-                            - affiliation: []
-                              given: Yonggao
-                              family: Yan
-                            - affiliation: []
-                              given: Xinfeng
-                              family: Tang
-                            - affiliation: []
-                              given: Ctirad
-                              family: Uher
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 6
-                          samples:
-                            meta:
-                              total: 13
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 16
-                        attributes:
-                          DOI: 10.1021/acsami.5b06492
-                          title: Contrasting the Role of Mg and Ba Doping on the Microstructure and Thermoelectric Properties of p-Type AgSbSe2
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Zihang
-                              family: Liu
-                            - affiliation: []
-                              given: Jing
-                              family: Shuai
-                            - affiliation: []
-                              given: Huiyuan
-                              family: Geng
-                            - affiliation: []
-                              given: Jun
-                              family: Mao
-                            - affiliation: []
-                              given: Yan
-                              family: Feng
-                            - affiliation: []
-                              given: Xu
-                              family: Zhao
-                            - affiliation: []
-                              given: Xianfu
-                              family: Meng
-                            - affiliation: []
-                              given: Ran
-                              family: He
-                            - affiliation: []
-                              given: Wei
-                              family: Cai
-                            - affiliation: []
-                              given: Jiehe
-                              family: Sui
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 15
-                          samples:
-                            meta:
-                              total: 19
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 17
-                        attributes:
-                          DOI: 10.1021/acsami.5b07596
-                          title: Enhanced Thermoelectric Performance of Nanostructured Bi2Te3through Significant Phonon Scattering
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Lei
-                              family: Yang
-                            - affiliation: []
-                              given: Zhi-Gang
-                              family: Chen
-                            - affiliation: []
-                              given: Min
-                              family: Hong
-                            - affiliation: []
-                              given: Guang
-                              family: Han
-                            - affiliation: []
-                              given: Jin
-                              family: Zou
-                          container_title: ACS Applied Materials & Interfaces
-                        relationships:
-                          figures:
-                            meta:
-                              total: 3
-                          samples:
-                            meta:
-                              total: 2
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 18
-                        attributes:
-                          DOI: 10.1021/nn900986r
-                          title: 'Thermoelectric Efficiency in Nanojunctions: A Comparison between Atomic Junctions and Molecular Junctions'
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Yu-Shen
-                              family: Liu
-                            - affiliation: []
-                              given: Yi-Ren
-                              family: Chen
-                            - affiliation: []
-                              given: Yu-Chang
-                              family: Chen
-                          container_title: ACS Nano
-                        relationships:
-                          figures:
-                            meta:
-                              total: 1
-                          samples:
-                            meta:
-                              total: 4
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 19
-                        attributes:
-                          DOI: 10.1021/nn100490g
-                          title: Giant Thermoelectric Effect from Transmission Supernodes
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Justin P.
-                              family: Bergfield
-                            - affiliation: []
-                              given: Michelle A.
-                              family: Solis
-                            - affiliation: []
-                              given: Charles A.
-                              family: Stafford
-                          container_title: ACS Nano
-                        relationships:
-                          figures:
-                            meta:
-                              total: 0
-                          samples:
-                            meta:
-                              total: 0
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-                      - type: papers
-                        id: 20
-                        attributes:
-                          DOI: 10.1021/nn2017183
-                          title: Thermoelectric Properties of Lead Chalcogenide Core–Shell Nanostructures
-                          publisher: American Chemical Society (ACS)
-                          authors:
-                            - affiliation: []
-                              given: Marcus
-                              family: Scheele
-                            - affiliation: []
-                              given: Niels
-                              family: Oeschler
-                            - affiliation: []
-                              given: Igor
-                              family: Veremchuk
-                            - affiliation: []
-                              given: Sven-Ole
-                              family: Peters
-                            - affiliation: []
-                              given: Alexander
-                              family: Littig
-                            - affiliation: []
-                              given: Andreas
-                              family: Kornowski
-                            - affiliation: []
-                              given: Christian
-                              family: Klinke
-                            - affiliation: []
-                              given: Horst
-                              family: Weller
-                          container_title: ACS Nano
-                        relationships:
-                          figures:
-                            meta:
-                              total: 4
-                          samples:
-                            meta:
-                              total: 5
-                          databases:
-                            data:
-                              - id: 5a6962c25464ad06cf0c13e4
-                                type: databases
-                            meta:
-                              total: 1
-        '201':
-          description: Created
-      operationId: get-papers
-      x-internal: false
-    parameters: []
-  '/papers/{paperId}':
-    parameters:
-      - schema:
-          type: string
-        name: paperId
-        in: path
-        required: true
-    get:
-      summary: get paper
-      description: Get Paper
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                x-examples:
-                  example-1:
-                    type: articles
-                    id: '1'
-                    attributes:
-                      title: Rails is Omakase
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      id:
-                        type: string
-                      attributes:
-                        $ref: '#/components/schemas/Paper'
-      operationId: get-papers-paperId
-  /databases:
-    get:
-      summary: get databases
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                x-examples:
-                  example-1:
-                    - type: articles
-                      id: '1'
-                      attributes:
-                        title: Rails is Omakase
-                      relationships:
-                        author:
-                          links:
-                            self: /articles/1/relationships/author
-                            related: /articles/1/author
-                          data:
-                            type: people
-                            id: '9'
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Database'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      - id: 5a6962c25464ad06cf0c13e4
-                        type: databases
-                        attributes:
-                          name: ThermoelectricMaterials
-                        relationships:
-                          papers:
-                            meta:
-                              total: 23520
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5a730fc65464ad2cc2b08918
-                        type: databases
-                        attributes:
-                          name: GeneralDB
-                        relationships:
-                          papers:
-                            meta:
-                              total: 31480
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5a8e38105464ad258f6ee3e7
-                        type: databases
-                        attributes:
-                          name: ProjectTtoH
-                        relationships:
-                          papers:
-                            meta:
-                              total: 0
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5c1c32a951caf670a69d5b7d
-                        type: databases
-                        attributes:
-                          name: MagneticMaterials
-                        relationships:
-                          papers:
-                            meta:
-                              total: 4103
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5e16a2e297c6331a469e812d
-                        type: databases
-                        attributes:
-                          name: PiezoelectricMaterials
-                        relationships:
-                          papers:
-                            meta:
-                              total: 134
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5eabc5c651caf673e8f29ad6
-                        type: databases
-                        attributes:
-                          name: Hypermaterial
-                        relationships:
-                          papers:
-                            meta:
-                              total: 76
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 5fca339897c6335a556b5571
-                        type: databases
-                        attributes:
-                          name: CondensedMatter
-                        relationships:
-                          papers:
-                            meta:
-                              total: 394
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-                      - id: 600e146197c633398772b782
-                        type: databases
-                        attributes:
-                          name: HighThermalConductivityMaterials
-                        relationships:
-                          papers:
-                            meta:
-                              total: 84
-                          samples:
-                            meta:
-                              total: 999
-                          figures:
-                            meta:
-                              total: 999
-      operationId: get-databases
-      description: 論文一覧取得
-    parameters: []
-  /fabrication_processes:
-    get:
-      summary: get Fabrication Processes
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
+                required:
+                  - data
                 properties:
                   data:
                     type: array
                     items:
                       $ref: '#/components/schemas/FabricationProcess'
-      operationId: get-fabrication_processes
-      description: 論文一覧取得
-    parameters: []
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
     post:
-      summary: ''
-      operationId: post-fabrication_processes
-      responses:
-        '200':
-          description: OK
+      operationId: create/api/fabrication_processes
       description: ''
+      parameters: []
+      tags:
+        - starrydata
       requestBody:
         content:
           application/vnd.api+json:
             schema:
-              description: ''
-              type: object
-              x-examples:
-                example-1:
-                  data:
-                    type: FabricationProcess
-                    id: null
-                    attributes:
-                      name_ja: 溶解法
-                      parent_id:
-                        type: FabricationProcess
-                        id: '10'
+              required:
+                - data
               properties:
                 data:
                   type: object
                   required:
                     - type
-                    - attributes
+                  additionalProperties: false
                   properties:
                     type:
-                      type: string
-                      minLength: 1
+                      $ref: '#/components/schemas/type'
                     id:
-                      type: string
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
                     attributes:
                       type: object
-                      required:
-                        - name_ja
                       properties:
                         name_ja:
                           type: string
-                          minLength: 1
+                          maxLength: 100
+                      required:
+                        - name_ja
+                    relationships:
+                      type: object
+                      properties:
                         parent_id:
-                          type: object
-                          required:
-                            - type
-                            - id
-                          properties:
-                            type:
-                              type: string
-                              minLength: 1
-                            id:
-                              type: string
-                              minLength: 1
+                          $ref: '#/components/schemas/reltoone'
+      responses:
+        '201':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-201). Assigned `id` and/or any other changes are in this response.'
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FabricationProcess'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-204) with the supplied `id`. No other changes from what was POSTed.'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-creating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-creating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict](https://jsonapi.org/format/#crud-creating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+  /api/fabrication_processes/{id}:
+    get:
+      operationId: retrieve/api/fabrication_processes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this fabrication process.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: retrieve/api/fabrication_processes/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FabricationProcess'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    patch:
+      operationId: partialUpdate/api/fabrication_processes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this fabrication process.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
               required:
                 - data
-        description: ''
-  '/fabrication_processes/{fabrication_process_id}':
-    parameters:
-      - schema:
-          type: string
-        name: fabrication_process_id
-        in: path
-        required: true
-    delete:
-      summary: ''
-      operationId: delete-fabrication_processes-fabrication_process_id
-      responses:
-        '204':
-          description: No Content
-components:
-  schemas:
-    Paper:
-      title: Paper
-      type: object
-      description: ''
-      properties:
-        type:
-          type: string
-        id:
-          type: number
-        attributes:
-          type: object
-          required:
-            - DOI
-            - title
-            - publisher
-            - authors
-            - container_title
-          properties:
-            DOI:
-              type: string
-            title:
-              type: string
-            publisher:
-              type: string
-            authors:
-              type: array
-              items:
-                $ref: '#/components/schemas/Contributor'
-            container_title:
-              type: string
-        relationships:
-          type: object
-          properties:
-            figures:
-              type: object
-              properties:
-                meta:
-                  type: object
-                  properties:
-                    total:
-                      type: number
-            samples:
-              type: object
-              properties:
-                meta:
-                  type: object
-                  properties:
-                    total:
-                      type: number
-            databases:
-              type: object
               properties:
                 data:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      id:
-                        type: string
+                  type: object
+                  required:
+                    - type
+                    - id
+                  additionalProperties: false
+                  properties:
+                    type:
+                      $ref: '#/components/schemas/type'
+                    id:
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
+                    attributes:
+                      type: object
+                      properties:
+                        name_ja:
+                          type: string
+                          maxLength: 100
+                    relationships:
+                      type: object
+                      properties:
+                        parent_id:
+                          $ref: '#/components/schemas/reltoone'
+      responses:
+        '200':
+          description: partialUpdate/api/fabrication_processes/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FabricationProcess'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-updating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-updating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict]([Conflict](https://jsonapi.org/format/#crud-updating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    delete:
+      operationId: destroy/api/fabrication_processes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this fabrication process.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: '[OK](https://jsonapi.org/format/#crud-deleting-responses-200)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/onlymeta'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[no content](https://jsonapi.org/format/#crud-deleting-responses-204)'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Resource does not exist](https://jsonapi.org/format/#crud-deleting-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+  /api/synthesis_method_tags/:
+    get:
+      operationId: List/api/synthesis_method_tags/
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: page[number]
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: page[size]
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: List/api/synthesis_method_tags/
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SynthesisMethodTag'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    post:
+      operationId: create/api/synthesis_method_tags/
+      description: ''
+      parameters: []
+      tags:
+        - starrydata
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                  additionalProperties: false
+                  properties:
+                    type:
+                      $ref: '#/components/schemas/type'
+                    id:
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 100
+                      required:
+                        - name
+      responses:
+        '201':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-201). Assigned `id` and/or any other changes are in this response.'
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTag'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-204) with the supplied `id`. No other changes from what was POSTed.'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-creating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-creating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict](https://jsonapi.org/format/#crud-creating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+  /api/synthesis_method_tags/{id}:
+    get:
+      operationId: retrieve/api/synthesis_method_tags/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: retrieve/api/synthesis_method_tags/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTag'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    patch:
+      operationId: partialUpdate/api/synthesis_method_tags/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - id
+                  additionalProperties: false
+                  properties:
+                    type:
+                      $ref: '#/components/schemas/type'
+                    id:
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 100
+      responses:
+        '200':
+          description: partialUpdate/api/synthesis_method_tags/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTag'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-updating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-updating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict]([Conflict](https://jsonapi.org/format/#crud-updating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    delete:
+      operationId: destroy/api/synthesis_method_tags/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: '[OK](https://jsonapi.org/format/#crud-deleting-responses-200)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/onlymeta'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[no content](https://jsonapi.org/format/#crud-deleting-responses-204)'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Resource does not exist](https://jsonapi.org/format/#crud-deleting-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+  /api/synthesis_method_tag_tree_nodes/:
+    get:
+      operationId: List/api/synthesis_method_tag_tree_nodes/
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: page[number]
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: page[size]
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: List/api/synthesis_method_tag_tree_nodes/
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SynthesisMethodTagTreeNode'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    post:
+      operationId: create/api/synthesis_method_tag_tree_nodes/
+      description: ''
+      parameters: []
+      tags:
+        - starrydata
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                  additionalProperties: false
+                  properties:
+                    type:
+                      $ref: '#/components/schemas/type'
+                    id:
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 100
+                      required:
+                        - name
+                    relationships:
+                      type: object
+                      properties:
+                        synthesis_method_tag:
+                          $ref: '#/components/schemas/reltoone'
+                        parent:
+                          $ref: '#/components/schemas/reltoone'
+      responses:
+        '201':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-201). Assigned `id` and/or any other changes are in this response.'
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTagTreeNode'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[Created](https://jsonapi.org/format/#crud-creating-responses-204) with the supplied `id`. No other changes from what was POSTed.'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-creating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-creating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict](https://jsonapi.org/format/#crud-creating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+  /api/synthesis_method_tag_tree_nodes/{id}:
+    get:
+      operationId: retrieve/api/synthesis_method_tag_tree_nodes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag tree node.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/include'
+        - $ref: '#/components/parameters/fields'
+        - name: sort
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: filter[search]
+          required: false
+          in: query
+          description: A search term.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: retrieve/api/synthesis_method_tag_tree_nodes/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTagTreeNode'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    patch:
+      operationId: partialUpdate/api/synthesis_method_tag_tree_nodes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag tree node.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                    - id
+                  additionalProperties: false
+                  properties:
+                    type:
+                      $ref: '#/components/schemas/type'
+                    id:
+                      $ref: '#/components/schemas/id'
+                    links:
+                      type: object
+                      properties:
+                        self:
+                          $ref: '#/components/schemas/link'
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          maxLength: 100
+                    relationships:
+                      type: object
+                      properties:
+                        synthesis_method_tag:
+                          $ref: '#/components/schemas/reltoone'
+                        parent:
+                          $ref: '#/components/schemas/reltoone'
+      responses:
+        '200':
+          description: partialUpdate/api/synthesis_method_tag_tree_nodes/{id}
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SynthesisMethodTagTreeNode'
+                  included:
+                    type: array
+                    uniqueItems: true
+                    items:
+                      $ref: '#/components/schemas/resource'
+                  links:
+                    description: Link members related to primary data
+                    allOf:
+                      - $ref: '#/components/schemas/links'
+                      - $ref: '#/components/schemas/pagination'
+                  jsonapi:
+                    $ref: '#/components/schemas/jsonapi'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '403':
+          description: '[Forbidden](https://jsonapi.org/format/#crud-updating-responses-403)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Related resource does not exist](https://jsonapi.org/format/#crud-updating-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '409':
+          description: '[Conflict]([Conflict](https://jsonapi.org/format/#crud-updating-responses-409)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+    delete:
+      operationId: destroy/api/synthesis_method_tag_tree_nodes/{id}
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this synthesis method tag tree node.
+          schema:
+            type: string
+      tags:
+        - starrydata
+      responses:
+        '200':
+          description: '[OK](https://jsonapi.org/format/#crud-deleting-responses-200)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/onlymeta'
+        '202':
+          description: Accepted for [asynchronous processing](https://jsonapi.org/recommendations/#asynchronous-processing)
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/datum'
+        '204':
+          description: '[no content](https://jsonapi.org/format/#crud-deleting-responses-204)'
+        '401':
+          description: not authorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+        '404':
+          description: '[Resource does not exist](https://jsonapi.org/format/#crud-deleting-responses-404)'
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/failure'
+components:
+  schemas:
+    FabricationProcess:
+      type: object
       required:
         - type
         - id
-        - attributes
-    Database:
-      title: Database
-      type: object
-      description: ''
+      additionalProperties: false
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/type'
         id:
-          type: string
+          $ref: '#/components/schemas/id'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
         attributes:
           type: object
           properties:
-            name:
-              type: string
-        relationships:
-          type: object
-          properties:
-            papers:
-              type: object
-              properties:
-                meta:
-                  type: object
-                  properties:
-                    total:
-                      type: number
-            figures:
-              type: object
-              properties:
-                meta:
-                  type: object
-                  properties:
-                    total:
-                      type: number
-            samples:
-              type: object
-              properties:
-                meta:
-                  type: object
-                  properties:
-                    total:
-                      type: number
-    FabricationProcess:
-      title: FabricationProcess
-      type: object
-      description: ''
-      properties:
-        type:
-          type: string
-        id:
-          type: string
-        attributes:
-          type: object
-          required:
-            - name_ja
-          properties:
+            id:
+              type: integer
+              readOnly: true
             name_ja:
               type: string
+              maxLength: 100
+          required:
+            - name_ja
         relationships:
           type: object
           properties:
             parent_id:
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                    id:
-                      type: string
+              $ref: '#/components/schemas/reltoone'
+    SynthesisMethodTag:
+      type: object
       required:
         - type
         - id
-        - attributes
-    Contributor:
-      title: Contributor
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/type'
+        id:
+          $ref: '#/components/schemas/id'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
+        attributes:
+          type: object
+          properties:
+            id:
+              type: integer
+              readOnly: true
+            name:
+              type: string
+              maxLength: 100
+          required:
+            - name
+    SynthesisMethodTagTreeNode:
+      type: object
+      required:
+        - type
+        - id
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/type'
+        id:
+          $ref: '#/components/schemas/id'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
+        attributes:
+          type: object
+          properties:
+            id:
+              type: integer
+              readOnly: true
+            name:
+              type: string
+              maxLength: 100
+          required:
+            - name
+        relationships:
+          type: object
+          properties:
+            synthesis_method_tag:
+              $ref: '#/components/schemas/reltoone'
+            parent:
+              $ref: '#/components/schemas/reltoone'
+    JSONAPIresponse:
+      oneOf:
+        - $ref: "#/components/schemas/success"
+        - $ref: "#/components/schemas/failure"
+        - $ref: "#/components/schemas/info"
+    success:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: "#/components/schemas/data"
+        included:
+          description: >-
+            To reduce the number of HTTP requests, servers **MAY** allow responses that include related resources along with the requested primary resources. Such responses are called `compound documents`.
+          type: array
+          items:
+            $ref: "#/components/schemas/resource"
+          uniqueItems: true
+        meta:
+          $ref: "#/components/schemas/meta"
+        links:
+          description: Link members related to the primary data.
+          allOf:
+            - $ref: "#/components/schemas/links"
+            - $ref: "#/components/schemas/pagination"
+        jsonapi:
+          $ref: "#/components/schemas/jsonapi"
+      additionalProperties: false
+    failure:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+          uniqueItems: true
+        meta:
+          $ref: "#/components/schemas/meta"
+        jsonapi:
+          $ref: "#/components/schemas/jsonapi"
+        links:
+          $ref: "#/components/schemas/links"
+      additionalProperties: false
+    info:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: "#/components/schemas/meta"
+        links:
+          $ref: "#/components/schemas/links"
+        jsonapi:
+          $ref: "#/components/schemas/jsonapi"
+      additionalProperties: false
+    onlymeta:
+      properties:
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    meta:
+      description: >-
+        Non-standard meta-information that can not be represented as an attribute or relationship.
+      type: object
+      additionalProperties: true
+    data:
+      description: >-
+        The document's `primary data` is a representation of the resource or collection of resources targeted by a request.
+      oneOf:
+        - $ref: "#/components/schemas/resource"
+        - description: >-
+            An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.
+          type: array
+          items:
+            $ref: "#/components/schemas/resource"
+          uniqueItems: true
+        - $ref: "#/components/schemas/nulltype"
+    post_datum:
+      description: >-
+        singular item being [created](https://jsonapi.org/format/#crud-creating). `id` is optional and may be ignored if supplied and created by the system.
+      properties:
+        data:
+          $ref: "#/components/schemas/post_resource"
+    datum:
+      description: singular item
+      properties:
+        data:
+          $ref: "#/components/schemas/resource"
+    resource:
+      description: Resource objects appear in a JSON API document to represent resources.
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          $ref: "#/components/schemas/type"
+        id:
+          $ref: "#/components/schemas/id"
+        attributes:
+          $ref: "#/components/schemas/attributes"
+        relationships:
+          $ref: "#/components/schemas/relationships"
+        links:
+          $ref: "#/components/schemas/links"
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    # unfortunately $ref resource and tring to change required doesn't work.
+    post_resource:
+      description: A POSTable resource object has an optional id.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: "#/components/schemas/type"
+        id:
+          $ref: "#/components/schemas/id"
+        attributes:
+          $ref: "#/components/schemas/attributes"
+        relationships:
+          $ref: "#/components/schemas/relationships"
+        # not clear what it means to try to POST links but the spec says POST a Resource Object...
+        links:
+          $ref: "#/components/schemas/links"
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    relationshipLinks:
+      description: >-
+        A resource object **MAY** contain references to other resource objects (`relationships`). Relationships may be to-one or to-many. Relationships can be specified by including a member in a resource's links object.
       type: object
       properties:
-        family:
+        self:
+          $ref: "#/components/schemas/link"
+        related:
+          $ref: "#/components/schemas/link"
+      additionalProperties: true
+    links:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/link"
+    link:
+      description: >-
+        A link **MUST** be represented as either: a string containing the link's URL or a link object.
+      oneOf:
+        - description: A string containing the link's URL.
           type: string
-        given:
-          type: string
+          format: uri-reference
+        - type: object
+          required:
+            - href
+          properties:
+            href:
+              description: A string containing the link's URL.
+              type: string
+              format: uri-reference
+            meta:
+              $ref: "#/components/schemas/meta"
+    attributes:
+      description: >-
+        Members of the attributes object (`attributes`) represent information about the resource object in which it's defined.
+      type: object
+      # properties:
+      #   ^(?!relationships$|links$|id$|type$)\w[-\w_]*$:
+      #     type: object
+      #     description: Attributes may contain any valid JSON value.
+      additionalProperties: false
+    # TODO: This validates rather than defines:
+    relationships:
+      description: >-
+        Members of the relationships object represent references from the resource object in which it's defined to other resource objects. N.B. this is validation, not useful for inclusion.
+      type: object
+      # properties:
+      #   ^(?!id$|type$)\w[-\w_]*$:
+      #     $ref: "#/components/schemas/relationship"
+      additionalProperties:
+        $ref: "#/components/schemas/relationship"
+    relationship:
+      description: A single relationship description
+      type: object
+      properties:
+        links:
+          $ref: "#/components/schemas/relationshipLinks"
+        data:
+          description: Member, whose value represents `resource linkage`.
+          oneOf:
+            - $ref: "#/components/schemas/relationshipToOne"
+            - $ref: "#/components/schemas/relationshipToMany"
+        meta:
+          $ref: "#/components/schemas/meta"
+      anyOf:
+        - required:
+            - data
+        - required:
+            - meta
+        - required:
+            - links
+      additionalProperties: false
+    relationshipToOne:
+      description: >-
+        References to other resource objects in a to-one (`relationship`). Relationships can be specified by including a member in a resource's links object.
+      anyOf:
+        - $ref: "#/components/schemas/empty"
+        - $ref: "#/components/schemas/linkage"
+    reltoone:
+      description: A singular relationship
+      type: object
+      properties:
+        links:
+          $ref: "#/components/schemas/relationshipLinks"
+        data:
+          $ref: "#/components/schemas/relationshipToOne"
+        meta:
+          $ref: "#/components/schemas/meta"
+    reltomany:
+      description: A multiple relationship
+      type: object
+      properties:
+        links:
+          $ref: "#/components/schemas/relationshipLinks"
+        data:
+          $ref: "#/components/schemas/relationshipToMany"
+        meta:
+          $ref: "#/components/schemas/meta"
+    reltoonedata:
+      description: A singular relationship, data only.
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/relationshipToOne"
+    reltomanydata:
+      description: A multiple relationship, data only.
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/relationshipToMany"
+    relationshipToMany:
+      description: >-
+        An array of objects each containing `type` and `id` members for to-many relationships.
+      type: array
+      items:
+        $ref: "#/components/schemas/linkage"
+      uniqueItems: true
+    empty:
+      $ref: "#/components/schemas/nulltype"
+    linkage:
+      description: The `type` and `id` to non-empty members.
+      type: object
       required:
-        - family
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    pagination:
+      type: object
+      properties:
+        first:
+          description: The first page of data
+          oneOf:
+            - type: string
+              format: uri-reference
+            - $ref: "#/components/schemas/nulltype"
+        last:
+          description: The last page of data
+          oneOf:
+            - type: string
+              format: uri-reference
+            - $ref: "#/components/schemas/nulltype"
+        prev:
+          description: The previous page of data
+          oneOf:
+            - type: string
+              format: uri-reference
+            - $ref: "#/components/schemas/nulltype"
+        next:
+          description: The next page of data
+          oneOf:
+            - type: string
+              format: uri-reference
+            - $ref: "#/components/schemas/nulltype"
+    jsonapi:
+      description: An object describing the server's implementation
+      type: object
+      properties:
+        version:
+          type: string
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    error:
+      type: object
+      properties:
+        id:
+          description: A unique identifier for this particular occurrence of the problem.
+          type: string
+        links:
+          $ref: "#/components/schemas/links"
+        status:
+          description: >-
+            The HTTP status code applicable to this problem, expressed as a string value.
+          type: string
+        code:
+          description: >-
+            An application-specific error code, expressed as a string value.
+          type: string
+        title:
+          description: >-
+            A short, human-readable summary of the problem. It **SHOULD NOT** change from occurrence to occurrence of the problem, except for purposes of localization.
+          type: string
+        detail:
+          description: >-
+            A human-readable explanation specific to this occurrence of the problem.
+          type: string
+        source:
+          type: object
+          properties:
+            pointer:
+              description: >-
+                A JSON Pointer [RFC6901] to the associated entity in the request document [e.g. `/data` for a primary data object, or `/data/attributes/title` for a specific attribute].
+              type: string
+            parameter:
+              description: A string indicating which query parameter caused the error.
+              type: string
+        meta:
+          $ref: "#/components/schemas/meta"
+      additionalProperties: false
+    nulltype:
+      description: OAS doesn't allow the null type so use this.
+      type: number
+      nullable: true
+      default: null
+    id:
+      type: string
+      description: "[resource object identifier](https://jsonapi.org/format/#document-resource-object-identification)"
+    type:
+      type: string
+      description: "[resource object type](https://jsonapi.org/format/#document-resource-object-identification)"
+  parameters:
+    include:
+      name: include
+      in: query
+      description: "[list of included related resources](https://jsonapi.org/format/#fetching-includes)"
+      required: false
+      style: form
+      schema:
+        type: string
+    sort:
+      name: sort
+      in: query
+      description: "[fields to sort by](https://jsonapi.org/format/#fetching-sorting)"
+      required: false
+      style: form
+      schema:
+        type: string
+    pageSize:
+      name: "page[size]"
+      in: query
+      description: size of page for paginated results
+      required: false
+      schema:
+        type: integer
+        format: int32
+    pageNumber:
+      name: "page[number]"
+      in: query
+      description: page number of results
+      required: false
+      schema:
+        type: integer
+        format: int32
+    pageLimit:
+      name: "page[limit]"
+      in: query
+      description: limit for this page of paginated results
+      required: false
+      schema:
+        type: integer
+        format: int32
+    pageOffset:
+      name: "page[offset]"
+      in: query
+      description: collection items offset for paginated results
+      required: false
+      schema:
+        type: integer
+        format: int32
+    # unable to properly represent fields and filters? swagger-edit appears to not implement this correctly.
+    fields:
+      name: fields
+      in: query
+      description: "sparse fieldsets: `fields[TYPE]=field1,field2,...`"
+      required: false
+      style: deepObject
+      schema:
+        type: string
+    filter:
+      name: filter
+      in: query
+      description: "filter[NAME]=value(s)"
+      required: false
+      style: deepObject
+      schema:
+        type: string
