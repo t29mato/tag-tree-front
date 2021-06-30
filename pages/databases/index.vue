@@ -7,9 +7,9 @@
       :loading="loading"
       :loading-text="loadingText"
     >
-      <template #[`item.relationships.papers.meta.total`]="{ item }">
-        <nuxt-link :to="{ path: 'papers', query: { database: item.id } }">{{
-          item.relationships.papers.meta.total
+      <template #[`item.attributes.paper_count`]="{ item }">
+        <nuxt-link :to="{ path: '/papers', query: { database: item.id } }">{{
+          item.attributes.paper_count
         }}</nuxt-link>
       </template>
     </v-data-table>
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { DefaultApiFactory, Database } from '@/api/out'
+import { StarrydataApiFactory, Database } from 'starrydata-api-client'
 
 export default Vue.extend({
   data() {
@@ -35,9 +35,9 @@ export default Vue.extend({
       return [
         { text: 'ID', value: 'id' },
         { text: 'Database', value: 'attributes.name' },
-        { text: 'Papers', value: 'relationships.papers.meta.total' },
-        { text: 'Figures', value: 'relationships.figures.meta.total' },
-        { text: 'Samples', value: 'relationships.samples.meta.total' },
+        { text: 'Papers', value: 'attributes.paper_count' },
+        { text: 'Figures', value: 'attributes.figure_count' },
+        { text: 'Samples', value: 'attributes.sample_count' },
       ]
     },
   },
@@ -49,9 +49,12 @@ export default Vue.extend({
       this.loading = true
       // wait 1 seconds for making a mock look like real applicatin.
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
-        const { data } = await api.getDatabases()
+        const { data } = await api.listApiDatabases()
         if (data.data) {
           this.items = data.data
         }

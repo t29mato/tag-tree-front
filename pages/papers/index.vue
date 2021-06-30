@@ -19,9 +19,6 @@
     </v-container>
 
     <v-data-table :headers="headers" :items="items" item-key="SID">
-      <template #[`item.attributes.authors`]="{ item }">
-        {{ makeAuthorsOneLine(item.attributes.authors) }}
-      </template>
       <template #[`item.attributes.title`]="{ item }">
         {{ item.attributes.title | truncate(120) }}
       </template>
@@ -31,13 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  Contributor,
-  DefaultApiFactory,
-  Paper,
-  PaperRelationshipsDatabasesData,
-  Database,
-} from '@/api/out'
+import { StarrydataApiFactory, Paper, Database } from 'starrydata-api-client'
 
 export default Vue.extend({
   filters: {
@@ -71,18 +62,9 @@ export default Vue.extend({
           text: 'Databases',
           value: 'relationships.databases.data',
           align: ' d-none',
-          // TODO: filteringはAPIの責務にするので、後々削除する。そうしないと数万オブジェクトの配列をメモリに展開することになるので。
-          filter: (databases: PaperRelationshipsDatabasesData[]) => {
-            if (!this.database) {
-              return true
-            }
-            return databases.some((database) => {
-              return database.id === this.database
-            })
-          },
         },
-        { text: 'Figures', value: 'relationships.figures.meta.total' },
-        { text: 'Samples', value: 'relationships.samples.meta.total' },
+        { text: 'Figures', value: 'attributes.figure_count' },
+        { text: 'Samples', value: 'attributes.sample_count' },
       ]
     },
   },
@@ -95,9 +77,12 @@ export default Vue.extend({
   },
   methods: {
     async loadPapers() {
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
-        const { data: papers } = (await api.getPapers()).data
+        const { data: papers } = (await api.listApiPapers()).data
         if (papers) {
           this.items = papers
         }
@@ -108,9 +93,12 @@ export default Vue.extend({
       }
     },
     async loadDatabases() {
-      const api = DefaultApiFactory(undefined, process.env.STARRYDATA_API_URL)
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
       try {
-        const { data: projects } = (await api.getDatabases()).data
+        const { data: projects } = (await api.listApiDatabases()).data
         if (projects) {
           this.databases = projects
         }
@@ -119,15 +107,6 @@ export default Vue.extend({
       } finally {
         //
       }
-    },
-    makeAuthorsOneLine(authors: Contributor[]): string {
-      return authors.reduce((prev, cur, index, array) => {
-        const result = prev + cur.family + ' ' + cur.given
-        if (index === array.length - 1) {
-          return result
-        }
-        return result + ', '
-      }, '')
     },
   },
 })

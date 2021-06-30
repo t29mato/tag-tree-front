@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { StarrydataApiFactory, FabricationProcess } from '@/api/out'
+import { StarrydataApiFactory, FabricationProcess } from 'starrydata-api-client'
 
 // FIX: nameは必須のはず
 type TreeViewItem = {
