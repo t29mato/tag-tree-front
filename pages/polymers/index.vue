@@ -3,13 +3,26 @@
     <v-dialog v-model="dialog">
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
-          {{ selectedItem.id + ': ' + selectedItem.name }}
+          {{ selectedItem.node_id + ': ' + selectedItem.name }}
         </v-card-title>
 
-        <v-card-text> text text text text text text text text </v-card-text>
+        <v-card-title>タグを追加</v-card-title>
+        <v-container>
+          <v-text-field
+            v-model="newName"
+            label="Main input"
+            hide-details="auto"
+            @keydown="loadPolymerTags(newName)"
+          ></v-text-field>
+        </v-container>
+        <div v-for="tag in tags" :key="tag.id">
+          <v-chip>{{ tag.attributes.name }}</v-chip>
+        </div>
+        <v-card-actions>
+          <v-btn color="error" text @click="addItem()"> Create </v-btn>
+        </v-card-actions>
 
         <v-divider></v-divider>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-text-field
@@ -17,7 +30,6 @@
             label="Main input"
             hide-details="auto"
           ></v-text-field>
-          <v-btn color="error" text @click="addItem()"> Create </v-btn>
 
           <v-btn color="error" text @click="deleteItem(selectedItem.id)">
             Delete
@@ -36,13 +48,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { StarrydataApiFactory, FabricationProcess } from 'starrydata-api-client'
+import { PolymerTag, StarrydataApiFactory } from 'starrydata-api-client'
 
 // FIX: nameは必須のはず
 type TreeViewItem = {
-  id: string
-  name?: string
-  children?: TreeViewItem[]
+  name: string
+  // eslint-disable-next-line camelcase
+  node_id: string
+  // eslint-disable-next-line camelcase
+  tag_id: string
+  children: TreeViewItem[]
 }
 
 export default Vue.extend({
@@ -58,14 +73,15 @@ export default Vue.extend({
     return {
       items: [] as TreeViewItem[],
       selectedItem: {} as TreeViewItem,
-      dialog: false,
+      dialog: true,
       parentId: '',
       newName: '',
+      tags: [] as PolymerTag[],
     }
   },
   computed: {},
   created() {
-    this.loadFabricationProcesses()
+    this.loadPolymerTagTree()
   },
   methods: {
     openDialog(e: TreeViewItem) {
@@ -80,7 +96,7 @@ export default Vue.extend({
       try {
         await api.destroyApiFabricationProcessesId(id)
         this.dialog = false
-        this.loadFabricationProcesses()
+        this.loadPolymerTag()
       } catch {
         //
       } finally {
@@ -88,73 +104,58 @@ export default Vue.extend({
       }
     },
     async addItem() {
-      const item: FabricationProcess = {
-        id: undefined, // FIXME: nullableのはず
-        name_ja: this.newName,
-        parent_id: Number(this.selectedItem.id), // FIXME: 無理なCAST
-      }
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
+      // const item: FabricationProcess = {
+      //   id: undefined, // FIXME: nullableのはず
+      //   name_ja: this.newName,
+      //   parent_id: Number(this.selectedItem.id), // FIXME: 無理なCAST
+      // }
+      // const api = StarrydataApiFactory(
+      //   undefined,load
+      //   process.env.STARRYDATA_API_URL
+      // )
       try {
-        await api.createApiFabricationProcesses(item)
+        // await api.createApiFabricationProcesses(item)
         this.dialog = false
-        this.loadFabricationProcesses()
+        this.loadPolymerTagTree()
       } catch {
         //
       } finally {
         //
       }
     },
-    generateTree(
-      treeViewItem: TreeViewItem,
-      fabricationProcesses: FabricationProcess[]
-    ): TreeViewItem {
-      const children = fabricationProcesses
-        .filter((fabricationProcess) => {
-          return (
-            fabricationProcess.relationships?.parent_id?.data?.id ===
-            treeViewItem.id
-          )
-        })
-        .map((value) => {
-          return {
-            id: value.id,
-            name: value.attributes?.name_ja,
-          }
-        })
-      treeViewItem.children = children.map((child) =>
-        this.generateTree(child, fabricationProcesses)
-      )
-      return treeViewItem
-    },
-    async loadFabricationProcesses() {
+    async loadPolymerTagTree() {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
       )
       try {
-        const { data: fabricationProcesses } = (
-          await api.listApiFabricationProcesses()
+        const { data: tagTree } = (await api.retrieveApiPolymerTagTree()).data
+        this.items = [tagTree.attributes]
+      } catch {
+        //
+      } finally {
+        //
+      }
+    },
+    async loadPolymerTags(name: string) {
+      console.log('loadPolymerTags start')
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
+      try {
+        const { data: tags } = (
+          await api.listApiPolymerTags(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            name
+          )
         ).data
-        if (fabricationProcesses) {
-          const parents = fabricationProcesses
-            // 親が存在しないものが親
-            .filter((process) => {
-              return !process.relationships?.parent_id?.data
-            })
-            .map((parent) => {
-              return {
-                id: parent.id,
-                name: parent.attributes?.name_ja,
-              }
-            })
-            .map((parent) => {
-              return this.generateTree(parent, fabricationProcesses)
-            })
-          this.items = parents
-        }
+        this.tags = tags
+        console.log(this.tags)
       } catch {
         //
       } finally {
