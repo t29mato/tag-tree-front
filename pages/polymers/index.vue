@@ -15,56 +15,60 @@
             selectedTree.node_id + ': ' + selectedTree.name
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <v-btn dark text @click="dialog = false"> Save </v-btn>
-          </v-toolbar-items>
         </v-toolbar>
 
         <v-card-title>子タグ一覧</v-card-title>
         <v-container>
           <span v-for="child in selectedTree.children" :key="child.node_id">
-            <v-chip class="ma-2" close>{{ child.name }}</v-chip>
+            <v-chip class="ma-2" close @click:close="deleteTree(child)">{{
+              child.name
+            }}</v-chip>
           </span>
         </v-container>
 
         <v-divider></v-divider>
 
-        <v-card-title>タグを追加</v-card-title>
+        <v-card-title>子タグ登録</v-card-title>
         <v-container>
           <v-text-field
             v-model="newName"
-            label="Main input"
+            label="タグ名"
             hide-details="auto"
-            @keydown="loadPolymerTags(newName)"
+            @keydown="loadTags()"
           ></v-text-field>
-        </v-container>
-
-        <span v-for="tag in tags" :key="tag.id">
+          <span v-for="tag in tags" :key="tag.id">
+            <v-chip
+              v-if="tag.attributes"
+              class="ma-2"
+              close
+              close-icon="mdi-plus-circle"
+              @click:close="addNode(tag)"
+              >{{ tag.attributes.name }}</v-chip
+            >
+          </span>
           <v-chip
-            v-if="tag.attributes"
+            v-if="shouldShowNewTag"
+            color="secondary"
             class="ma-2"
             close
             close-icon="mdi-plus-circle"
-            @click:close="addNode(tag)"
-            >{{ tag.attributes.name }}</v-chip
+            @click:close="addTagAndNode()"
           >
-        </span>
-        <v-divider></v-divider>
-
-        <v-card-title>タグを削除</v-card-title>
-        <v-card-actions>
-          <v-btn color="error" text @click="deleteItem(selectedTree.id)">
-            Delete
-          </v-btn>
-          <v-btn color="primary" text @click="dialog = false"> Close </v-btn>
-        </v-card-actions>
+            {{ newName }}
+          </v-chip>
+        </v-container>
       </v-card>
     </v-dialog>
     <!-- タグツリーの初期表示を全てOpenにするため -->
     <div v-if="items.length > 0">
       <v-treeview open-all :items="items">
         <template slot="label" slot-scope="{ item }">
-          <a @click="openDialog(item)">{{ item.name }}</a>
+          <v-chip
+            close
+            @click="openDialog(item)"
+            @click:close="deleteTree(item)"
+            >{{ item.name }}</v-chip
+          >
         </template>
       </v-treeview>
     </div>
@@ -110,30 +114,47 @@ export default Vue.extend({
       tags: [] as PolymerTag[],
     }
   },
-  computed: {},
+  computed: {
+    shouldShowNewTag(): boolean {
+      return this.tags.length === 0 && this.newName.length > 0
+    },
+  },
   created() {
-    this.loadPolymerTagTree()
+    this.loadTree()
   },
   methods: {
     openDialog(e: TreeViewItem) {
       this.dialog = true
-      this.loadSelectedTree(e.node_id)
+      this.selectedTree = e
+      this.loadSelectedTree()
     },
-    async deleteItem(id: string) {
+    refreshTree() {
+      this.loadSelectedTree()
+      this.loadTree()
+      this.loadTags()
+    },
+    async deleteTree(tree: PolymerTagTreeAttributes) {
+      if (
+        !window.confirm(
+          `「${tree.name}」ノードを本当に削除しますか？削除する場合は対象ノードの子ツリーも同時に削除されます。タグ自体は削除されません。`
+        )
+      ) {
+        return
+      }
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
       )
       try {
-        await api.destroyApiFabricationProcessesId(id)
-        this.dialog = false
+        await api.destroyApiPolymerNodesId(tree.node_id)
+        this.refreshTree()
       } catch {
         //
       } finally {
         //
       }
     },
-    async loadPolymerTagTree(id?: string) {
+    async loadTree(id?: string) {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -150,7 +171,7 @@ export default Vue.extend({
         //
       }
     },
-    async loadSelectedTree(id: string) {
+    async loadSelectedTree() {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -158,7 +179,7 @@ export default Vue.extend({
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await api.retrieveApiPolymerTagTreeId(id)
+          await api.retrieveApiPolymerTagTreeId(this.selectedTree.node_id)
         ).data
         this.selectedTree = tagTree.attributes
       } catch {
@@ -167,8 +188,7 @@ export default Vue.extend({
         //
       }
     },
-    async loadPolymerTags(name: string) {
-      console.log('loadPolymerTags start')
+    async loadTags() {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -181,7 +201,7 @@ export default Vue.extend({
             undefined,
             undefined,
             undefined,
-            name
+            this.newName
           )
         ).data
         this.tags = tags
@@ -228,11 +248,47 @@ export default Vue.extend({
             },
           },
         })
-        this.loadSelectedTree(this.selectedTree.node_id)
+        this.refreshTree()
       } catch (error) {
         console.error(error)
         //
       } finally {
+        //
+      }
+    },
+    async addTagAndNode() {
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
+      try {
+        const { data: newTag } = (
+          await api.createApiPolymerTags({
+            data: {
+              type: 'PolymerTag',
+              attributes: {
+                name: this.newName,
+              },
+            },
+          })
+        ).data
+        await api.createApiPolymerNodes({
+          data: {
+            type: 'PolymerNode',
+            attributes: {
+              parent: {
+                type: 'PolymerNode',
+                id: this.selectedTree.node_id,
+              },
+              polymer_tag: newTag,
+            },
+          },
+        })
+      } catch (error) {
+        console.error(error)
+        //
+      } finally {
+        this.refreshTree()
         //
       }
     },
