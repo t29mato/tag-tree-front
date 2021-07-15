@@ -25,7 +25,6 @@
             }}</v-chip>
           </span>
         </v-container>
-
         <v-divider></v-divider>
 
         <v-card-title>子タグ登録</v-card-title>
@@ -34,18 +33,8 @@
             v-model="newName"
             label="タグ名"
             hide-details="auto"
-            @keydown="loadTags()"
+            @keypress="loadTags()"
           ></v-text-field>
-          <span v-for="tag in tags" :key="tag.id">
-            <v-chip
-              v-if="tag.attributes"
-              class="ma-2"
-              close
-              close-icon="mdi-plus-circle"
-              @click:close="addNode(tag)"
-              >{{ tag.attributes.name }}</v-chip
-            >
-          </span>
           <v-chip
             v-if="shouldShowNewTag"
             color="secondary"
@@ -56,6 +45,23 @@
           >
             {{ newName }}
           </v-chip>
+          <v-chip
+            v-for="tag in tags"
+            :key="tag.id"
+            class="ma-2"
+            close
+            close-icon="mdi-plus-circle"
+            @click:close="addNode(tag)"
+            >{{ tag.attributes && tag.attributes.name }}</v-chip
+          >
+        </v-container>
+
+        <v-divider></v-divider>
+
+        <v-card-title>タグ名編集</v-card-title>
+        <v-container>
+          <v-text-field v-model="updateName" label="タグ名"></v-text-field>
+          <v-btn @click="updateTag()"> 更新する </v-btn>
         </v-container>
       </v-card>
     </v-dialog>
@@ -111,12 +117,13 @@ export default Vue.extend({
       dialog: false,
       parentId: '',
       newName: '',
+      updateName: '',
       tags: [] as PolymerTag[],
     }
   },
   computed: {
     shouldShowNewTag(): boolean {
-      return this.tags.length === 0 && this.newName.length > 0
+      return this.newName.length > 0
     },
   },
   created() {
@@ -126,6 +133,7 @@ export default Vue.extend({
     openDialog(e: TreeViewItem) {
       this.dialog = true
       this.selectedTree = e
+      this.updateName = this.selectedTree.name
       this.loadSelectedTree()
     },
     refreshTree() {
@@ -257,6 +265,9 @@ export default Vue.extend({
       }
     },
     async addTagAndNode() {
+      if (this.tags.map((tag) => tag.attributes?.name).includes(this.newName)) {
+        window.alert(`${this.newName}は既に登録されているタグです。`)
+      }
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -284,6 +295,32 @@ export default Vue.extend({
             },
           },
         })
+      } catch (error) {
+        console.error(error)
+        //
+      } finally {
+        this.refreshTree()
+        //
+      }
+    },
+    async updateTag() {
+      const api = StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      )
+      try {
+        await api.partialUpdateApiPolymerTagsId(
+          this.selectedTree.polymer_tag_id,
+          {
+            data: {
+              type: 'PolymerTag',
+              id: this.selectedTree.polymer_tag_id,
+              attributes: {
+                name: this.updateName,
+              },
+            },
+          }
+        )
       } catch (error) {
         console.error(error)
         //
