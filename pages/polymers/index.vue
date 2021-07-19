@@ -10,48 +10,67 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="shouldShowNodeDeleteDialog" hide-overlay>
+      <v-card>
+        <v-app-bar>
+          <v-toolbar-title>削除確認</v-toolbar-title>
+        </v-app-bar>
+        <v-container>
+          <v-treeview open-all :items="[deletedTree]"></v-treeview>
+          <v-card-actions>
+            <v-btn text @click="shouldShowNodeDeleteDialog = false">
+              キャンセル
+            </v-btn>
+            <v-btn text color="error" @click="deleteTree()"> 削除する </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
+
     <!-- タグツリーの初期表示を全てOpenにするため -->
     <div v-if="allTree.length > 0">
       <v-treeview open-all :items="allTree">
         <template slot="label" slot-scope="{ item }">
-          <v-chip class="ma-2" @click="openTagDetailDialog(item)">{{
-            item.name
-          }}</v-chip>
+          <div style="border-left: 1px solid white">
+            <v-chip class="ma-2" @click="openTagDetailDialog(item)">{{
+              item.name
+            }}</v-chip>
 
-          <v-btn
-            v-if="item.node_id === AddedTree.node_id"
-            icon
-            large
-            @click="closeAddTagField()"
-            ><v-icon color="green">mdi-minus-box</v-icon></v-btn
-          >
-          <v-btn v-else icon large @click="showAddTagField(item)"
-            ><v-icon>mdi-plus-box</v-icon></v-btn
-          >
+            <v-btn
+              v-if="item.node_id === AddedTree.node_id"
+              icon
+              large
+              @click="closeAddTagField()"
+              ><v-icon color="green">mdi-minus-box</v-icon></v-btn
+            >
+            <v-btn v-else icon large @click="showAddTagField(item)"
+              ><v-icon>mdi-plus-box</v-icon></v-btn
+            >
 
-          <v-btn icon large @click="deleteTree(item)"
-            ><v-icon>mdi-delete</v-icon></v-btn
-          >
-          <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
-            <v-text-field
-              v-model="newName"
-              class="ml-2"
-              @keypress="filterTags()"
-            ></v-text-field>
-            <div class="ml-1">
-              <v-chip
-                v-for="tag in filteredTags"
-                :key="tag.id"
-                color="primary"
-                class="ma-2"
-                @click="addNode(tag)"
-                >{{ tag.attributes && tag.attributes.name }}</v-chip
-              >
-              <div v-show="shouldShowNewTag">
-                <v-chip class="ma-2" color="success" @click="addTagAndNode()">
-                  {{ newName }}
-                </v-chip>
-                <v-icon color="success" large>mdi-new-box</v-icon>
+            <v-btn icon large @click="openNodeDeleteDialog(item)"
+              ><v-icon>mdi-delete</v-icon></v-btn
+            >
+            <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
+              <v-text-field
+                v-model="newName"
+                class="ml-2"
+                @keypress="filterTags()"
+              ></v-text-field>
+              <div class="ml-1">
+                <v-chip
+                  v-for="tag in filteredTags"
+                  :key="tag.id"
+                  color="primary"
+                  class="ma-2"
+                  @click="addNode(tag)"
+                  >{{ tag.attributes && tag.attributes.name }}</v-chip
+                >
+                <div v-show="shouldShowNewTag">
+                  <v-chip class="ma-2" color="success" @click="addTagAndNode()">
+                    {{ newName }}
+                  </v-chip>
+                  <v-icon color="success" large>mdi-new-box</v-icon>
+                </div>
               </div>
             </div>
           </div>
@@ -83,7 +102,9 @@ export default Vue.extend({
       allTree: [] as PolymerTagTreeAttributes[],
       AddedTree: {} as PolymerTagTreeAttributes,
       updatedTree: {} as PolymerTagTreeAttributes,
+      deletedTree: {} as PolymerTagTreeAttributes,
       shouldShowTagDetailDialog: false,
+      shouldShowNodeDeleteDialog: false,
       newName: '',
       updatedName: '',
       filteredTags: [] as PolymerTag[],
@@ -104,26 +125,24 @@ export default Vue.extend({
       this.updatedName = this.updatedTree.name
       this.loadSelectedTree()
     },
+    openNodeDeleteDialog(e: PolymerTagTreeAttributes) {
+      this.shouldShowNodeDeleteDialog = true
+      this.deletedTree = e
+    },
     refreshTree() {
       this.loadSelectedTree()
       this.loadTree()
       this.filterTags()
     },
-    async deleteTree(tree: PolymerTagTreeAttributes) {
-      if (
-        !window.confirm(
-          `「${tree.name}」を本当に削除しますか？削除する場合は対象ノードの子ツリーも同時に削除されます。`
-        )
-      ) {
-        return
-      }
+    async deleteTree() {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
       )
       try {
-        await api.destroyApiPolymerNodesId(tree.node_id)
+        await api.destroyApiPolymerNodesId(this.deletedTree.node_id)
         this.refreshTree()
+        this.shouldShowNodeDeleteDialog = false
       } catch {
         //
       } finally {
