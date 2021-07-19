@@ -2,10 +2,17 @@
   <v-container>
     <v-dialog v-model="shouldShowTagDetailDialog" hide-overlay>
       <v-card>
-        <v-card-title>{{ updatedTree.name }}</v-card-title>
+        <v-app-bar>
+          <v-toolbar-title>{{ updatedTree.name }}</v-toolbar-title>
+        </v-app-bar>
         <v-container>
           <v-text-field v-model="updatedName" label="タグ名"></v-text-field>
-          <v-btn @click="updateTag()"> 更新する </v-btn>
+          <v-card-actions>
+            <v-btn text @click="shouldShowTagDetailDialog = false">
+              キャンセル
+            </v-btn>
+            <v-btn text color="success" @click="updateTag()"> 更新する </v-btn>
+          </v-card-actions>
         </v-container>
       </v-card>
     </v-dialog>
@@ -31,6 +38,7 @@
     <div v-if="allTree.length > 0">
       <v-treeview open-all :items="allTree">
         <template slot="label" slot-scope="{ item }">
+          <!-- TODO: Transnoみたいに線を入れたい -->
           <div style="border-left: 1px solid white">
             <v-chip class="ma-2" @click="openTagDetailDialog(item)">{{
               item.name
@@ -316,6 +324,7 @@ export default Vue.extend({
             },
           },
         })
+        this.shouldShowTagDetailDialog = false
       } catch (error) {
         console.error(error)
         //
