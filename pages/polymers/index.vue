@@ -1,25 +1,25 @@
 <template>
   <v-container>
-    <v-dialog v-model="dialog" hide-overlay>
+    <v-dialog v-model="shouldShowTagDetailDialog" hide-overlay>
       <v-card>
-        <v-card-title>{{ treeWillBeUpdated.name }}</v-card-title>
+        <v-card-title>{{ updatedTree.name }}</v-card-title>
         <v-container>
-          <v-text-field v-model="updateName" label="タグ名"></v-text-field>
+          <v-text-field v-model="updatedName" label="タグ名"></v-text-field>
           <v-btn @click="updateTag()"> 更新する </v-btn>
         </v-container>
       </v-card>
     </v-dialog>
 
     <!-- タグツリーの初期表示を全てOpenにするため -->
-    <div v-if="items.length > 0">
-      <v-treeview open-all :items="items">
+    <div v-if="allTree.length > 0">
+      <v-treeview open-all :items="allTree">
         <template slot="label" slot-scope="{ item }">
-          <v-chip class="ma-2" @click="openTagDetail(item)">{{
+          <v-chip class="ma-2" @click="openTagDetailDialog(item)">{{
             item.name
           }}</v-chip>
 
           <v-btn
-            v-if="item.node_id === treeWillBeAdded.node_id"
+            v-if="item.node_id === AddedTree.node_id"
             icon
             large
             @click="closeAddTagField()"
@@ -32,15 +32,15 @@
           <v-btn icon large @click="deleteTree(item)"
             ><v-icon>mdi-delete</v-icon></v-btn
           >
-          <div v-if="item.node_id === treeWillBeAdded.node_id" class="ml-sm-5">
+          <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
             <v-text-field
               v-model="newName"
               class="ml-2"
-              @keypress="loadTags()"
+              @keypress="filterTags()"
             ></v-text-field>
             <div class="ml-1">
               <v-chip
-                v-for="tag in tags"
+                v-for="tag in filteredTags"
                 :key="tag.id"
                 color="primary"
                 class="ma-2"
@@ -80,14 +80,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      items: [] as PolymerTagTreeAttributes[],
-      treeWillBeAdded: {} as PolymerTagTreeAttributes,
-      treeWillBeUpdated: {} as PolymerTagTreeAttributes,
-      dialog: false,
-      parentId: '',
+      allTree: [] as PolymerTagTreeAttributes[],
+      AddedTree: {} as PolymerTagTreeAttributes,
+      updatedTree: {} as PolymerTagTreeAttributes,
+      shouldShowTagDetailDialog: false,
       newName: '',
-      updateName: '',
-      tags: [] as PolymerTag[],
+      updatedName: '',
+      filteredTags: [] as PolymerTag[],
     }
   },
   computed: {
@@ -99,16 +98,16 @@ export default Vue.extend({
     this.loadTree()
   },
   methods: {
-    openTagDetail(e: PolymerTagTreeAttributes) {
-      this.dialog = true
-      this.treeWillBeUpdated = e
-      this.updateName = this.treeWillBeUpdated.name
+    openTagDetailDialog(e: PolymerTagTreeAttributes) {
+      this.shouldShowTagDetailDialog = true
+      this.updatedTree = e
+      this.updatedName = this.updatedTree.name
       this.loadSelectedTree()
     },
     refreshTree() {
       this.loadSelectedTree()
       this.loadTree()
-      this.loadTags()
+      this.filterTags()
     },
     async deleteTree(tree: PolymerTagTreeAttributes) {
       if (
@@ -132,11 +131,11 @@ export default Vue.extend({
       }
     },
     showAddTagField(tree: PolymerTagTreeAttributes) {
-      this.treeWillBeAdded = tree
+      this.AddedTree = tree
       this.newName = ''
     },
     closeAddTagField() {
-      this.treeWillBeAdded = {} as PolymerTagTreeAttributes
+      this.AddedTree = {} as PolymerTagTreeAttributes
       this.newName = ''
     },
     async loadTree(id?: string) {
@@ -149,7 +148,7 @@ export default Vue.extend({
         const { data: tagTree } = (
           await api.retrieveApiPolymerTagTreeId(id || '1')
         ).data
-        this.items = [tagTree.attributes]
+        this.allTree = [tagTree.attributes]
       } catch {
         //
       } finally {
@@ -164,16 +163,16 @@ export default Vue.extend({
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await api.retrieveApiPolymerTagTreeId(this.treeWillBeAdded.node_id)
+          await api.retrieveApiPolymerTagTreeId(this.AddedTree.node_id)
         ).data
-        this.treeWillBeAdded = tagTree.attributes
+        this.AddedTree = tagTree.attributes
       } catch {
         //
       } finally {
         //
       }
     },
-    async loadTags() {
+    async filterTags() {
       const api = StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -189,8 +188,7 @@ export default Vue.extend({
             this.newName
           )
         ).data
-        this.tags = tags
-        console.log(this.tags)
+        this.filteredTags = tags
       } catch {
         //
       } finally {
@@ -199,17 +197,17 @@ export default Vue.extend({
     },
     async addNode(tag: PolymerTag) {
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
-      if (this.treeWillBeAdded.polymer_tag_id === tag.id) {
+      if (this.AddedTree.polymer_tag_id === tag.id) {
         window.alert(`親ノードと同じタグの子を登録することはできません。`)
         return
       }
       if (
-        this.treeWillBeAdded.children
+        this.AddedTree.children
           .map((child) => child.polymer_tag_id)
           .includes(tag.id)
       ) {
         window.alert(
-          `既に「${this.treeWillBeAdded.name}」ノードに「${tag.attributes?.name}」タグは登録されています。`
+          `既に「${this.AddedTree.name}」ノードに「${tag.attributes?.name}」タグは登録されています。`
         )
         return
       }
@@ -224,7 +222,7 @@ export default Vue.extend({
             attributes: {
               parent: {
                 type: 'PolymerNode',
-                id: this.treeWillBeAdded.node_id,
+                id: this.AddedTree.node_id,
               },
               polymer_tag: {
                 type: 'PolymerTag',
@@ -242,7 +240,11 @@ export default Vue.extend({
       }
     },
     async addTagAndNode() {
-      if (this.tags.map((tag) => tag.attributes?.name).includes(this.newName)) {
+      if (
+        this.filteredTags
+          .map((tag) => tag.attributes?.name)
+          .includes(this.newName)
+      ) {
         window.alert(`${this.newName}は既に登録されているタグです。`)
       }
       const api = StarrydataApiFactory(
@@ -266,7 +268,7 @@ export default Vue.extend({
             attributes: {
               parent: {
                 type: 'PolymerNode',
-                id: this.treeWillBeAdded.node_id,
+                id: this.AddedTree.node_id,
               },
               polymer_tag: newTag,
             },
@@ -286,18 +288,15 @@ export default Vue.extend({
         process.env.STARRYDATA_API_URL
       )
       try {
-        await api.partialUpdateApiPolymerTagsId(
-          this.treeWillBeAdded.polymer_tag_id,
-          {
-            data: {
-              type: 'PolymerTag',
-              id: this.treeWillBeAdded.polymer_tag_id,
-              attributes: {
-                name: this.updateName,
-              },
+        await api.partialUpdateApiPolymerTagsId(this.AddedTree.polymer_tag_id, {
+          data: {
+            type: 'PolymerTag',
+            id: this.AddedTree.polymer_tag_id,
+            attributes: {
+              name: this.updatedName,
             },
-          }
-        )
+          },
+        })
       } catch (error) {
         console.error(error)
         //
