@@ -38,47 +38,47 @@
     <div v-if="allTree.length > 0">
       <v-treeview open-all :items="allTree">
         <template slot="label" slot-scope="{ item }">
-          <!-- TODO: Transnoみたいに線を入れたい -->
-          <div style="border-left: 1px solid white">
-            <v-chip class="ma-2" @click="openTagDetailDialog(item)">{{
-              item.name
-            }}</v-chip>
+          <v-chip
+            class="ma-2"
+            :color="generateColor(item.tree_level)"
+            @click="openTagDetailDialog(item)"
+            >{{ item.name }}</v-chip
+          >
 
-            <v-btn
-              v-if="item.node_id === AddedTree.node_id"
-              icon
-              large
-              @click="closeAddTagField()"
-              ><v-icon color="green">mdi-minus-box</v-icon></v-btn
-            >
-            <v-btn v-else icon large @click="showAddTagField(item)"
-              ><v-icon>mdi-plus-box</v-icon></v-btn
-            >
+          <v-btn
+            v-if="item.node_id === AddedTree.node_id"
+            icon
+            large
+            @click="closeAddTagField()"
+            ><v-icon color="green">mdi-minus-box</v-icon></v-btn
+          >
+          <v-btn v-else icon large @click="showAddTagField(item)"
+            ><v-icon>mdi-plus-box</v-icon></v-btn
+          >
 
-            <v-btn icon large @click="openNodeDeleteDialog(item)"
-              ><v-icon>mdi-delete</v-icon></v-btn
-            >
-            <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
-              <v-text-field
-                v-model="newName"
-                class="ml-2"
-                @keypress="filterTags()"
-              ></v-text-field>
-              <div class="ml-1">
-                <v-chip
-                  v-for="tag in filteredTags"
-                  :key="tag.id"
-                  color="primary"
-                  class="ma-2"
-                  @click="addNode(tag)"
-                  >{{ tag.attributes && tag.attributes.name }}</v-chip
-                >
-                <div v-show="shouldShowNewTag">
-                  <v-chip class="ma-2" color="success" @click="addTagAndNode()">
-                    {{ newName }}
-                  </v-chip>
-                  <v-icon color="success" large>mdi-new-box</v-icon>
-                </div>
+          <v-btn icon large @click="openNodeDeleteDialog(item)"
+            ><v-icon>mdi-delete</v-icon></v-btn
+          >
+          <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
+            <v-text-field
+              v-model="newName"
+              class="ml-2"
+              @keypress="filterTags()"
+            ></v-text-field>
+            <div class="ml-1">
+              <v-chip
+                v-for="tag in filteredTags"
+                :key="tag.id"
+                color="primary"
+                class="ma-2"
+                @click="addNode(tag)"
+                >{{ tag.attributes && tag.attributes.name }}</v-chip
+              >
+              <div v-show="shouldShowNewTag">
+                <v-chip class="ma-2" color="success" @click="addTagAndNode()">
+                  {{ newName }}
+                </v-chip>
+                <v-icon color="success" large>mdi-new-box</v-icon>
               </div>
             </div>
           </div>
@@ -127,6 +127,18 @@ export default Vue.extend({
     this.loadTree()
   },
   methods: {
+    generateColor(treeLevel: number) {
+      const colors = [
+        '#FFE0B2',
+        '#D1C4E9',
+        '#BBDEFB',
+        '#B2DFDB',
+        '#F0F4C3',
+        '#FFECB3',
+        '#D7CCC8',
+      ]
+      return colors[treeLevel % 7]
+    },
     openTagDetailDialog(e: PolymerTagTreeAttributes) {
       this.shouldShowTagDetailDialog = true
       this.updatedTree = e
