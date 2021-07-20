@@ -127,7 +127,7 @@ export default Vue.extend({
     this.loadTree()
   },
   methods: {
-    generateColor(treeLevel: number) {
+    generateColor(treeLevel: number): string {
       const colors = [
         '#FFE0B2',
         '#D1C4E9',
@@ -161,12 +161,11 @@ export default Vue.extend({
       )
       try {
         await api.destroyApiPolymerNodesId(this.deletedTree.node_id)
-        this.refreshTree()
         this.shouldShowNodeDeleteDialog = false
       } catch {
         //
       } finally {
-        //
+        this.refreshTree()
       }
     },
     showAddTagField(tree: PolymerTagTreeAttributes) {
