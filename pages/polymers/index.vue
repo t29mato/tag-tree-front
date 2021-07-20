@@ -327,15 +327,18 @@ export default Vue.extend({
         process.env.STARRYDATA_API_URL
       )
       try {
-        await api.partialUpdateApiPolymerTagsId(this.AddedTree.polymer_tag_id, {
-          data: {
-            type: 'PolymerTag',
-            id: this.AddedTree.polymer_tag_id,
-            attributes: {
-              name: this.updatedName,
+        await api.partialUpdateApiPolymerTagsId(
+          this.updatedTree.polymer_tag_id,
+          {
+            data: {
+              type: 'PolymerTag',
+              id: this.updatedTree.polymer_tag_id,
+              attributes: {
+                name: this.updatedName,
+              },
             },
-          },
-        })
+          }
+        )
         this.shouldShowTagDetailDialog = false
       } catch (error) {
         console.error(error)
