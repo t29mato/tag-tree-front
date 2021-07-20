@@ -116,6 +116,10 @@ export default Vue.extend({
       newName: '',
       updatedName: '',
       filteredTags: [] as PolymerTag[],
+      apiClient: StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      ),
     }
   },
   computed: {
@@ -155,12 +159,8 @@ export default Vue.extend({
       this.filterTags()
     },
     async deleteTree() {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
-        await api.destroyApiPolymerNodesId(this.deletedTree.node_id)
+        await this.apiClient.destroyApiPolymerNodesId(this.deletedTree.node_id)
         this.shouldShowNodeDeleteDialog = false
       } catch {
         //
@@ -177,14 +177,10 @@ export default Vue.extend({
       this.newName = ''
     },
     async loadTree(id?: string) {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await api.retrieveApiPolymerTagTreeId(id || '1')
+          await this.apiClient.retrieveApiPolymerTagTreeId(id || '1')
         ).data
         this.allTree = [tagTree.attributes]
       } catch {
@@ -194,14 +190,11 @@ export default Vue.extend({
       }
     },
     async loadSelectedTree() {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
-        // ルートIDが1のため
         const { data: tagTree } = (
-          await api.retrieveApiPolymerTagTreeId(this.AddedTree.node_id)
+          await this.apiClient.retrieveApiPolymerTagTreeId(
+            this.AddedTree.node_id
+          )
         ).data
         this.AddedTree = tagTree.attributes
       } catch {
@@ -211,13 +204,9 @@ export default Vue.extend({
       }
     },
     async filterTags() {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
         const { data: tags } = (
-          await api.listApiPolymerTags(
+          await this.apiClient.listApiPolymerTags(
             undefined,
             undefined,
             undefined,
@@ -249,12 +238,8 @@ export default Vue.extend({
         )
         return
       }
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
-        await api.createApiPolymerNodes({
+        await this.apiClient.createApiPolymerNodes({
           data: {
             type: 'PolymerNode',
             attributes: {
@@ -285,13 +270,9 @@ export default Vue.extend({
       ) {
         window.alert(`${this.newName}は既に登録されているタグです。`)
       }
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
         const { data: newTag } = (
-          await api.createApiPolymerTags({
+          await this.apiClient.createApiPolymerTags({
             data: {
               type: 'PolymerTag',
               attributes: {
@@ -300,7 +281,7 @@ export default Vue.extend({
             },
           })
         ).data
-        await api.createApiPolymerNodes({
+        await this.apiClient.createApiPolymerNodes({
           data: {
             type: 'PolymerNode',
             attributes: {
@@ -321,12 +302,8 @@ export default Vue.extend({
       }
     },
     async updateTag() {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
       try {
-        await api.partialUpdateApiPolymerTagsId(
+        await this.apiClient.partialUpdateApiPolymerTagsId(
           this.updatedTree.polymer_tag_id,
           {
             data: {
