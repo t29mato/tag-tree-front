@@ -1,22 +1,5 @@
 <template>
   <v-container>
-    <v-dialog v-model="shouldShowTagDetailDialog" hide-overlay>
-      <v-card>
-        <v-app-bar>
-          <v-toolbar-title>{{ updatedTree.name }}</v-toolbar-title>
-        </v-app-bar>
-        <v-container>
-          <v-text-field v-model="updatedName" label="タグ名"></v-text-field>
-          <v-card-actions>
-            <v-btn text @click="shouldShowTagDetailDialog = false">
-              キャンセル
-            </v-btn>
-            <v-btn text color="success" @click="updateTag()"> 更新する </v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="shouldShowNodeDeleteDialog" hide-overlay>
       <v-card>
         <v-app-bar>
@@ -41,9 +24,10 @@
           <v-chip
             class="ma-2"
             :color="generateColor(item.tree_level)"
-            @click="openTagDetailDialog(item)"
-            >{{ item.name }}</v-chip
+            :to="{ path: './tags/' + item.polymer_tag_id }"
           >
+            {{ item.name }}
+          </v-chip>
 
           <v-btn
             v-if="item.node_id === AddedTree.node_id"
@@ -111,7 +95,6 @@ export default Vue.extend({
       AddedTree: {} as PolymerTagTreeAttributes,
       updatedTree: {} as PolymerTagTreeAttributes,
       deletedTree: {} as PolymerTagTreeAttributes,
-      shouldShowTagDetailDialog: false,
       shouldShowNodeDeleteDialog: false,
       newName: '',
       updatedName: '',
@@ -142,12 +125,6 @@ export default Vue.extend({
         '#D7CCC8',
       ]
       return colors[treeLevel % 7]
-    },
-    openTagDetailDialog(e: PolymerTagTreeAttributes) {
-      this.shouldShowTagDetailDialog = true
-      this.updatedTree = e
-      this.updatedName = this.updatedTree.name
-      this.loadSelectedTree()
     },
     openNodeDeleteDialog(e: PolymerTagTreeAttributes) {
       this.shouldShowNodeDeleteDialog = true
@@ -295,29 +272,6 @@ export default Vue.extend({
             },
           },
         })
-      } catch (error) {
-        console.error(error)
-        //
-      } finally {
-        this.refreshTree()
-        //
-      }
-    },
-    async updateTag() {
-      try {
-        await this.apiClient.partialUpdateApiPolymerTagsId(
-          this.updatedTree.polymer_tag_id,
-          {
-            data: {
-              type: 'PolymerTag',
-              id: this.updatedTree.polymer_tag_id,
-              attributes: {
-                name: this.updatedName,
-              },
-            },
-          }
-        )
-        this.shouldShowTagDetailDialog = false
       } catch (error) {
         console.error(error)
         //
