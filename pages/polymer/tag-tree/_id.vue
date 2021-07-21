@@ -176,11 +176,13 @@ export default Vue.extend({
       this.AddedTree = {} as PolymerTagTreeAttributes
       this.newName = ''
     },
-    async loadTree(id?: string) {
+    async loadTree() {
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await this.apiClient.retrieveApiPolymerTagTreeId(id || '1')
+          await this.apiClient.retrieveApiPolymerTagTreeId(
+            this.$route.params.id || '1'
+          )
         ).data
         this.allTree = [tagTree.attributes]
       } catch {
