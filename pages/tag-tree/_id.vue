@@ -216,10 +216,10 @@ export default Vue.extend({
       try {
         await this.apiClient.createApiNodes({
           data: {
-            type: 'PolymerNode',
+            type: 'Node',
             attributes: {
               parent: {
-                type: 'PolymerNode',
+                type: 'Node',
                 id: this.AddedTree.node_id,
               },
               tag: {
@@ -258,10 +258,10 @@ export default Vue.extend({
         ).data
         await this.apiClient.createApiNodes({
           data: {
-            type: 'PolymerNode',
+            type: 'Node',
             attributes: {
               parent: {
-                type: 'PolymerNode',
+                type: 'Node',
                 id: this.AddedTree.node_id,
               },
               tag: newTag,

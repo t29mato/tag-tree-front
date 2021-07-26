@@ -2,6 +2,10 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "cSpell.words": [],
+  "cSpell.words": [
+    "axios",
+    "nuxtjs",
+    "starrydata"
+  ],
   "vetur.experimental.templateInterpolationService": true
 }

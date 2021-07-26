@@ -34,8 +34,12 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class Sidebar extends Vue {
   items = [
     { title: 'Dashboard', icon: 'mdi-view-dashboard', path: '/' },
-    { title: 'Polymer Tag Tree', icon: 'mdi-image', path: '/tag-tree' },
-    { title: 'Polymer Tag List', icon: 'mdi-image', path: '/tags/' },
+    {
+      title: '高分子タグツリー',
+      icon: 'mdi-image',
+      path: '/tag-tree/1',
+    },
+    { title: 'タグ一覧', icon: 'mdi-image', path: '/tags/' },
     { title: 'Databasees', icon: 'mdi-image', path: '/databases' },
     { title: 'Papers', icon: 'mdi-help-box', path: '/papers' },
     {
