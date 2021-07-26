@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-container>
-        <v-card-title>{{ tag.attributes.name }}</v-card-title>
+        <v-card-title>{{ tag.attributes.name_ja }}</v-card-title>
         <v-text-field v-model="updatedName"></v-text-field>
         <v-card-actions>
           <v-btn text @click="loadTag()"> 元に戻す </v-btn>
@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { StarrydataApiFactory, PolymerTag } from 'starrydata-api-client'
+import { StarrydataApiFactory, Tag } from 'starrydata-api-client'
 
 export default Vue.extend({
   async asyncData({ params }) {
@@ -23,14 +23,12 @@ export default Vue.extend({
       undefined,
       process.env.STARRYDATA_API_URL
     )
-    const { data: tag } = (
-      await apiClient.retrieveApiPolymerTagsId(params.id)
-    ).data
-    return { tag, updatedName: tag.attributes.name }
+    const { data: tag } = (await apiClient.retrieveApiTagsId(params.id)).data
+    return { tag, updatedName: tag.attributes.name_ja }
   },
   data() {
     return {
-      tag: {} as PolymerTag,
+      tag: {} as Tag,
       apiClient: StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -46,10 +44,10 @@ export default Vue.extend({
     async loadTag() {
       try {
         const { data: tag } = (
-          await this.apiClient.retrieveApiPolymerTagsId(this.$route.params.id)
+          await this.apiClient.retrieveApiTagsId(this.$route.params.id)
         ).data
         this.tag = tag
-        this.updatedName = tag.attributes.name
+        this.updatedName = tag.attributes.name_ja
       } catch (error) {
         console.error(error)
       } finally {
@@ -58,18 +56,15 @@ export default Vue.extend({
     },
     async updateTag() {
       try {
-        await this.apiClient.partialUpdateApiPolymerTagsId(
-          this.$route.params.id,
-          {
-            data: {
-              type: 'PolymerTag',
-              id: this.$route.params.id,
-              attributes: {
-                name: this.updatedName,
-              },
+        await this.apiClient.partialUpdateApiTagsId(this.$route.params.id, {
+          data: {
+            type: 'Tag',
+            id: this.$route.params.id,
+            attributes: {
+              name_ja: this.updatedName,
             },
-          }
-        )
+          },
+        })
       } catch (error) {
         console.error(error)
         //

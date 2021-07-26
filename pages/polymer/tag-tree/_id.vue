@@ -24,9 +24,9 @@
           <v-chip
             class="ma-2"
             :color="generateColor(item.tree_level)"
-            :to="{ path: './tags/' + item.polymer_tag_id }"
+            :to="{ path: './tags/' + item.tag_id }"
           >
-            {{ item.name }}
+            {{ item.name_ja }}
           </v-chip>
 
           <v-btn
@@ -56,7 +56,7 @@
                 color="primary"
                 class="ma-2"
                 @click="addNode(tag)"
-                >{{ tag.attributes && tag.attributes.name }}</v-chip
+                >{{ tag.attributes && tag.attributes.name_ja }}</v-chip
               >
               <div v-show="shouldShowNewTag">
                 <v-chip class="ma-2" color="success" @click="addTagAndNode()">
@@ -75,9 +75,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import {
-  PolymerTag,
+  Tag,
   StarrydataApiFactory,
-  PolymerTagTreeAttributes,
+  TagTreeAttributes,
 } from 'starrydata-api-client'
 
 export default Vue.extend({
@@ -91,14 +91,14 @@ export default Vue.extend({
   },
   data() {
     return {
-      allTree: [] as PolymerTagTreeAttributes[],
-      AddedTree: {} as PolymerTagTreeAttributes,
-      updatedTree: {} as PolymerTagTreeAttributes,
-      deletedTree: {} as PolymerTagTreeAttributes,
+      allTree: [] as TagTreeAttributes[],
+      AddedTree: {} as TagTreeAttributes,
+      updatedTree: {} as TagTreeAttributes,
+      deletedTree: {} as TagTreeAttributes,
       shouldShowNodeDeleteDialog: false,
       newName: '',
       updatedName: '',
-      filteredTags: [] as PolymerTag[],
+      filteredTags: [] as Tag[],
       apiClient: StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -126,7 +126,7 @@ export default Vue.extend({
       ]
       return colors[treeLevel % 7]
     },
-    openNodeDeleteDialog(e: PolymerTagTreeAttributes) {
+    openNodeDeleteDialog(e: TagTreeAttributes) {
       this.shouldShowNodeDeleteDialog = true
       this.deletedTree = e
     },
@@ -137,7 +137,7 @@ export default Vue.extend({
     },
     async deleteTree() {
       try {
-        await this.apiClient.destroyApiPolymerNodesId(this.deletedTree.node_id)
+        await this.apiClient.destroyApiNodesId(this.deletedTree.node_id)
         this.shouldShowNodeDeleteDialog = false
       } catch {
         //
@@ -145,19 +145,19 @@ export default Vue.extend({
         this.refreshTree()
       }
     },
-    showAddTagField(tree: PolymerTagTreeAttributes) {
+    showAddTagField(tree: TagTreeAttributes) {
       this.AddedTree = tree
       this.newName = ''
     },
     closeAddTagField() {
-      this.AddedTree = {} as PolymerTagTreeAttributes
+      this.AddedTree = {} as TagTreeAttributes
       this.newName = ''
     },
     async loadTree() {
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await this.apiClient.retrieveApiPolymerTagTreeId(
+          await this.apiClient.retrieveApiTagTreeId(
             this.$route.params.id || '1'
           )
         ).data
@@ -171,9 +171,7 @@ export default Vue.extend({
     async loadSelectedTree() {
       try {
         const { data: tagTree } = (
-          await this.apiClient.retrieveApiPolymerTagTreeId(
-            this.AddedTree.node_id
-          )
+          await this.apiClient.retrieveApiTagTreeId(this.AddedTree.node_id)
         ).data
         this.AddedTree = tagTree.attributes
       } catch {
@@ -185,7 +183,7 @@ export default Vue.extend({
     async filterTags() {
       try {
         const { data: tags } = (
-          await this.apiClient.listApiPolymerTags(
+          await this.apiClient.listApiTags(
             undefined,
             undefined,
             undefined,
@@ -201,24 +199,22 @@ export default Vue.extend({
         //
       }
     },
-    async addNode(tag: PolymerTag) {
+    async addNode(tag: Tag) {
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
-      if (this.AddedTree.polymer_tag_id === tag.id) {
+      if (this.AddedTree.tag_id === tag.id) {
         window.alert(`親ノードと同じタグの子を登録することはできません。`)
         return
       }
       if (
-        this.AddedTree.children
-          .map((child) => child.polymer_tag_id)
-          .includes(tag.id)
+        this.AddedTree.children.map((child) => child.tag_id).includes(tag.id)
       ) {
         window.alert(
-          `既に「${this.AddedTree.name}」ノードに「${tag.attributes?.name}」タグは登録されています。`
+          `既に「${this.AddedTree.name_ja}」ノードに「${tag.attributes?.name_ja}」タグは登録されています。`
         )
         return
       }
       try {
-        await this.apiClient.createApiPolymerNodes({
+        await this.apiClient.createApiNodes({
           data: {
             type: 'PolymerNode',
             attributes: {
@@ -226,8 +222,8 @@ export default Vue.extend({
                 type: 'PolymerNode',
                 id: this.AddedTree.node_id,
               },
-              polymer_tag: {
-                type: 'PolymerTag',
+              tag: {
+                type: 'Tag',
                 id: tag.id,
               },
             },
@@ -244,23 +240,23 @@ export default Vue.extend({
     async addTagAndNode() {
       if (
         this.filteredTags
-          .map((tag) => tag.attributes?.name)
+          .map((tag) => tag.attributes?.name_ja)
           .includes(this.newName)
       ) {
         window.alert(`${this.newName}は既に登録されているタグです。`)
       }
       try {
         const { data: newTag } = (
-          await this.apiClient.createApiPolymerTags({
+          await this.apiClient.createApiTags({
             data: {
-              type: 'PolymerTag',
+              type: 'Tag',
               attributes: {
-                name: this.newName,
+                name_ja: this.newName,
               },
             },
           })
         ).data
-        await this.apiClient.createApiPolymerNodes({
+        await this.apiClient.createApiNodes({
           data: {
             type: 'PolymerNode',
             attributes: {
@@ -268,7 +264,7 @@ export default Vue.extend({
                 type: 'PolymerNode',
                 id: this.AddedTree.node_id,
               },
-              polymer_tag: newTag,
+              tag: newTag,
             },
           },
         })

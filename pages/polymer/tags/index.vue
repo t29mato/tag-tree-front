@@ -9,9 +9,9 @@
       :options.sync="options"
       :footer-props="{ 'items-per-page-options': [10, 20, 50, 100] }"
     >
-      <template #[`item.attributes.name`]="{ item }">
+      <template #[`item.attributes.name_ja`]="{ item }">
         <v-chip>
-          {{ item.attributes.name }}
+          {{ item.attributes.name_ja }}
         </v-chip>
       </template>
       <template #[`item.relationships.nodes`]="{ item }">
@@ -31,7 +31,7 @@
 import Vue from 'vue'
 import {
   StarrydataApiFactory,
-  PolymerTag,
+  Tag,
   MetaPagination,
 } from 'starrydata-api-client'
 
@@ -51,7 +51,7 @@ export default Vue.extend({
     return {
       sortBy: 'age',
       sortDesc: false,
-      tags: [] as PolymerTag[],
+      tags: [] as Tag[],
       pagination: {} as MetaPagination,
       options: { itemsPerPage: 20 } as DataOptions,
       apiClient: StarrydataApiFactory(
@@ -65,26 +65,26 @@ export default Vue.extend({
     headers() {
       return [
         { text: 'ID', value: 'id', sortable: false },
-        { text: 'タグ名', value: 'attributes.name', sortable: false },
+        { text: 'タグ名', value: 'attributes.name_ja', sortable: false },
         { text: 'ツリーID', value: 'relationships.nodes', sortable: false },
       ]
     },
   },
   watch: {
     options() {
-      this.loadPolymerTags()
+      this.loadTags()
     },
     keyword() {
-      this.loadPolymerTags()
+      this.loadTags()
     },
   },
   created() {
-    this.loadPolymerTags()
+    this.loadTags()
   },
   methods: {
-    async loadPolymerTags() {
+    async loadTags() {
       try {
-        const { data: response } = await this.apiClient.listApiPolymerTags(
+        const { data: response } = await this.apiClient.listApiTags(
           undefined,
           undefined,
           this.options.page,
