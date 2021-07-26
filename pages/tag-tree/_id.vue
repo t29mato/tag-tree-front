@@ -231,8 +231,10 @@ export default Vue.extend({
         })
         this.refreshTree()
       } catch (error) {
-        console.error(error)
-        //
+        window.alert(
+          JSON.stringify(error.response.data.errors) ||
+            '予期しないエラーです。管理者に問い合わせください。'
+        )
       } finally {
         //
       }
@@ -269,8 +271,10 @@ export default Vue.extend({
           },
         })
       } catch (error) {
-        console.error(error)
-        //
+        window.alert(
+          JSON.stringify(error.response.data.errors) ||
+            '予期しないエラーです。管理者に問い合わせください。'
+        )
       } finally {
         this.refreshTree()
         //
