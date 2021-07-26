@@ -10,7 +10,7 @@
       :footer-props="{ 'items-per-page-options': [10, 20, 50, 100] }"
     >
       <template #[`item.attributes.name_ja`]="{ item }">
-        <v-chip>
+        <v-chip :to="item.id">
           {{ item.attributes.name_ja }}
         </v-chip>
       </template>
