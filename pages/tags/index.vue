@@ -14,6 +14,11 @@
           {{ item.attributes.name_ja }}
         </v-chip>
       </template>
+      <template #[`item.attributes.name_en`]="{ item }">
+        <v-chip :to="item.id">
+          {{ item.attributes.name_en }}
+        </v-chip>
+      </template>
       <template #[`item.relationships.nodes`]="{ item }">
         <nuxt-link
           v-for="node in item.relationships.nodes.data"
@@ -66,6 +71,7 @@ export default Vue.extend({
       return [
         { text: 'ID', value: 'id', sortable: false },
         { text: 'タグ名', value: 'attributes.name_ja', sortable: false },
+        { text: 'Tag Name', value: 'attributes.name_en', sortable: false },
         { text: 'ツリーID', value: 'relationships.nodes', sortable: false },
       ]
     },
