@@ -3,13 +3,21 @@
     <v-card>
       <v-container>
         <v-card-title>{{ tag.attributes.name_ja }}</v-card-title>
-        <v-text-field v-model="updatedName"></v-text-field>
+        <v-text-field v-model="updatedNameJa" label="タグ名"></v-text-field>
+        <v-text-field v-model="updatedNameEn" label="Tag Name"></v-text-field>
         <v-card-actions>
-          <v-btn text @click="loadTag()"> 元に戻す </v-btn>
           <v-btn text color="success" @click="updateTag()"> 更新する </v-btn>
         </v-card-actions>
       </v-container>
     </v-card>
+    <v-snackbar v-model="snackbar">
+      更新に成功しました
+      <template #action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -24,7 +32,11 @@ export default Vue.extend({
       process.env.STARRYDATA_API_URL
     )
     const { data: tag } = (await apiClient.retrieveApiTagsId(params.id)).data
-    return { tag, updatedName: tag.attributes.name_ja }
+    return {
+      tag,
+      updatedNameJa: tag.attributes.name_ja,
+      updatedNameEn: tag.attributes.name_en,
+    }
   },
   data() {
     return {
@@ -33,7 +45,9 @@ export default Vue.extend({
         undefined,
         process.env.STARRYDATA_API_URL
       ),
-      updatedName: '',
+      updatedNameJa: '',
+      updatedNameEn: '' as string | undefined,
+      snackbar: false,
     }
   },
   computed: {},
@@ -47,7 +61,8 @@ export default Vue.extend({
           await this.apiClient.retrieveApiTagsId(this.$route.params.id)
         ).data
         this.tag = tag
-        this.updatedName = tag.attributes.name_ja
+        this.updatedNameJa = tag.attributes.name_ja
+        this.updatedNameEn = tag.attributes.name_en
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
@@ -64,10 +79,12 @@ export default Vue.extend({
             type: 'Tag',
             id: this.$route.params.id,
             attributes: {
-              name_ja: this.updatedName,
+              name_ja: this.updatedNameJa,
+              name_en: this.updatedNameEn,
             },
           },
         })
+        this.snackbar = true
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
