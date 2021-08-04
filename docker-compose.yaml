@@ -20,13 +20,3 @@ services:
     ports:
       - 3000:3000
     command: yarn dev
-
-  api:
-    image: stoplight/prism:4
-    ports:
-      - 4010:4010
-    command: mock -h 0.0.0.0 /workspace/api/Starrydata-API.yaml
-    volumes:
-      - ./api:/workspace/api
-    tty: true
-    restart: always

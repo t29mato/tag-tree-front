@@ -24,7 +24,6 @@ For detailed explanation on how things work, check out [Nuxt.js docs](https://nu
 $ docker-compose up
 
 - Nuxt.js (User Front): http://localhost:3000/
-- Prism (API Mock): http://localhost:4010/
 
 ## Mock Environment
 
