@@ -6,7 +6,17 @@
           <v-toolbar-title>削除確認</v-toolbar-title>
         </v-app-bar>
         <v-container>
-          <v-treeview open-all :items="[deletedTree]"></v-treeview>
+          <v-treeview :items="[deletedTree]">
+            <template slot="label" slot-scope="{ item }">
+              <v-chip
+                class="ma-2"
+                :color="generateColor(item.tree_level)"
+                :to="{ path: '/tags/' + item.tag_id }"
+              >
+                {{ item.name_ja }}
+              </v-chip>
+            </template>
+          </v-treeview>
           <v-card-actions>
             <v-btn text @click="shouldShowNodeDeleteDialog = false">
               キャンセル
@@ -16,59 +26,58 @@
         </v-container>
       </v-card>
     </v-dialog>
+    <v-text-field
+      v-model="filterKeyword"
+      label="魚類名でフィルタリング"
+      clearable
+      clear-icon="mdi-close-circle-outline"
+    ></v-text-field>
+    <v-treeview
+      :items="allTree"
+      item-key="node_id"
+      :search="filterKeyword"
+      :filter="filterTree"
+      item-text="name_ja"
+      :open="[$route.params.id]"
+      color="red"
+      selectable
+    >
+      <template slot="label" slot-scope="{ item }">
+        <v-chip
+          class="ma-2"
+          :color="generateColor(item.tree_level)"
+          :to="{ path: '/tag-tree/' + item.node_id }"
+        >
+          {{ item.name_ja }}
+        </v-chip>
 
-    <!-- タグツリーの初期表示を全てOpenにするため -->
-    <div v-if="allTree.length > 0">
-      <v-treeview open-all :items="allTree">
-        <template slot="label" slot-scope="{ item }">
-          <v-chip
-            class="ma-2"
-            :color="generateColor(item.tree_level)"
-            :to="{ path: './tags/' + item.tag_id }"
-          >
-            {{ item.name_ja }}
-          </v-chip>
-
-          <v-btn
-            v-if="item.node_id === AddedTree.node_id"
-            icon
-            large
-            @click="closeAddTagField()"
-            ><v-icon color="green">mdi-minus-box</v-icon></v-btn
-          >
-          <v-btn v-else icon large @click="showAddTagField(item)"
-            ><v-icon>mdi-plus-box</v-icon></v-btn
-          >
-
-          <v-btn icon large @click="openNodeDeleteDialog(item)"
-            ><v-icon>mdi-delete</v-icon></v-btn
-          >
-          <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
-            <v-text-field
-              v-model="newName"
-              class="ml-2"
-              @keypress="filterTags()"
-            ></v-text-field>
-            <div class="ml-1">
-              <v-chip
-                v-for="tag in filteredTags"
-                :key="tag.id"
-                color="primary"
-                class="ma-2"
-                @click="addNode(tag)"
-                >{{ tag.attributes && tag.attributes.name_ja }}</v-chip
-              >
-              <div v-show="shouldShowNewTag">
-                <v-chip class="ma-2" color="success" @click="addTagAndNode()">
-                  {{ newName }}
-                </v-chip>
-                <v-icon color="success" large>mdi-new-box</v-icon>
-              </div>
+        <v-btn icon large @click="showAddTagField(item)">追加</v-btn>
+        <v-btn icon large @click="openNodeDeleteDialog(item)">削除</v-btn>
+        <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
+          <v-text-field
+            v-model="newName"
+            class="ml-2"
+            @keypress="filterTags()"
+          ></v-text-field>
+          <div class="ml-1">
+            <v-chip
+              v-for="tag in filteredTags"
+              :key="tag.id"
+              color="primary"
+              class="ma-2"
+              @click="addNode(tag)"
+              >{{ tag.attributes && tag.attributes.name_ja }}</v-chip
+            >
+            <div v-show="shouldShowNewTag">
+              <v-chip class="ma-2" color="success" @click="addTagAndNode()">
+                {{ newName }}
+              </v-chip>
+              <v-icon color="success" large>mdi-new-box</v-icon>
             </div>
           </div>
-        </template>
-      </v-treeview>
-    </div>
+        </div>
+      </template>
+    </v-treeview>
   </v-container>
 </template>
 
@@ -89,6 +98,25 @@ export default Vue.extend({
       return text
     },
   },
+  async asyncData({ params }) {
+    const apiClient = StarrydataApiFactory(
+      undefined,
+      process.env.STARRYDATA_API_URL
+    )
+    try {
+      // ルートIDが1のため
+      const { data: tagTree } = (
+        await apiClient.retrieveApiTagTreeId(params.id || '1')
+      ).data
+      return {
+        allTree: [tagTree.attributes],
+      }
+    } catch {
+      //
+    } finally {
+      //
+    }
+  },
   data() {
     return {
       allTree: [] as TagTreeAttributes[],
@@ -103,15 +131,17 @@ export default Vue.extend({
         undefined,
         process.env.STARRYDATA_API_URL
       ),
+      filterKeyword: '',
     }
   },
   computed: {
     shouldShowNewTag(): boolean {
       return this.newName.length > 0
     },
-  },
-  created() {
-    this.loadTree()
+    filterTree() {
+      return (item: TagTreeAttributes, search: string) =>
+        item.name_ja.includes(search)
+    },
   },
   methods: {
     generateColor(treeLevel: number): string {
@@ -147,10 +177,6 @@ export default Vue.extend({
     },
     showAddTagField(tree: TagTreeAttributes) {
       this.AddedTree = tree
-      this.newName = ''
-    },
-    closeAddTagField() {
-      this.AddedTree = {} as TagTreeAttributes
       this.newName = ''
     },
     async loadTree() {
