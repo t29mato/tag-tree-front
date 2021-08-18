@@ -28,7 +28,7 @@
     "@nuxtjs/axios": "^5.13.1",
     "core-js": "^3.9.1",
     "cross-env": "^7.0.3",
-    "nuxt": "^2.15.3",
+    "nuxt": "^2.15.8",
     "nuxt-basic-auth-module": "^1.4.0",
     "starrydata-api-client": "git+https://github.com/t29mato/std3-api-client.git#v1.0.31",
     "vue-class-component": "^7.2.6"
