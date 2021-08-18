@@ -23,7 +23,7 @@
         <nuxt-link
           v-for="node in item.relationships.nodes.data"
           :key="node.id"
-          :to="{ path: '/polymer/tag-tree/' + node.id }"
+          :to="{ path: '/tag-tree/' + node.id }"
           class="mr-3"
           >{{ node.id }}</nuxt-link
         >

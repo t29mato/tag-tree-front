@@ -34,8 +34,8 @@ export default Vue.extend({
     const { data: tag } = (await apiClient.retrieveApiTagsId(params.id)).data
     return {
       tag,
-      updatedNameJa: tag.attributes.name_ja,
-      updatedNameEn: tag.attributes.name_en,
+      updatedNameJa: tag.attributes.term_ja.name,
+      updatedNameEn: tag.attributes.term_en.name,
     }
   },
   data() {
@@ -61,8 +61,8 @@ export default Vue.extend({
           await this.apiClient.retrieveApiTagsId(this.$route.params.id)
         ).data
         this.tag = tag
-        this.updatedNameJa = tag.attributes.name_ja
-        this.updatedNameEn = tag.attributes.name_en
+        this.updatedNameJa = tag.attributes.term_ja.name || ''
+        this.updatedNameEn = tag.attributes.term_en.name || ''
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-dialog v-model="shouldShowNodeDeleteDialog" hide-overlay>
       <v-card>
         <v-app-bar>
@@ -8,11 +8,7 @@
         <v-container>
           <v-treeview :items="[deletedTree]">
             <template slot="label" slot-scope="{ item }">
-              <v-chip
-                class="ma-2"
-                :color="generateColor(item.tree_level)"
-                :to="{ path: '/tags/' + item.tag_id }"
-              >
+              <v-chip class="ma-2" :to="{ path: '/tags/' + item.tag_id }">
                 {{ item.name_ja }}
               </v-chip>
             </template>
@@ -26,59 +22,72 @@
         </v-container>
       </v-card>
     </v-dialog>
-    <v-text-field
-      v-model="filterKeyword"
-      label="魚類名でフィルタリング"
-      clearable
-      clear-icon="mdi-close-circle-outline"
-    ></v-text-field>
-    <v-treeview
-      :items="allTree"
-      item-key="node_id"
-      :search="filterKeyword"
-      :filter="filterTree"
-      item-text="name_ja"
-      :open="[$route.params.id]"
-      color="red"
-      selectable
-    >
-      <template slot="label" slot-scope="{ item }">
-        <v-chip
-          class="ma-2"
-          :color="generateColor(item.tree_level)"
-          :to="{ path: '/tag-tree/' + item.node_id }"
-        >
-          {{ item.name_ja }}
-        </v-chip>
-
-        <v-btn icon large @click="showAddTagField(item)">追加</v-btn>
-        <v-btn icon large @click="openNodeDeleteDialog(item)">削除</v-btn>
-        <div v-if="item.node_id === AddedTree.node_id" class="ml-sm-5">
+    <v-container>
+      <v-row>
+        <v-col cols="6">
           <v-text-field
-            v-model="newName"
-            class="ml-2"
-            @keypress="filterTags()"
+            v-model="filterKeyword"
+            label="キーワードでフィルタリング"
+            clearable
+            clear-icon="mdi-close-circle-outline"
           ></v-text-field>
-          <div class="ml-1">
-            <v-chip
-              v-for="tag in filteredTags"
-              :key="tag.id"
-              color="primary"
-              class="ma-2"
-              @click="addNode(tag)"
-              >{{ tag.attributes && tag.attributes.name_ja }}</v-chip
-            >
-            <div v-show="shouldShowNewTag">
-              <v-chip class="ma-2" color="success" @click="addTagAndNode()">
-                {{ newName }}
+          <v-treeview
+            :items="allTree"
+            item-key="node_id"
+            :search="filterKeyword"
+            :filter="filterTree"
+            item-text="name_ja"
+            activatable
+            @update:active="activateTree"
+          >
+            <template slot="label" slot-scope="{ item }">
+              <v-chip class="ma-2" :color="generateColor(item.tree_level)">
+                {{ item.name_ja }}
               </v-chip>
-              <v-icon color="success" large>mdi-new-box</v-icon>
+            </template>
+          </v-treeview>
+        </v-col>
+        <v-col v-if="activeTree.children" cols="6">
+          <v-list dense>
+            <h2>{{ activeTree.name_ja }}</h2>
+            <v-chip
+              v-for="child in activeTree.children"
+              :key="child.node_id"
+              class="ma-2"
+              close
+              @click:close="openNodeDeleteDialog(child.node_id)"
+            >
+              {{ child.name_ja }}
+            </v-chip>
+            <v-text-field
+              v-model="newName"
+              class="ml-2"
+              label="タグを追加"
+              @keypress="filterTags()"
+            ></v-text-field>
+            <div class="ml-1">
+              <v-chip
+                v-for="tag in filteredTags"
+                :key="tag.id"
+                color="primary"
+                class="ma-2"
+                @click="addNode(tag)"
+                >{{
+                  tag.attributes.term_ja && tag.attributes.term_ja.name
+                }}</v-chip
+              >
+              <div v-show="filteredTags.length === 0">
+                <v-chip class="ma-2" color="success" @click="addTagAndNode()">
+                  {{ newName }}
+                </v-chip>
+                <v-icon color="success" large>mdi-new-box</v-icon>
+              </div>
             </div>
-          </div>
-        </div>
-      </template>
-    </v-treeview>
-  </v-container>
+          </v-list>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -124,6 +133,7 @@ export default Vue.extend({
       updatedTree: {} as TagTreeAttributes,
       deletedTree: {} as TagTreeAttributes,
       shouldShowNodeDeleteDialog: false,
+      activeTree: {} as TagTreeAttributes,
       newName: '',
       updatedName: '',
       filteredTags: [] as Tag[],
@@ -144,28 +154,55 @@ export default Vue.extend({
     },
   },
   methods: {
-    generateColor(treeLevel: number): string {
-      const colors = [
-        '#FFE0B2',
-        '#D1C4E9',
-        '#BBDEFB',
-        '#B2DFDB',
-        '#F0F4C3',
-        '#FFECB3',
-        '#D7CCC8',
-      ]
-      return colors[treeLevel % 7]
+    async activateTree(ids: string[]) {
+      this.$nuxt.$loading.start()
+      try {
+        // ルートIDが1のため
+        const { data: tagTree } = (
+          await this.apiClient.retrieveApiTagTreeId(ids[0])
+        ).data
+        this.activeTree = tagTree.attributes
+      } catch {
+        //
+      } finally {
+        this.$nuxt.$loading.finish()
+      }
     },
-    openNodeDeleteDialog(e: TagTreeAttributes) {
+    generateColor(treeLevel: number): string {
+      // INFO: https://iro-color.com/colorchart/tint/rainbow-color.html
+      const colors = [
+        '#F5B090',
+        '#FCD7A1',
+        '#FFF9B1',
+        '#A5D4AD',
+        '#A3BCE2',
+        '#A59ACA',
+        '#CFA7CD',
+      ]
+      // INFO: ツリーレベルが1から開始するので、順番通りにするため1を引いた
+      return colors[(treeLevel - 1) % 7]
+    },
+    async openNodeDeleteDialog(nodeId: string) {
       this.shouldShowNodeDeleteDialog = true
-      this.deletedTree = e
+      try {
+        const { data: tagTree } = (
+          await this.apiClient.retrieveApiTagTreeId(nodeId)
+        ).data
+        this.deletedTree = tagTree.attributes
+      } catch {
+        //
+      } finally {
+        //
+      }
     },
     refreshTree() {
       this.loadSelectedTree()
       this.loadTree()
       this.filterTags()
+      this.loadActiveTree()
     },
     async deleteTree() {
+      this.$nuxt.$loading.start()
       try {
         await this.apiClient.destroyApiNodesId(this.deletedTree.node_id)
         this.shouldShowNodeDeleteDialog = false
@@ -173,11 +210,8 @@ export default Vue.extend({
         //
       } finally {
         this.refreshTree()
+        this.$nuxt.$loading.finish()
       }
-    },
-    showAddTagField(tree: TagTreeAttributes) {
-      this.AddedTree = tree
-      this.newName = ''
     },
     async loadTree() {
       try {
@@ -206,6 +240,18 @@ export default Vue.extend({
         //
       }
     },
+    async loadActiveTree() {
+      try {
+        const { data: tagTree } = (
+          await this.apiClient.retrieveApiTagTreeId(this.activeTree.node_id)
+        ).data
+        this.activeTree = tagTree.attributes
+      } catch {
+        //
+      } finally {
+        //
+      }
+    },
     async filterTags() {
       try {
         const { data: tags } = (
@@ -227,15 +273,15 @@ export default Vue.extend({
     },
     async addNode(tag: Tag) {
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
-      if (this.AddedTree.tag_id === tag.id) {
+      if (this.activeTree.tag_id === tag.id) {
         window.alert(`親ノードと同じタグの子を登録することはできません。`)
         return
       }
       if (
-        this.AddedTree.children.map((child) => child.tag_id).includes(tag.id)
+        this.activeTree.children.map((child) => child.tag_id).includes(tag.id)
       ) {
         window.alert(
-          `既に「${this.AddedTree.name_ja}」ノードに「${tag.attributes?.name_ja}」タグは登録されています。`
+          `既に「${this.activeTree.name_ja}」ノードに「${tag.attributes.term_ja.name}」タグは登録されています。`
         )
         return
       }
@@ -246,7 +292,7 @@ export default Vue.extend({
             attributes: {
               parent: {
                 type: 'Node',
-                id: this.AddedTree.node_id,
+                id: this.activeTree.node_id,
               },
               tag: {
                 type: 'Tag',
@@ -268,18 +314,31 @@ export default Vue.extend({
     async addTagAndNode() {
       if (
         this.filteredTags
-          .map((tag) => tag.attributes?.name_ja)
+          .map((tag) => tag.attributes.term_ja.name)
           .includes(this.newName)
       ) {
-        window.alert(`${this.newName}は既に登録されているタグです。`)
+        window.alert(`${this.newName}は既に登録されているタ
+        グです。`)
+        return
       }
       try {
+        const { data: newTerm } = (
+          await this.apiClient.createApiTerms({
+            data: {
+              type: 'Term',
+              attributes: {
+                name: this.newName,
+                language: 'ja',
+              },
+            },
+          })
+        ).data
         const { data: newTag } = (
           await this.apiClient.createApiTags({
             data: {
               type: 'Tag',
               attributes: {
-                name_ja: this.newName,
+                term_ja_id: newTerm.id,
               },
             },
           })
@@ -290,7 +349,7 @@ export default Vue.extend({
             attributes: {
               parent: {
                 type: 'Node',
-                id: this.AddedTree.node_id,
+                id: this.activeTree.node_id,
               },
               tag: newTag,
             },

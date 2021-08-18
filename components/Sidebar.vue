@@ -35,7 +35,7 @@ export default class Sidebar extends Vue {
   items = [
     { title: 'ダッシュボード', icon: 'mdi-view-dashboard', path: '/' },
     {
-      title: '高分子タグツリー',
+      title: '熱電材料タグツリー',
       icon: 'mdi-image',
       path: '/tag-tree/1',
     },
