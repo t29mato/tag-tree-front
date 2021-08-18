@@ -91,3 +91,6 @@ sw.*
 
 # Web Plot Digitizer files
 static/wpd/*
+
+# Local File History - VSCode extension
+.history
