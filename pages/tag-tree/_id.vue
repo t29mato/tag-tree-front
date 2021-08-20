@@ -42,7 +42,7 @@
           >
             <template slot="label" slot-scope="{ item }">
               <v-chip class="ma-2" :color="generateColor(item.tree_level)">
-                {{ item.name_ja }}
+                {{ item.name_ja | addCount(item.children.length) }}
               </v-chip>
             </template>
           </v-treeview>
@@ -57,7 +57,7 @@
               close
               @click:close="openNodeDeleteDialog(child.node_id)"
             >
-              {{ child.name_ja }}
+              {{ child.name_ja | addCount(child.children.length) }}
             </v-chip>
             <v-text-field
               v-model="newName"
@@ -105,6 +105,12 @@ export default Vue.extend({
         return text.slice(0, end) + '...'
       }
       return text
+    },
+    addCount(text: string, count: number): string {
+      if (count === 0) {
+        return text
+      }
+      return text + ' ' + count
     },
   },
   async asyncData({ params }) {
