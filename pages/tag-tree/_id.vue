@@ -42,45 +42,50 @@
           >
             <template slot="label" slot-scope="{ item }">
               <v-chip class="ma-2" :color="generateColor(item.tree_level)">
-                {{ item.name_ja | addCount(item.children.length) }}
+                {{ item.name_ja }}
               </v-chip>
+              <v-chip v-if="item.children.length > 0" x-small>{{
+                item.children.length
+              }}</v-chip>
             </template>
           </v-treeview>
         </v-col>
         <v-col v-if="activeTree.children" cols="6">
           <v-list dense>
             <h2>{{ activeTree.name_ja }}</h2>
-            <v-chip
-              v-for="child in activeTree.children"
-              :key="child.node_id"
-              class="ma-2"
-              close
-              @click:close="openNodeDeleteDialog(child.node_id)"
-            >
-              {{ child.name_ja | addCount(child.children.length) }}
-            </v-chip>
             <v-text-field
               v-model="newName"
+              append-outer-icon="mdi-new-box"
               class="ml-2"
               label="タグを追加"
+              @click:append-outer="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
             <div class="ml-1">
-              <v-chip
-                v-for="tag in filteredTags"
-                :key="tag.id"
-                color="primary"
-                class="ma-2"
-                @click="addNode(tag)"
-                >{{
-                  tag.attributes.term_ja && tag.attributes.term_ja.name
-                }}</v-chip
-              >
-              <div v-show="filteredTags.length === 0">
-                <v-chip class="ma-2" color="success" @click="addTagAndNode()">
-                  {{ newName }}
+              <div v-for="tag in filteredTags" :key="tag.id">
+                <v-chip
+                  color="primary"
+                  class="ma-2"
+                  close
+                  close-icon="mdi-plus-box"
+                  @click:close="addNode(tag)"
+                  >{{
+                    tag.attributes.term_ja && tag.attributes.term_ja.name
+                  }}</v-chip
+                >
+              </div>
+              <!-- 右側を固定する -->
+              <div v-for="child in activeTree.children" :key="child.node_id">
+                <v-chip
+                  class="ma-2"
+                  close
+                  @click:close="openNodeDeleteDialog(child.node_id)"
+                >
+                  {{ child.name_ja }}
                 </v-chip>
-                <v-icon color="success" large>mdi-new-box</v-icon>
+                <v-chip v-if="child.children.length > 0" x-small>{{
+                  child.children.length
+                }}</v-chip>
               </div>
             </div>
           </v-list>
@@ -106,11 +111,11 @@ export default Vue.extend({
       }
       return text
     },
-    addCount(text: string, count: number): string {
-      if (count === 0) {
-        return text
+    showIfNumberIsOverOne(num: number): string {
+      if (num === 0) {
+        return ''
       }
-      return text + ' ' + count
+      return String(num)
     },
   },
   async asyncData({ params }) {
@@ -318,6 +323,7 @@ export default Vue.extend({
       }
     },
     async addTagAndNode() {
+      // TODO: 既に登録されているタグでもそのまま登録できるようにする。
       if (
         this.filteredTags
           .map((tag) => tag.attributes.term_ja.name)
