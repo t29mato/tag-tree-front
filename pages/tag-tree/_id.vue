@@ -64,6 +64,7 @@
             <div class="ml-1">
               <div v-for="tag in filteredTags" :key="tag.id">
                 <v-chip
+                  v-if="shouldShowFilteredTag(tag)"
                   color="primary"
                   class="ma-2"
                   close
@@ -165,6 +166,12 @@ export default Vue.extend({
     },
   },
   methods: {
+    // INFO: 同じ親に同じ子を複数登録するのはできないので事前に非表示にするため
+    shouldShowFilteredTag(tag: Tag): boolean {
+      return !this.activeTree.children
+        .map((child) => child.name_ja)
+        .includes(tag.attributes.term_ja.name || '')
+    },
     activateTree(ids: string[]) {
       const activatedTreeId = ids[0]
       const searchTreeById = (
