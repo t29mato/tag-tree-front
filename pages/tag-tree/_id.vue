@@ -165,19 +165,30 @@ export default Vue.extend({
     },
   },
   methods: {
-    async activateTree(ids: string[]) {
-      this.$nuxt.$loading.start()
-      try {
-        // ルートIDが1のため
-        const { data: tagTree } = (
-          await this.apiClient.retrieveApiTagTreeId(ids[0])
-        ).data
-        this.activeTree = tagTree.attributes
-      } catch {
-        //
-      } finally {
-        this.$nuxt.$loading.finish()
+    activateTree(ids: string[]) {
+      const activatedTreeId = ids[0]
+      const searchTreeById = (
+        targetTreeId: string,
+        rootTree: TagTreeAttributes
+      ) => {
+        let targetTree: TagTreeAttributes = {} as TagTreeAttributes
+        const search = (tree: TagTreeAttributes): void => {
+          // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
+          if (targetTree.node_id) {
+            return
+          }
+          if (!tree) {
+            return
+          }
+          if (tree.node_id === targetTreeId) {
+            targetTree = tree
+          }
+          tree.children.map((child) => search(child))
+        }
+        search(rootTree)
+        return targetTree
       }
+      this.activeTree = searchTreeById(activatedTreeId, this.allTree[0])
     },
     generateColor(treeLevel: number): string {
       // INFO: https://iro-color.com/colorchart/tint/rainbow-color.html
