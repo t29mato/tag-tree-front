@@ -282,6 +282,10 @@ export default Vue.extend({
       }
     },
     async filterTags() {
+      if (!this.newName) {
+        this.filteredTags = []
+        return
+      }
       try {
         const { data: tags } = (
           await this.apiClient.listApiTags(
