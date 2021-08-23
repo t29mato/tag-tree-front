@@ -32,7 +32,7 @@
             clear-icon="mdi-close-circle-outline"
           ></v-text-field>
           <v-treeview
-            :items="allTree"
+            :items="[allTree]"
             item-key="node_id"
             :search="filterKeyword"
             :filter="filterTree"
@@ -129,7 +129,7 @@ export default Vue.extend({
         await apiClient.retrieveApiTagTreeId(params.id || '1')
       ).data
       return {
-        allTree: [tagTree.attributes],
+        allTree: tagTree.attributes,
       }
     } catch {
       //
@@ -139,7 +139,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      allTree: [] as TagTreeAttributes[],
+      allTree: {} as TagTreeAttributes,
       AddedTree: {} as TagTreeAttributes,
       updatedTree: {} as TagTreeAttributes,
       deletedTree: {} as TagTreeAttributes,
@@ -188,7 +188,7 @@ export default Vue.extend({
         search(rootTree)
         return targetTree
       }
-      this.activeTree = searchTreeById(activatedTreeId, this.allTree[0])
+      this.activeTree = searchTreeById(activatedTreeId, this.allTree)
     },
     generateColor(treeLevel: number): string {
       // INFO: https://iro-color.com/colorchart/tint/rainbow-color.html
@@ -243,7 +243,7 @@ export default Vue.extend({
             this.$route.params.id || '1'
           )
         ).data
-        this.allTree = [tagTree.attributes]
+        this.allTree = tagTree.attributes
       } catch {
         //
       } finally {
