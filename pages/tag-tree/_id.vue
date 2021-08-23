@@ -347,8 +347,7 @@ export default Vue.extend({
           .map((tag) => tag.attributes.term_ja.name)
           .includes(this.newName)
       ) {
-        window.alert(`${this.newName}は既に登録されているタ
-        グです。`)
+        window.alert(`${this.newName}は既に登録されているタグです。`)
         return
       }
       try {
