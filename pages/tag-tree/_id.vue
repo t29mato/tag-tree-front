@@ -57,7 +57,7 @@
               v-model="newName"
               append-outer-icon="mdi-new-box"
               class="ml-2"
-              label="タグを追加"
+              label="子タグを追加"
               @click:append-outer="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
@@ -76,6 +76,7 @@
                 >
               </div>
               <!-- 右側を固定する -->
+              <h3>子タグ</h3>
               <div v-for="child in activeTree.children" :key="child.node_id">
                 <v-chip
                   class="ma-2"
