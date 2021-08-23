@@ -363,6 +363,11 @@ export default Vue.extend({
               attributes: {
                 term_ja_id: newTerm.id,
               },
+              relationships: {
+                nodes: {
+                  data: {},
+                },
+              },
             },
           })
         ).data
