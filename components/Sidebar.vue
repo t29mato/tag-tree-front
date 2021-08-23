@@ -37,7 +37,17 @@ export default class Sidebar extends Vue {
     {
       title: '熱電材料タグツリー',
       icon: 'mdi-image',
-      path: '/tag-tree/1',
+      path: '/tag-tree/' + process.env.TREE_ID_THERMOELECTRIC_MATERIALS,
+    },
+    {
+      title: '合成方法タグツリー',
+      icon: 'mdi-image',
+      path: '/tag-tree/' + process.env.TREE_ID_INORGANIC_SYNTHESIS,
+    },
+    {
+      title: '測定方法タグツリー',
+      icon: 'mdi-image',
+      path: '/tag-tree/' + process.env.TREE_ID_THERMOELECTRIC_MEASUREMENT,
     },
     {
       title: '魚類タグツリー',
