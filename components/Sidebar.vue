@@ -52,7 +52,7 @@ export default class Sidebar extends Vue {
     {
       title: '魚類タグツリー',
       icon: 'mdi-fish',
-      path: '/tag-tree/4851',
+      path: '/tag-tree/' + process.env.TREE_ID_FISH,
     },
     { title: 'タグ', icon: 'mdi-image', path: '/tags/' },
     { title: 'データベース', icon: 'mdi-image', path: '/databases' },

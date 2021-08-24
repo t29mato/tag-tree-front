@@ -47,6 +47,13 @@
               <v-chip v-if="item.children.length > 0" x-small>{{
                 item.children.length
               }}</v-chip>
+              <!-- INFO 魚類ツリーの時だけ魚図鑑のURL表示 -->
+              <v-icon
+                v-if="allTree.node_id === '4851'"
+                class="ml-2"
+                @click="openZukanCom(item.node_id)"
+                >mdi-fish</v-icon
+              >
             </template>
           </v-treeview>
         </v-col>
@@ -167,6 +174,9 @@ export default Vue.extend({
     },
   },
   methods: {
+    openZukanCom(id: string) {
+      window.open('https://zukan.com/fish/internal' + id)
+    },
     // INFO: 同じ親に同じ子を複数登録するのはできないので事前に非表示にするため
     shouldShowFilteredTag(tag: Tag): boolean {
       return !this.activeTree.children
