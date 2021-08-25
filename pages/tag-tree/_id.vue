@@ -114,6 +114,10 @@ import {
   TagTreeAttributes,
 } from 'starrydata-api-client'
 
+interface VTreeView {
+  updateAll: (arg0: boolean) => void
+}
+
 export default Vue.extend({
   filters: {
     truncate(text: string, end: number): string {
@@ -177,12 +181,11 @@ export default Vue.extend({
   },
   methods: {
     handleFilterKeyword(input: string) {
+      const allTree = this.$refs.allTree as unknown as VTreeView
       if (input) {
-        // FIXME: vetur error
-        this.$refs.allTree.updateAll(true)
+        allTree.updateAll(true)
       } else {
-        // FIXME: vetur error
-        this.$refs.allTree.updateAll(false)
+        allTree.updateAll(false)
       }
     },
     openZukanCom(id: string) {
