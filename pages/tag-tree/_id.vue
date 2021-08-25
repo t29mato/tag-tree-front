@@ -30,8 +30,10 @@
             label="キーワードでフィルタリング"
             clearable
             clear-icon="mdi-close-circle-outline"
+            @input="handleFilterKeyword"
           ></v-text-field>
           <v-treeview
+            ref="allTree"
             :items="[allTree]"
             item-key="node_id"
             :search="filterKeyword"
@@ -174,6 +176,15 @@ export default Vue.extend({
     },
   },
   methods: {
+    handleFilterKeyword(input: string) {
+      if (input) {
+        // FIXME: vetur error
+        this.$refs.allTree.updateAll(true)
+      } else {
+        // FIXME: vetur error
+        this.$refs.allTree.updateAll(false)
+      }
+    },
     openZukanCom(id: string) {
       window.open('https://zukan.com/fish/internal' + id)
     },
