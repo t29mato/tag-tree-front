@@ -30,7 +30,7 @@
     "cross-env": "^7.0.3",
     "nuxt": "^2.15.8",
     "nuxt-basic-auth-module": "^1.4.0",
-    "starrydata-api-client": "git+https://github.com/t29mato/std3-api-client.git#v1.0.32",
+    "starrydata-api-client": "git+https://github.com/t29mato/std3-api-client.git#v1.0.39",
     "vue-class-component": "^7.2.6"
   },
   "devDependencies": {
