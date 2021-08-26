@@ -66,7 +66,7 @@
             <h3>子タグ</h3>
             <v-text-field
               v-model="newChildTagName"
-              append-outer-icon="mdi-tag-plus"
+              append-outer-icon="mdi-plus-box"
               class="ml-2"
               label="子タグを追加"
               @click:append-outer="addTagAndNode"
@@ -103,10 +103,10 @@
               <h3 class="mt-2">類語</h3>
               <v-text-field
                 v-model="newSynonymName"
-                append-outer-icon="mdi-tag-plus"
+                append-outer-icon="mdi-plus-box"
                 class="ml-2"
                 label="類語を追加"
-                @click:append-outer="addTagAndNode"
+                @click:append-outer="addTermAndSynonym"
                 @keypress="filterTerms()"
               ></v-text-field>
 
@@ -294,6 +294,7 @@ export default Vue.extend({
       // INFO: ツリーレベルが1から開始するので、順番通りにするため1を引いた
       return colors[(treeLevel - 1) % 7]
     },
+    // TODO: APIコールせずにツリーを表示できるように修正
     async openNodeDeleteDialog(nodeId: string) {
       this.shouldShowNodeDeleteDialog = true
       try {
@@ -309,7 +310,7 @@ export default Vue.extend({
     },
     refreshTree() {
       this.loadSelectedTree()
-      this.loadTree()
+      // this.loadTree()
       this.filterTags()
       this.loadActiveTree()
       this.filterTerms()
@@ -342,6 +343,7 @@ export default Vue.extend({
         //
       }
     },
+    // REFACTOR: 使っていないメソッドなので削除してもよさそう。
     async loadSelectedTree() {
       try {
         const { data: tagTree } = (
@@ -443,13 +445,13 @@ export default Vue.extend({
             },
           },
         })
-        this.refreshTree()
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
             '予期しないエラーです。管理者に問い合わせください。'
         )
       } finally {
+        this.refreshTree()
         //
       }
     },
@@ -464,27 +466,14 @@ export default Vue.extend({
         return
       }
       try {
-        const { data: newTerm } = (
-          await this.apiClient.createApiTerms({
-            data: {
-              type: 'Term',
-              attributes: {
-                name: this.newChildTagName,
-                language: 'ja',
-              },
-            },
-          })
-        ).data
         const { data: newTag } = (
           await this.apiClient.createApiTags({
             data: {
               type: 'Tag',
               attributes: {
-                term_ja_id: newTerm.id,
-              },
-              relationships: {
-                nodes: {
-                  data: {},
+                term_ja: {
+                  name: this.newChildTagName,
+                  language: 'ja',
                 },
               },
             },
@@ -533,16 +522,52 @@ export default Vue.extend({
             type: 'Tag',
             id: this.activeTag.id,
             attributes: {
-              synonyms_ids: [
-                term.id,
-                ...this.activeTag.relationships.synonyms_ids.data.map(
-                  (item) => item.id
-                ),
+              synonyms: [
+                term.attributes,
+                ...this.activeTag.attributes.synonyms,
               ],
             },
           },
         })
         this.refreshTree()
+      } catch (error) {
+        window.alert(
+          JSON.stringify(error.response.data.errors) ||
+            '予期しないエラーです。管理者に問い合わせください。'
+        )
+      } finally {
+        this.refreshTree()
+        this.$nuxt.$loading.finish()
+      }
+    },
+    // REFACTOR: addSynonymと重複箇所あるのでリファくタできないか
+    async addTermAndSynonym() {
+      this.$nuxt.$loading.start()
+      // TODO: 既に登録されているタグでもそのまま登録できるようにする。
+      if (
+        this.filteredTerms
+          .map((term) => term.attributes.name)
+          .includes(this.newSynonymName)
+      ) {
+        window.alert(`${this.newSynonymName}は既に登録されている用語です。`)
+        return
+      }
+      try {
+        await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
+          data: {
+            type: 'Tag',
+            id: this.activeTag.id,
+            attributes: {
+              synonyms: [
+                {
+                  name: this.newSynonymName,
+                  language: 'ja',
+                },
+                ...this.activeTag.attributes.synonyms,
+              ],
+            },
+          },
+        })
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||

@@ -79,8 +79,8 @@ export default Vue.extend({
             type: 'Tag',
             id: this.$route.params.id,
             attributes: {
-              name_ja: this.updatedNameJa,
-              name_en: this.updatedNameEn,
+              // name_ja: this.updatedNameJa,
+              // name_en: this.updatedNameEn,
             },
           },
         })
