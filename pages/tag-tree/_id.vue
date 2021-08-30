@@ -60,56 +60,26 @@
           </v-treeview>
         </v-col>
         <v-col v-if="activeTreeId" cols="6">
-          <v-list dense>
-            <h2>{{ activeTree.name_ja + 'タグ' }}</h2>
-            <!-- 右側を固定する -->
-            <h3>子タグ</h3>
-            <v-text-field
-              v-model="newChildTagName"
-              append-outer-icon="mdi-plus-box"
-              class="ml-2"
-              label="子タグを追加"
-              @click:append-outer="addTagAndNode"
-              @keypress="filterTags()"
-            ></v-text-field>
-
-            <div v-for="tag in filteredTags" :key="tag.id">
-              <v-chip
-                v-if="shouldShowFilteredTag(tag)"
-                color="primary"
-                class="ma-2"
-                close
-                close-icon="mdi-plus-box"
-                @click:close="addNode(tag)"
-                >{{
-                  tag.attributes.term_ja && tag.attributes.term_ja.name
-                }}</v-chip
-              >
-            </div>
-
-            <div v-for="child in activeTree.children" :key="child.node_id">
-              <v-chip
-                class="ma-2"
-                close
-                @click:close="openNodeDeleteDialog(child.node_id)"
-              >
-                {{ child.name_ja }}
-              </v-chip>
-              <v-chip v-if="child.children.length > 0" x-small>{{
-                child.children.length
-              }}</v-chip>
-            </div>
+          <v-chip large class="mb-2">
+            <h3>{{ activeTree.name_ja }}</h3>
+          </v-chip>
+          <v-container>
+            <h4>タグ名</h4>
+            <p>{{ activeTree.name_ja }}</p>
             <div v-if="activeTag.attributes">
-              <h3 class="mt-2">類語</h3>
-              <v-text-field
-                v-model="newSynonymName"
-                append-outer-icon="mdi-plus-box"
-                class="ml-2"
-                label="類語を追加"
-                @click:append-outer="addTermAndSynonym"
-                @keypress="filterTerms()"
-              ></v-text-field>
-
+              <h4 class="mt-2">同義語</h4>
+              <template
+                v-for="(synonym, index) in activeTag.attributes.synonyms"
+              >
+                <template v-if="index > 0">|</template>
+                <span :key="synonym.name"
+                  >{{ synonym.name }}
+                  <!-- TODO: 類語削除機能はモーダルで表示する -->
+                  <!-- <v-icon :key="synonym.name" @click="removeSynonym(synonym)"
+                  >mdi-close</v-icon
+                > -->
+                </span>
+              </template>
               <div v-for="term in filteredTerms" :key="term.id">
                 <v-chip
                   v-if="shouldShowFilteredTerm(term)"
@@ -121,15 +91,51 @@
                   >{{ term.attributes.name }}</v-chip
                 >
               </div>
-
-              <div
-                v-for="synonym in activeTag.attributes.synonyms"
-                :key="synonym.name"
-              >
-                {{ synonym.name }}
-              </div>
             </div>
-          </v-list>
+            <v-text-field
+              v-model="newSynonymName"
+              append-outer-icon="mdi-plus-box"
+              :label="activeTree.name_ja + 'の同義語を追加'"
+              @click:append-outer="addTermAndSynonym"
+              @keypress="filterTerms()"
+            ></v-text-field>
+          </v-container>
+          <h3>{{ activeTree.name_ja }}の子タグ</h3>
+          <v-container>
+            <div v-for="child in activeTree.children" :key="child.node_id">
+              <v-chip
+                class="mt-2 mr-2 mb-2"
+                close
+                @click="activateTree([child.node_id])"
+                @click:close="openNodeDeleteDialog(child.node_id)"
+              >
+                {{ child.name_ja }}
+              </v-chip>
+              <v-chip v-if="child.children.length > 0" x-small>{{
+                child.children.length
+              }}</v-chip>
+            </div>
+            <v-text-field
+              v-model="newChildTagName"
+              append-outer-icon="mdi-plus-box"
+              :label="activeTree.name_ja + 'タグに子タグを追加'"
+              @click:append-outer="addTagAndNode"
+              @keypress="filterTags()"
+            ></v-text-field>
+            <div v-for="tag in filteredTags" :key="tag.id">
+              <v-chip
+                v-if="shouldShowFilteredTag(tag)"
+                color="primary"
+                class="mt-2 mr-2 mb-2"
+                close
+                close-icon="mdi-plus-box"
+                @click:close="addNode(tag)"
+                >{{
+                  tag.attributes.term_ja && tag.attributes.term_ja.name
+                }}</v-chip
+              >
+            </div>
+          </v-container>
         </v-col>
       </v-row>
     </v-container>
@@ -143,6 +149,7 @@ import {
   StarrydataApiFactory,
   TagTreeAttributes,
   Term,
+  TermAttributes,
 } from 'starrydata-api-client'
 
 interface VTreeView {
@@ -236,7 +243,7 @@ export default Vue.extend({
         .map((child) => child.name_ja)
         .includes(tag.attributes.term_ja.name || '')
     },
-    // INFO: 同じタグに同じ類語を登録するのはできないので。
+    // INFO: 同じタグに同じ同義語を登録するのはできないので。
     shouldShowFilteredTerm(term: Term): boolean {
       return !this.activeTag.relationships.synonyms_ids.data
         .map((synonym) => synonym.id)
@@ -317,7 +324,6 @@ export default Vue.extend({
       this.loadActiveTag()
     },
     async deleteTree() {
-      this.$nuxt.$loading.start()
       try {
         await this.apiClient.destroyApiNodesId(this.deletedTree.node_id)
         this.shouldShowNodeDeleteDialog = false
@@ -325,7 +331,26 @@ export default Vue.extend({
         //
       } finally {
         this.refreshTree()
-        this.$nuxt.$loading.finish()
+      }
+    },
+    async removeSynonym(term: TermAttributes) {
+      try {
+        await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
+          data: {
+            type: 'Tag',
+            id: this.activeTag.id,
+            attributes: {
+              synonyms: this.activeTag.attributes.synonyms.filter((synonym) => {
+                console.log(term.name !== synonym.name)
+                return term.name !== synonym.name
+              }),
+            },
+          },
+        })
+      } catch {
+        //
+      } finally {
+        //
       }
     },
     async loadTree() {
@@ -502,7 +527,6 @@ export default Vue.extend({
       }
     },
     async addSynonym(term: Term) {
-      this.$nuxt.$loading.start()
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
       if (this.activeTree.name_ja === term.attributes.name) {
         window.alert(`親タグと同じ名前のものは登録できません。`)
@@ -513,7 +537,7 @@ export default Vue.extend({
           .map((synonym) => synonym.name)
           .includes(term.attributes.name)
       ) {
-        window.alert(`既に同名の類語が登録されています。`)
+        window.alert(`既に同名の同義語が登録されています。`)
         return
       }
       try {
@@ -537,7 +561,6 @@ export default Vue.extend({
         )
       } finally {
         this.refreshTree()
-        this.$nuxt.$loading.finish()
       }
     },
     // REFACTOR: addSynonymと重複箇所あるのでリファくタできないか
