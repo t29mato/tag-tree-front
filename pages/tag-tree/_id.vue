@@ -65,7 +65,17 @@
           </v-chip>
           <v-container>
             <h4>タグ名</h4>
-            <p>{{ activeTree.name_ja }}</p>
+            <v-text-field
+              v-model="newTagName.ja"
+              append-icon="mdi-content-save"
+              @click:append="updateTagName('ja')"
+            ></v-text-field>
+            <h4>タグ名（英）</h4>
+            <v-text-field
+              v-model="newTagName.en"
+              append-icon="mdi-content-save"
+              @click:append="updateTagName('en')"
+            ></v-text-field>
             <div v-if="activeTag.attributes">
               <h4 class="mt-2">同義語</h4>
               <template
@@ -80,26 +90,29 @@
                 > -->
                 </span>
               </template>
-              <div v-for="term in filteredTerms" :key="term.id">
-                <v-chip
-                  v-if="shouldShowFilteredTerm(term)"
-                  color="primary"
-                  class="ma-2"
-                  close
-                  close-icon="mdi-plus-box"
-                  @click:close="addSynonym(term)"
-                  >{{ term.attributes.name }}</v-chip
-                >
-              </div>
             </div>
             <v-text-field
               v-model="newSynonymName"
-              append-outer-icon="mdi-plus-box"
+              append-icon="mdi-text-box-plus"
               :label="activeTree.name_ja + 'の同義語を追加'"
-              @click:append-outer="addTermAndSynonym"
+              class="mr-2 mb-2"
+              @click:append="addTermAndSynonym"
               @keypress="filterTerms()"
             ></v-text-field>
+            <!-- TODO: 類語追加でわざわざ既存Termを出す必要性がないので、不要そうであれば削除。 -->
+            <!-- <div v-for="term in filteredTerms" :key="term.id">
+              <v-chip
+                v-if="shouldShowFilteredTerm(term)"
+                color="primary"
+                class="mr-2 mb-2"
+                close
+                close-icon="mdi-text-box-plus"
+                @click:close="addSynonym(term)"
+                >{{ term.attributes.name }}</v-chip
+              >
+            </div> -->
           </v-container>
+
           <h3>{{ activeTree.name_ja }}の子タグ</h3>
           <v-container>
             <div v-for="child in activeTree.children" :key="child.node_id">
@@ -115,11 +128,12 @@
                 child.children.length
               }}</v-chip>
             </div>
+            <div v-if="activeTree.children.length === 0">なし</div>
             <v-text-field
               v-model="newChildTagName"
-              append-outer-icon="mdi-plus-box"
+              append-icon="mdi-tag-plus"
               :label="activeTree.name_ja + 'タグに子タグを追加'"
-              @click:append-outer="addTagAndNode"
+              @click:append="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
             <div v-for="tag in filteredTags" :key="tag.id">
@@ -128,7 +142,7 @@
                 color="primary"
                 class="mt-2 mr-2 mb-2"
                 close
-                close-icon="mdi-plus-box"
+                close-icon="mdi-tag-plus"
                 @click:close="addNode(tag)"
                 >{{
                   tag.attributes.term_ja && tag.attributes.term_ja.name
@@ -201,6 +215,10 @@ export default Vue.extend({
       activeTreeId: '',
       activeTag: {} as Tag,
       newChildTagName: '',
+      newTagName: {
+        ja: '',
+        en: '',
+      },
       newSynonymName: '',
       updatedName: '',
       filteredTags: [] as Tag[],
@@ -226,6 +244,43 @@ export default Vue.extend({
     },
   },
   methods: {
+    updateTagName(language: 'ja' | 'en') {
+      let attributes = {}
+      switch (language) {
+        case 'ja':
+          attributes = {
+            term_ja: {
+              name: this.newTagName.ja,
+              language,
+            },
+          }
+          break
+
+        case 'en':
+          attributes = {
+            term_en: {
+              name: this.newTagName.en,
+              language,
+            },
+          }
+          break
+      }
+
+      try {
+        this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
+          data: {
+            type: 'Tag',
+            id: this.activeTag.id,
+            attributes,
+          },
+        })
+        this.refreshTree()
+      } catch (error) {
+        //
+      } finally {
+        //
+      }
+    },
     handleFilterKeyword(input: string) {
       const allTree = this.$refs.allTree as unknown as VTreeView
       if (input) {
@@ -253,6 +308,10 @@ export default Vue.extend({
       const activatedTreeId = ids[0]
       this.activeTreeId = activatedTreeId
       this.activeTree = this.searchTreeById(activatedTreeId, this.allTree)
+      this.newTagName = {
+        ja: this.activeTree.name_ja,
+        en: this.activeTree.name_en,
+      }
     },
     loadActiveTag() {
       this.activeTree = this.searchTreeById(this.activeTreeId, this.allTree)
@@ -317,7 +376,7 @@ export default Vue.extend({
     },
     refreshTree() {
       this.loadSelectedTree()
-      // this.loadTree()
+      this.loadTree()
       this.filterTags()
       this.loadActiveTree()
       this.filterTerms()
@@ -417,28 +476,29 @@ export default Vue.extend({
         //
       }
     },
+    // TODO: termを絞り込んで表示するメリットないので、不要そうであればそのまま削除
     async filterTerms() {
-      if (!this.newSynonymName) {
-        this.filteredTerms = []
-        return
-      }
-      try {
-        const { data: terms } = (
-          await this.apiClient.listApiTerms(
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.newSynonymName
-          )
-        ).data
-        this.filteredTerms = terms
-      } catch {
-        //
-      } finally {
-        //
-      }
+      // if (!this.newSynonymName) {
+      //   this.filteredTerms = []
+      //   return
+      // }
+      // try {
+      //   const { data: terms } = (
+      //     await this.apiClient.listApiTerms(
+      //       undefined,
+      //       undefined,
+      //       undefined,
+      //       undefined,
+      //       undefined,
+      //       this.newSynonymName
+      //     )
+      //   ).data
+      //   this.filteredTerms = terms
+      // } catch {
+      //   //
+      // } finally {
+      //   //
+      // }
     },
     async addNode(tag: Tag) {
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
@@ -565,14 +625,20 @@ export default Vue.extend({
     },
     // REFACTOR: addSynonymと重複箇所あるのでリファくタできないか
     async addTermAndSynonym() {
-      this.$nuxt.$loading.start()
-      // TODO: 既に登録されているタグでもそのまま登録できるようにする。
+      if (this.activeTag.attributes.term_ja.name === this.newSynonymName) {
+        window.alert(`${this.newSynonymName}はタグ名と同じです。`)
+        return
+      }
+      if (this.activeTag.attributes.term_en.name === this.newSynonymName) {
+        window.alert(`${this.newSynonymName}はタグ名（英）と同じです。`)
+        return
+      }
       if (
-        this.filteredTerms
-          .map((term) => term.attributes.name)
+        this.activeTag.attributes.synonyms
+          .map((term) => term.name)
           .includes(this.newSynonymName)
       ) {
-        window.alert(`${this.newSynonymName}は既に登録されている用語です。`)
+        window.alert(`${this.newSynonymName}は既に登録されている同義語です。`)
         return
       }
       try {
@@ -591,14 +657,15 @@ export default Vue.extend({
             },
           },
         })
+        this.refreshTree()
+        this.newSynonymName = ''
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
             '予期しないエラーです。管理者に問い合わせください。'
         )
       } finally {
-        this.refreshTree()
-        this.$nuxt.$loading.finish()
+        //
       }
     },
   },

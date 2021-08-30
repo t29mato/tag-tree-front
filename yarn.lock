@@ -11263,9 +11263,9 @@ stackframe@^1.1.1:
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.2.0.tgz#52429492d63c62eb989804c11552e3d22e779303"
   integrity sha512-GrdeshiRmS1YLMYgzF16olf2jJ/IzxXY9lhKOskuVziubpTYcYqyOwYeJKzQkwy7uN0fYSsbsC4RQaXf9LCrYA==
 
-"starrydata-api-client@git+https://github.com/t29mato/std3-api-client.git#v1.0.47":
-  version "1.0.47"
-  resolved "git+https://github.com/t29mato/std3-api-client.git#48e67c3f90530f7f34b32372ccb8dd9b4cf813b5"
+"starrydata-api-client@git+https://github.com/t29mato/std3-api-client.git#v1.0.48":
+  version "1.0.48"
+  resolved "git+https://github.com/t29mato/std3-api-client.git#8de78b09e412c46a8e1fcd5cea526ca3568864db"
 
 static-extend@^0.1.1:
   version "0.1.2"
