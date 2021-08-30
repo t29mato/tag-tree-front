@@ -113,7 +113,7 @@
             </div> -->
           </v-container>
 
-          <h3>{{ activeTree.name_ja }}の子タグ</h3>
+          <h3>{{ `「${activeTree.name_ja}」タグの子タグ` }}</h3>
           <v-container>
             <div v-for="child in activeTree.children" :key="child.node_id">
               <v-chip
@@ -132,17 +132,17 @@
             <v-text-field
               v-model="newChildTagName"
               append-icon="mdi-tag-plus"
-              :label="activeTree.name_ja + 'タグに子タグを追加'"
+              :label="`「${activeTree.name_ja}」タグに子タグを追加'`"
               @click:append="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
             <div v-for="tag in filteredTags" :key="tag.id">
               <v-chip
                 v-if="shouldShowFilteredTag(tag)"
-                color="primary"
+                color="light-green accent-1"
                 class="mt-2 mr-2 mb-2"
                 close
-                close-icon="mdi-tag-plus"
+                close-icon="mdi-plus-circle"
                 @click:close="addNode(tag)"
                 >{{
                   tag.attributes.term_ja && tag.attributes.term_ja.name
