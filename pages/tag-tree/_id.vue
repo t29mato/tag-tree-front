@@ -625,11 +625,18 @@ export default Vue.extend({
     },
     // REFACTOR: addSynonymと重複箇所あるのでリファくタできないか
     async addTermAndSynonym() {
-      if (this.activeTag.attributes.term_ja.name === this.newSynonymName) {
+      console.log(this.activeTag.attributes)
+      if (
+        this.activeTag.attributes.term_ja &&
+        this.activeTag.attributes.term_ja.name === this.newSynonymName
+      ) {
         window.alert(`${this.newSynonymName}はタグ名と同じです。`)
         return
       }
-      if (this.activeTag.attributes.term_en.name === this.newSynonymName) {
+      if (
+        this.activeTag.attributes.term_en &&
+        this.activeTag.attributes.term_en.name === this.newSynonymName
+      ) {
         window.alert(`${this.newSynonymName}はタグ名（英）と同じです。`)
         return
       }
