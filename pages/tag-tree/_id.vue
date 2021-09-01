@@ -185,8 +185,8 @@ export default Vue.extend({
       return {
         allTree: tagTree.attributes,
       }
-    } catch {
-      //
+    } catch (error) {
+      window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
     } finally {
       //
     }
@@ -285,7 +285,7 @@ export default Vue.extend({
         })
         await this.loadTree()
       } catch (error) {
-        //
+        window.alert('タグ名の更新に失敗しました' + JSON.stringify(error))
       } finally {
         this.$nuxt.$loading.finish()
       }
@@ -328,8 +328,8 @@ export default Vue.extend({
           await this.apiClient.retrieveApiTagsId(this.activeTree.tag_id)
         ).data
         this.activeTag = tag
-      } catch {
-        //
+      } catch (error) {
+        window.alert('タグの読み込みに失敗しました。' + JSON.stringify(error))
       } finally {
         //
       }
@@ -376,8 +376,8 @@ export default Vue.extend({
           await this.apiClient.retrieveApiTagTreeId(nodeId)
         ).data
         this.deletedTree = tagTree.attributes
-      } catch {
-        //
+      } catch (error) {
+        window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
       } finally {
         //
       }
@@ -388,8 +388,8 @@ export default Vue.extend({
         await this.apiClient.destroyApiNodesId(this.deletedTree.node_id)
         this.shouldShowNodeDeleteDialog = false
         await this.loadTree()
-      } catch {
-        //
+      } catch (error) {
+        window.alert('ツリーの削除に失敗しました。' + JSON.stringify(error))
       } finally {
         this.$nuxt.$loading.finish()
       }
@@ -407,8 +407,8 @@ export default Vue.extend({
             },
           },
         })
-      } catch {
-        //
+      } catch (error) {
+        window.alert('同義語の削除に失敗しました' + JSON.stringify(error))
       } finally {
         //
       }
@@ -422,21 +422,8 @@ export default Vue.extend({
           )
         ).data
         this.allTree = tagTree.attributes
-      } catch {
-        //
-      } finally {
-        //
-      }
-    },
-    // REFACTOR: 使っていないメソッドなので削除してもよさそう。
-    async loadSelectedTree() {
-      try {
-        const { data: tagTree } = (
-          await this.apiClient.retrieveApiTagTreeId(this.AddedTree.node_id)
-        ).data
-        this.AddedTree = tagTree.attributes
-      } catch {
-        //
+      } catch (error) {
+        window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
       } finally {
         //
       }
@@ -458,8 +445,8 @@ export default Vue.extend({
           )
         ).data
         this.filteredTags = tags
-      } catch {
-        //
+      } catch (error) {
+        window.alert('タグの読み込みに失敗しました' + JSON.stringify(error))
       } finally {
         //
       }
