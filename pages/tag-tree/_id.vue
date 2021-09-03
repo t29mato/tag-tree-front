@@ -22,6 +22,23 @@
         </v-container>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="shouldShowSynonymDialog" hide-overlay>
+      <v-card>
+        <v-app-bar>
+          <v-toolbar-title>{{ removedSynonym.name }}</v-toolbar-title>
+        </v-app-bar>
+        <v-container>
+          <v-card-actions>
+            <v-btn text @click="shouldShowSynonymDialog = false">
+              キャンセル
+            </v-btn>
+            <v-btn text color="error" @click="removeSynonym(removedSynonym)">
+              削除する
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <v-container>
       <v-row>
         <v-col cols="6">
@@ -76,27 +93,40 @@
               append-icon="mdi-content-save"
               @click:append="updateTagName('en')"
             ></v-text-field>
-            <div v-if="activeTag.attributes">
-              <h4 class="mt-2">同義語</h4>
-              <template
-                v-for="(synonym, index) in activeTag.attributes.synonyms"
-              >
+            <h4 class="mt-2">同義語</h4>
+            <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
+              <template v-for="(synonym, index) in activeTagSynonymJa">
                 <template v-if="index > 0">|</template>
-                <span :key="synonym.name"
+                <span :key="synonym.name" @click="openSynonymDialog(synonym)"
                   >{{ synonym.name }}
-                  <!-- TODO: 類語削除機能はモーダルで表示する -->
-                  <!-- <v-icon :key="synonym.name" @click="removeSynonym(synonym)"
-                  >mdi-close</v-icon
-                > -->
                 </span>
               </template>
             </div>
+            <div v-if="activeTagSynonymJa.length === 0">なし</div>
             <v-text-field
-              v-model="newSynonymName"
+              v-model="newSynonymNameJa"
               append-icon="mdi-text-box-plus"
               :label="activeTree.name_ja + 'の同義語を追加'"
-              class="mr-2 mb-2"
-              @click:append="addTermAndSynonym"
+              class="mb-2"
+              @click:append="addTermAndSynonym('ja')"
+            ></v-text-field>
+
+            <h4 class="mt-2">同義語（英）</h4>
+            <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
+              <template v-for="(synonym, index) in activeTagSynonymEn">
+                <template v-if="index > 0">|</template>
+                <span :key="synonym.name" @click="openSynonymDialog(synonym)"
+                  >{{ synonym.name }}
+                </span>
+              </template>
+            </div>
+            <div v-if="activeTagSynonymEn.length === 0">なし</div>
+            <v-text-field
+              v-model="newSynonymNameEn"
+              append-icon="mdi-text-box-plus"
+              :label="activeTree.name_en + 'の同義語（英）を追加'"
+              class="mb-2"
+              @click:append="addTermAndSynonym('en')"
             ></v-text-field>
           </v-container>
 
@@ -151,6 +181,7 @@ import {
   TagTreeAttributes,
   Term,
   TermAttributes,
+  ApiTermsDataAttributes,
 } from 'starrydata-api-client'
 
 interface VTreeView {
@@ -197,8 +228,9 @@ export default Vue.extend({
       AddedTree: {} as TagTreeAttributes,
       updatedTree: {} as TagTreeAttributes,
       deletedTree: {} as TagTreeAttributes,
+      removedSynonym: {} as TermAttributes,
       shouldShowNodeDeleteDialog: false,
-      // activeTree: {} as TagTreeAttributes,
+      shouldShowSynonymDialog: false,
       activeTreeId: '',
       activeTag: {} as Tag,
       newChildTagName: '',
@@ -206,7 +238,8 @@ export default Vue.extend({
         ja: '',
         en: '',
       },
-      newSynonymName: '',
+      newSynonymNameJa: '',
+      newSynonymNameEn: '',
       updatedName: '',
       filteredTags: [] as Tag[],
       filteredTerms: [] as Term[],
@@ -249,6 +282,22 @@ export default Vue.extend({
       }
       search(this.activeTreeId, this.allTree)
       return targetTree
+    },
+    activeTagSynonymJa(): ApiTermsDataAttributes[] {
+      if (!this.activeTag?.attributes?.synonyms) {
+        return []
+      }
+      return this.activeTag?.attributes?.synonyms.filter(
+        (synonym) => synonym.language === 'ja'
+      )
+    },
+    activeTagSynonymEn(): ApiTermsDataAttributes[] {
+      if (!this.activeTag?.attributes?.synonyms) {
+        return []
+      }
+      return this.activeTag?.attributes?.synonyms.filter(
+        (synonym) => synonym.language === 'en'
+      )
     },
   },
   methods: {
@@ -382,6 +431,13 @@ export default Vue.extend({
         //
       }
     },
+    openSynonymDialog(term: TermAttributes) {
+      this.removedSynonym = term
+      this.shouldShowSynonymDialog = true
+    },
+    closeSynonymDialog() {
+      this.shouldShowSynonymDialog = false
+    },
     async deleteTree() {
       this.$nuxt.$loading.start()
       try {
@@ -395,6 +451,7 @@ export default Vue.extend({
       }
     },
     async removeSynonym(term: TermAttributes) {
+      this.$nuxt.$loading.start()
       try {
         await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
           data: {
@@ -407,10 +464,12 @@ export default Vue.extend({
             },
           },
         })
+        await this.loadActiveTag()
       } catch (error) {
         window.alert('同義語の削除に失敗しました' + JSON.stringify(error))
       } finally {
-        //
+        this.closeSynonymDialog()
+        this.$nuxt.$loading.finish()
       }
     },
     async loadTree() {
@@ -540,31 +599,33 @@ export default Vue.extend({
         this.$nuxt.$loading.finish()
       }
     },
-    async addTermAndSynonym() {
-      this.$nuxt.$loading.start()
+    async addTermAndSynonym(language: 'ja' | 'en') {
+      const newName =
+        language === 'ja' ? this.newSynonymNameJa : this.newSynonymNameEn
       if (
         this.activeTag.attributes.term_ja &&
-        this.activeTag.attributes.term_ja.name === this.newSynonymName
+        this.activeTag.attributes.term_ja.name === newName
       ) {
-        window.alert(`${this.newSynonymName}はタグ名と同じです。`)
+        window.alert(`${newName}はタグ名と同じです。`)
         return
       }
       if (
         this.activeTag.attributes.term_en &&
-        this.activeTag.attributes.term_en.name === this.newSynonymName
+        this.activeTag.attributes.term_en.name === newName
       ) {
-        window.alert(`${this.newSynonymName}はタグ名（英）と同じです。`)
+        window.alert(`${newName}はタグ名（英）と同じです。`)
         return
       }
       if (
         this.activeTag.attributes.synonyms
           .map((term) => term.name)
-          .includes(this.newSynonymName)
+          .includes(newName)
       ) {
-        window.alert(`${this.newSynonymName}は既に登録されている同義語です。`)
+        window.alert(`${newName}は既に登録されている同義語です。`)
         return
       }
       try {
+        this.$nuxt.$loading.start()
         await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
           data: {
             type: 'Tag',
@@ -572,17 +633,22 @@ export default Vue.extend({
             attributes: {
               synonyms: [
                 {
-                  name: this.newSynonymName,
-                  language: 'ja',
+                  name: newName,
+                  language,
                 },
                 ...this.activeTag.attributes.synonyms,
               ],
             },
           },
         })
-        await this.loadTree()
         await this.loadActiveTag()
-        this.newSynonymName = ''
+        switch (language) {
+          case 'ja':
+            this.newSynonymNameJa = ''
+            break
+          case 'en':
+            this.newSynonymNameEn = ''
+        }
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
