@@ -61,7 +61,7 @@
           >
             <template slot="label" slot-scope="{ item }">
               <v-chip class="ma-2" :color="generateColor(item.tree_level)">
-                {{ item.name_ja }}
+                {{ item | tagName }}
               </v-chip>
               <v-chip v-if="item.children.length > 0" x-small>{{
                 item.children.length
@@ -201,6 +201,15 @@ export default Vue.extend({
         return ''
       }
       return String(num)
+    },
+    tagName(tree: TagTreeAttributes): string {
+      if (tree.name_ja) {
+        return tree.name_ja
+      }
+      if (tree.name_en) {
+        return tree.name_en
+      }
+      return ''
     },
   },
   async asyncData({ params }) {
