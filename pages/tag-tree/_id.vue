@@ -55,7 +55,6 @@
             item-key="node_id"
             :search="filterKeyword"
             :filter="filterTree"
-            item-text="name_ja"
             activatable
             @update:active="activateTree"
           >
@@ -311,10 +310,14 @@ export default Vue.extend({
   },
   methods: {
     async updateTagName(language: 'ja' | 'en') {
-      this.$nuxt.$loading.start()
       let attributes = {}
       switch (language) {
         case 'ja':
+          if (this.newTagName.ja === '') {
+            window.alert('タグ名を空欄にはできません')
+            this.newTagName.ja = this.activeTree.name_ja
+            return
+          }
           attributes = {
             term_ja: {
               name: this.newTagName.ja,
@@ -324,6 +327,11 @@ export default Vue.extend({
           break
 
         case 'en':
+          if (this.newTagName.en === '') {
+            window.alert('タグ名（英）を空欄にはできません')
+            this.newTagName.en = this.activeTree.name_en
+            return
+          }
           attributes = {
             term_en: {
               name: this.newTagName.en,
@@ -334,6 +342,7 @@ export default Vue.extend({
       }
 
       try {
+        this.$nuxt.$loading.start()
         await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
           data: {
             type: 'Tag',
