@@ -528,6 +528,7 @@ export default Vue.extend({
       }
     },
     handleInputAddedTree(input: string) {
+      // INFO: transnoからのコピーが半角スペース4文字がインデントになるため
       this.tagTreeTextArea = input.replace(/ {4}/g, '\t')
       const addedTree = this.$refs.addedTree as unknown as VTreeView
       addedTree.updateAll(true)
