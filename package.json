@@ -31,7 +31,8 @@
     "nuxt": "^2.15.8",
     "nuxt-basic-auth-module": "^1.4.0",
     "starrydata-api-client": "git+https://github.com/t29mato/std3-api-client.git#v1.0.48",
-    "vue-class-component": "^7.2.6"
+    "vue-class-component": "^7.2.6",
+    "vue2-editor": "^2.10.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",

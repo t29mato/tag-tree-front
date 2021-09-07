@@ -39,15 +39,52 @@
         </v-container>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="shouldShowAddChildren" hide-overlay>
+      <v-card>
+        <v-app-bar>
+          <v-toolbar-title>{{ removedSynonym.name }}</v-toolbar-title>
+        </v-app-bar>
+        <v-container>
+          <v-card-actions>
+            <v-btn text @click="shouldShowAddChildren = false">
+              キャンセル
+            </v-btn>
+            <v-btn text color="error" @click="removeSynonym(removedSynonym)">
+              削除する
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <v-container>
       <v-row>
         <v-col cols="6">
+          <h4>タグツリーをまとめて追加</h4>
+          <v-textarea
+            v-model="tagTreeTextArea"
+            name="input-7-1"
+            auto-grow
+            :error="tagTreeTextAreaError"
+            :error-messages="tagTreeTextAreaErrorMessage"
+            @input="handleInputAddedTree"
+            @keydown.tab.exact="handleKeyDownTab"
+            @keydown.shift.tab.exact="handleKeyDownShiftTab"
+          ></v-textarea>
+          <v-treeview ref="addedTree" :items="generateTreeFromPlainText">
+            <template slot="label" slot-scope="{ item }">
+              <v-chip>{{ item.name }}</v-chip>
+              <span class="ma-2">
+                {{ item.synonyms.join(' | ') }}
+              </span>
+            </template>
+          </v-treeview>
+
           <v-text-field
             v-model="filterKeyword"
             label="キーワードでフィルタリング"
             clearable
             clear-icon="mdi-close-circle-outline"
-            @input="handleFilterKeyword"
+            @input="openAllTree"
           ></v-text-field>
           <v-treeview
             ref="allTree"
@@ -148,7 +185,7 @@
             <v-text-field
               v-model="newChildTagName"
               append-icon="mdi-tag-plus"
-              :label="`「${activeTree.name_ja}」タグに子タグを追加'`"
+              :label="`「${activeTree.name_ja}」タグに子タグを追加`"
               @click:append="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
@@ -165,6 +202,9 @@
                 }}</v-chip
               >
             </div>
+            <v-btn>{{
+              `「${activeTree.name_ja}」タグにまとめて子タグを追加'`
+            }}</v-btn>
           </v-container>
         </v-col>
       </v-row>
@@ -185,6 +225,12 @@ import {
 
 interface VTreeView {
   updateAll: (arg0: boolean) => void
+}
+
+interface textTree {
+  name: string
+  synonyms: string[]
+  children: textTree[]
 }
 
 export default Vue.extend({
@@ -256,6 +302,12 @@ export default Vue.extend({
         process.env.STARRYDATA_API_URL
       ),
       filterKeyword: '',
+      tagTreeTextArea: '',
+      tagTreeTextAreaError: false,
+      tagTreeTextAreaErrorMessage: '',
+      tagTreeTextAreaParseErrorLines: [] as number[],
+      customToolbar: [[], [], []],
+      shouldShowAddChildren: false,
     }
   },
   computed: {
@@ -307,8 +359,118 @@ export default Vue.extend({
         (synonym) => synonym.language === 'en'
       )
     },
+    generateTreeFromPlainText(): textTree[] {
+      this.showErrorMessage(false, '')
+      const result = [] as textTree[]
+      const pushChild = (
+        target: textTree[],
+        child: textTree,
+        count: number
+      ): void => {
+        if (count === 0) {
+          target.push(child)
+          return
+        }
+        if (!target.slice(-1)[0]) {
+          throw new Error('パースに失敗')
+        }
+        pushChild(target.slice(-1)[0].children, child, count - 1)
+      }
+      const errorLines = [] as number[]
+      this.tagTreeTextArea.split('\n').forEach((text, index) => {
+        const indentCount = text.search(/\S|$/)
+        const words = text
+          .trim()
+          .split('|')
+          .map((item) => item.trim())
+        const child = {
+          name: words[0],
+          synonyms: words.slice(1),
+          children: [],
+        }
+        try {
+          pushChild(result, child, indentCount)
+        } catch (error) {
+          console.error(index, error)
+          errorLines.push(index + 1)
+        } finally {
+          //
+        }
+      })
+      if (errorLines.length > 0) {
+        this.showErrorMessage(
+          true,
+          '次の行でパースに失敗しました。' + errorLines.join(', ')
+        )
+      }
+      return result
+    },
   },
   methods: {
+    handleKeyDownTab(e: KeyboardEvent) {
+      e.preventDefault()
+      const element = e.target
+      const start = element.selectionStart
+      const end = element.selectionEnd
+      const currentText = element.value
+      const lastLineBreakPos = currentText.substr(0, start).lastIndexOf('\n')
+      element.value =
+        currentText.substr(0, lastLineBreakPos + 1) +
+        '\t' +
+        currentText.substr(lastLineBreakPos + 1)
+      element.selectionEnd = end + 1
+    },
+    handleKeyDownShiftTab(e: KeyboardEvent) {
+      e.preventDefault()
+      const element = e.target
+      const posOfCursor = element.selectionStart
+      const text = element.value
+      const cursorIsFirstLine =
+        text.substring(0, posOfCursor).lastIndexOf('\n') === -1
+      if (cursorIsFirstLine) {
+        let currentLineEnd = text.indexOf('\n')
+        if (currentLineEnd === -1) {
+          currentLineEnd = text.length
+        }
+        const tabPos = text.substring(0, currentLineEnd).indexOf('\t')
+        if (tabPos === -1) {
+          return
+        }
+        element.value = text.substring(0, tabPos) + text.substring(tabPos + 1)
+        element.selectionEnd = posOfCursor - 1
+        return
+      }
+
+      const currentLineStart =
+        text.substring(0, posOfCursor).lastIndexOf('\n') + 1
+      // INFO: 最終行の時は改行コードが存在しないのでテキスト長がcurrentLineEndになる
+      const currentLineEnd =
+        text.substring(currentLineStart).lastIndexOf('\n') === -1
+          ? text.length
+          : text.substring(currentLineStart).indexOf('\n') + currentLineStart
+
+      const tabInCurrentLine = text
+        .substring(currentLineStart, currentLineEnd)
+        .indexOf('\t')
+
+      if (tabInCurrentLine === -1) {
+        return
+      }
+      element.value =
+        text.substring(0, currentLineStart + tabInCurrentLine) +
+        text.substring(currentLineStart + tabInCurrentLine + 1)
+      element.selectionEnd = posOfCursor - 1
+    },
+    showErrorMessage(isError: boolean, message: string) {
+      this.tagTreeTextAreaError = isError
+      this.tagTreeTextAreaErrorMessage = message
+    },
+    tagNameIncludeingSynonyms(name: string, synonyms: string[]): string {
+      if (synonyms.length === 0) {
+        return name
+      }
+      return name + synonyms.reduce((prev, cur) => prev + ' | ' + cur, '')
+    },
     async updateTagName(language: 'ja' | 'en') {
       let attributes = {}
       switch (language) {
@@ -357,13 +519,18 @@ export default Vue.extend({
         this.$nuxt.$loading.finish()
       }
     },
-    handleFilterKeyword(input: string) {
+    openAllTree(input: string) {
       const allTree = this.$refs.allTree as unknown as VTreeView
       if (input) {
         allTree.updateAll(true)
       } else {
         allTree.updateAll(false)
       }
+    },
+    handleInputAddedTree(input: string) {
+      this.tagTreeTextArea = input.replace(/ {4}/g, '\t')
+      const addedTree = this.$refs.addedTree as unknown as VTreeView
+      addedTree.updateAll(true)
     },
     openZukanCom(id: string) {
       window.open('https://zukan.com/fish/internal' + id)
