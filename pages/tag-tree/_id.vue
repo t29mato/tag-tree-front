@@ -97,7 +97,7 @@
             <h3>{{ activeTree.name_ja || activeTree.name_en }}</h3>
           </v-chip>
           <v-container>
-            <h4>タグ名</h4>
+            <h4>タグ名（日）</h4>
             <v-text-field
               v-model="newTagName.ja"
               append-icon="mdi-content-save"
@@ -109,7 +109,7 @@
               append-icon="mdi-content-save"
               @click:append="updateTagName('en')"
             ></v-text-field>
-            <h4 class="mt-2">同義語</h4>
+            <h4 class="mt-2">同義語（日）</h4>
             <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
               <template v-for="(synonym, index) in activeTagSynonymJa">
                 <template v-if="index > 0">|</template>
@@ -172,7 +172,7 @@
             <div v-for="tag in filteredTags" :key="tag.id">
               <v-chip
                 v-if="shouldShowFilteredTag(tag)"
-                color="light-green accent-1"
+                color="light-green"
                 class="mt-2 mr-2 mb-2"
                 close
                 close-icon="mdi-plus-circle"
