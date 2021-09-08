@@ -406,6 +406,81 @@ export default Vue.extend({
     },
   },
   methods: {
+    // TODO: 多言語対応
+    async addTree() {
+      this.$nuxt.$loading.start()
+      // TODO: 現在どのタグが保存されてるか進捗が分かるようにする
+      // TODO: 失敗したときに、どのタグで失敗したか表示するようにする
+      for (const tree of this.generateTreeFromPlainText) {
+        await this.addTreeRecursively(
+          this.activeTree.node_id,
+          this.activeTree.name_ja,
+          tree
+        )
+      }
+      await this.loadTree()
+      this.tagTreeTextArea = ''
+      this.$nuxt.$loading.finish()
+    },
+    async addTreeRecursively(
+      parentNode: string,
+      parentName: string,
+      tree: textTree
+    ) {
+      try {
+        if (parentName === tree.name) {
+          throw new Error('親タグと子タグの名前を同一にはできません')
+        }
+        if (
+          this.activeTree.children
+            .map((child) => child.name_ja)
+            .includes(tree.name)
+        ) {
+          throw new Error('既に同じ名前の子タグが登録されています')
+        }
+        const { data: newTag } = (
+          await this.apiClient.createApiTags({
+            data: {
+              type: 'Tag',
+              attributes: {
+                term_ja: {
+                  name: tree.name,
+                  language: 'ja',
+                },
+              },
+            },
+          })
+        ).data
+        const { data: newNode } = (
+          await this.apiClient.createApiNodes({
+            data: {
+              type: 'Node',
+              attributes: {
+                parent: {
+                  type: 'Node',
+                  id: parentNode,
+                },
+                tag: newTag,
+              },
+            },
+          })
+        ).data
+        if (tree.children.length > 0) {
+          for (const child of tree.children) {
+            await this.addTreeRecursively(newNode.id, tree.name, child)
+          }
+        }
+      } catch (error) {
+        console.error(error)
+        window.alert(
+          JSON.stringify(error.response?.data.errors) ||
+            error ||
+            '予期しないエラーです。管理者に問い合わせください。'
+        )
+      } finally {
+        this.$nuxt.$loading.finish()
+      }
+    },
     handleKeyDownTab(e: KeyboardEvent) {
       e.preventDefault()
       const element = e.target
