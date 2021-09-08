@@ -486,21 +486,30 @@ export default Vue.extend({
     },
     handleKeyDownTab(e: KeyboardEvent) {
       e.preventDefault()
-      const element = e.target
-      const start = element.selectionStart
-      const end = element.selectionEnd
+      const element = e.target as HTMLInputElement
+      const posOfCursor = element.selectionStart
+      if (!posOfCursor) {
+        console.error('カーソル位置の特定不可')
+        return
+      }
       const currentText = element.value
-      const lastLineBreakPos = currentText.substr(0, start).lastIndexOf('\n')
+      const lastLineBreakPos = currentText
+        .substr(0, posOfCursor)
+        .lastIndexOf('\n')
       element.value =
         currentText.substr(0, lastLineBreakPos + 1) +
         '\t' +
         currentText.substr(lastLineBreakPos + 1)
-      element.selectionEnd = end + 1
+      element.selectionEnd = posOfCursor + 1
     },
     handleKeyDownShiftTab(e: KeyboardEvent) {
       e.preventDefault()
-      const element = e.target
+      const element = e.target as HTMLInputElement
       const posOfCursor = element.selectionStart
+      if (!posOfCursor) {
+        console.error('カーソル位置の特定不可')
+        return
+      }
       const text = element.value
       const cursorIsFirstLine =
         text.substring(0, posOfCursor).lastIndexOf('\n') === -1
