@@ -59,26 +59,6 @@
     <v-container>
       <v-row>
         <v-col cols="6">
-          <h4>タグツリーをまとめて追加</h4>
-          <v-textarea
-            v-model="tagTreeTextArea"
-            name="input-7-1"
-            auto-grow
-            :error="tagTreeTextAreaError"
-            :error-messages="tagTreeTextAreaErrorMessage"
-            @input="handleInputAddedTree"
-            @keydown.tab.exact="handleKeyDownTab"
-            @keydown.shift.tab.exact="handleKeyDownShiftTab"
-          ></v-textarea>
-          <v-treeview ref="addedTree" :items="generateTreeFromPlainText">
-            <template slot="label" slot-scope="{ item }">
-              <v-chip>{{ item.name }}</v-chip>
-              <span class="ma-2">
-                {{ item.synonyms.join(' | ') }}
-              </span>
-            </template>
-          </v-treeview>
-
           <v-text-field
             v-model="filterKeyword"
             label="キーワードでフィルタリング"
@@ -202,9 +182,28 @@
                 }}</v-chip
               >
             </div>
-            <v-btn>{{
-              `「${activeTree.name_ja}」タグにまとめて子タグを追加'`
-            }}</v-btn>
+            <h4>タグツリーをまとめて追加</h4>
+            <v-textarea
+              v-model="tagTreeTextArea"
+              name="input-7-1"
+              auto-grow
+              :error="tagTreeTextAreaError"
+              :error-messages="tagTreeTextAreaErrorMessage"
+              @input="handleInputAddedTree"
+              @keydown.tab.exact="handleKeyDownTab"
+              @keydown.shift.tab.exact="handleKeyDownShiftTab"
+            ></v-textarea>
+            <v-treeview ref="addedTree" :items="generateTreeFromPlainText">
+              <template slot="label" slot-scope="{ item }">
+                <v-chip>{{ item.name }}</v-chip>
+                <span class="ma-2">
+                  {{ item.synonyms.join(' | ') }}
+                </span>
+              </template>
+            </v-treeview>
+            <v-btn :disabled="tagTreeTextAreaError" @click="addTree"
+              >まとめて追加</v-btn
+            >
           </v-container>
         </v-col>
       </v-row>
