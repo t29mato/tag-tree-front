@@ -379,26 +379,29 @@ export default Vue.extend({
         pushChild(target.slice(-1)[0].children, child, count - 1)
       }
       const errorLines = [] as number[]
-      this.tagTreeTextArea.split('\n').forEach((text, index) => {
-        const indentCount = text.search(/\S|$/)
-        const words = text
-          .trim()
-          .split('|')
-          .map((item) => item.trim())
-        const child = {
-          name: words[0],
-          synonyms: words.slice(1),
-          children: [],
-        }
-        try {
-          pushChild(result, child, indentCount)
-        } catch (error) {
-          console.error(index, error)
-          errorLines.push(index + 1)
-        } finally {
-          //
-        }
-      })
+      this.tagTreeTextArea
+        .trimEnd()
+        .split('\n')
+        .forEach((text, index) => {
+          const indentCount = text.search(/\S|$/)
+          const words = text
+            .trim()
+            .split('|')
+            .map((item) => item.trim())
+          const child = {
+            name: words[0],
+            synonyms: words.slice(1),
+            children: [],
+          }
+          try {
+            pushChild(result, child, indentCount)
+          } catch (error) {
+            console.error(index, error)
+            errorLines.push(index + 1)
+          } finally {
+            //
+          }
+        })
       if (errorLines.length > 0) {
         this.showErrorMessage(
           true,
