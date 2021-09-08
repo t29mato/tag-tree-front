@@ -94,7 +94,7 @@
         </v-col>
         <v-col v-if="activeTreeId" cols="6">
           <v-chip large class="mb-2">
-            <h3>{{ activeTree.name_ja }}</h3>
+            <h3>{{ activeTree.name_ja || activeTree.name_en }}</h3>
           </v-chip>
           <v-container>
             <h4>タグ名</h4>
@@ -155,7 +155,7 @@
                 @click="activateTree([child.node_id])"
                 @click:close="openNodeDeleteDialog(child.node_id)"
               >
-                {{ child.name_ja }}
+                {{ child.name_ja || child.name_en }}
               </v-chip>
               <v-chip v-if="child.children.length > 0" x-small>{{
                 child.children.length
@@ -204,8 +204,13 @@
             </v-treeview>
             <v-btn
               :disabled="tagTreeTextAreaError || tagTreeTextArea.length === 0"
-              @click="addTree"
-              >まとめて追加</v-btn
+              @click="addTree('ja')"
+              >まとめて追加（日）</v-btn
+            >
+            <v-btn
+              :disabled="tagTreeTextAreaError || tagTreeTextArea.length === 0"
+              @click="addTree('en')"
+              >まとめて追加（英）</v-btn
             >
           </v-container>
         </v-col>
@@ -229,6 +234,9 @@ interface VTreeView {
   updateAll: (arg0: boolean) => void
 }
 
+type Language = 'ja' | 'en'
+
+// REFACTOR: interfaceはPascalCase
 interface textTree {
   name: string
   synonyms: string[]
@@ -413,16 +421,17 @@ export default Vue.extend({
   },
   methods: {
     // TODO: 多言語対応
-    async addTree() {
-      // TODO: 現在どのタグが保存されてるか進捗が分かるようにする
-      // TODO: 失敗したときに、どのタグで失敗したか表示するようにする
+    async addTree(language: Language) {
       try {
         this.$nuxt.$loading.start()
         for (const tree of this.generateTreeFromPlainText) {
           await this.addTreeRecursively(
             this.activeTree.node_id,
-            this.activeTree.name_ja,
-            tree
+            language === 'ja'
+              ? this.activeTree.name_ja
+              : this.activeTree.name_en,
+            tree,
+            language
           )
         }
         this.tagTreeTextArea = ''
@@ -441,7 +450,8 @@ export default Vue.extend({
     async addTreeRecursively(
       parentNode: string,
       parentName: string,
-      tree: textTree
+      tree: textTree,
+      language: Language
     ) {
       if (parentName === tree.name) {
         throw new Error(
@@ -450,7 +460,9 @@ export default Vue.extend({
       }
       if (
         this.activeTree.children
-          .map((child) => child.name_ja)
+          .map((child) => {
+            return language === 'ja' ? child.name_ja : child.name_en
+          })
           .includes(tree.name)
       ) {
         throw new Error(
@@ -460,16 +472,25 @@ export default Vue.extend({
       if (tree.name === '') {
         throw new Error('タグ名が空白です')
       }
+      const term =
+        language === 'ja'
+          ? {
+              term_ja: {
+                name: tree.name,
+                language,
+              },
+            }
+          : {
+              term_en: {
+                name: tree.name,
+                language,
+              },
+            }
       const { data: newTag } = (
         await this.apiClient.createApiTags({
           data: {
             type: 'Tag',
-            attributes: {
-              term_ja: {
-                name: tree.name,
-                language: 'ja',
-              },
-            },
+            attributes: term,
           },
         })
       ).data
@@ -489,7 +510,7 @@ export default Vue.extend({
       ).data
       if (tree.children.length > 0) {
         for (const child of tree.children) {
-          await this.addTreeRecursively(newNode.id, tree.name, child)
+          await this.addTreeRecursively(newNode.id, tree.name, child, language)
         }
       }
     },
