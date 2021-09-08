@@ -182,11 +182,12 @@
                 }}</v-chip
               >
             </div>
+            <h4>{{ `「${activeTree.name_ja}」タグにツリーをまとめて追加` }}</h4>
             <v-textarea
               v-model="tagTreeTextArea"
               name="input-7-1"
               auto-grow
-              :placeholder="`「${activeTree.name_ja}」タグにツリーをまとめて追加`"
+              :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
               :error="tagTreeTextAreaError"
               :error-messages="tagTreeTextAreaErrorMessage"
               @input="handleInputAddedTree"
@@ -201,7 +202,9 @@
                 </span>
               </template>
             </v-treeview>
-            <v-btn :disabled="tagTreeTextAreaError" @click="addTree"
+            <v-btn
+              :disabled="tagTreeTextAreaError || tagTreeTextArea.length === 0"
+              @click="addTree"
               >まとめて追加</v-btn
             >
           </v-container>
