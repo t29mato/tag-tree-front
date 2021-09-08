@@ -182,11 +182,11 @@
                 }}</v-chip
               >
             </div>
-            <h4>タグツリーをまとめて追加</h4>
             <v-textarea
               v-model="tagTreeTextArea"
               name="input-7-1"
               auto-grow
+              :placeholder="`「${activeTree.name_ja}」タグにツリーをまとめて追加`"
               :error="tagTreeTextAreaError"
               :error-messages="tagTreeTextAreaErrorMessage"
               @input="handleInputAddedTree"
