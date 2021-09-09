@@ -51,6 +51,7 @@
               :disabled="
                 tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
               "
+              :loading="runningAddTreeJa"
               @click="addTree('ja')"
               >まとめて追加（日）</v-btn
             >
@@ -59,6 +60,7 @@
               :disabled="
                 tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
               "
+              :loading="runningAddTreeEn"
               @click="addTree('en')"
               >まとめて追加（英）</v-btn
             >
@@ -358,6 +360,8 @@ export default Vue.extend({
       customToolbar: [[], [], []],
       shouldShowAddChildren: false,
       textTree: [] as TextTree[],
+      runningAddTreeJa: false,
+      runningAddTreeEn: false,
     }
   },
   computed: {
@@ -415,6 +419,11 @@ export default Vue.extend({
     async addTree(language: Language) {
       try {
         this.$nuxt.$loading.start()
+        if (language === 'ja') {
+          this.runningAddTreeJa = true
+        } else {
+          this.runningAddTreeEn = true
+        }
         for (const tree of this.textTree) {
           await this.addTreeRecursively(
             this.activeTree.node_id,
@@ -439,6 +448,11 @@ export default Vue.extend({
         const allTree = this.$refs.allTree as unknown as VTreeView
         allTree.updateAll(true)
         this.$nuxt.$loading.finish()
+        if (language === 'ja') {
+          this.runningAddTreeJa = false
+        } else {
+          this.runningAddTreeEn = false
+        }
       }
     },
     async addTreeRecursively(
