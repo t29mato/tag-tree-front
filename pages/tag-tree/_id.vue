@@ -12,7 +12,7 @@
             <v-col cols="6">
               <h4>編集エリア</h4>
               <v-textarea
-                v-model="tagTreeTextArea"
+                v-model="tagTreeText"
                 name="input-7-1"
                 auto-grow
                 :style="{
@@ -23,7 +23,7 @@
                   paddingTop: '2px',
                 }"
                 :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
-                :error-messages="tagTreeTextAreaErrorMessage"
+                :error-messages="tagTreeTextErrorMessage"
                 @input="handleInputAddedTree"
                 @keydown.tab.exact="handleKeyDownTab"
                 @keydown.shift.tab.exact="handleKeyDownShiftTab"
@@ -49,7 +49,7 @@
             <v-btn
               text
               :disabled="
-                tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
+                tagTreeText === '' || tagTreeTextErrorMessage.length > 0
               "
               :loading="runningAddTreeJa"
               @click="addTree('ja')"
@@ -58,7 +58,7 @@
             <v-btn
               text
               :disabled="
-                tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
+                tagTreeText === '' || tagTreeTextErrorMessage.length > 0
               "
               :loading="runningAddTreeEn"
               @click="addTree('en')"
@@ -351,9 +351,8 @@ export default Vue.extend({
         process.env.STARRYDATA_API_URL
       ),
       filterKeyword: '',
-      // REFACTOR: 変数名がわかりにくいので修正する
-      tagTreeTextArea: '',
-      tagTreeTextAreaErrorMessage: '',
+      tagTreeText: '',
+      tagTreeTextErrorMessage: '',
       tagTreeTextAreaParseErrorLines: [] as number[],
       customToolbar: [[], [], []],
       shouldShowAddChildren: false,
@@ -432,7 +431,7 @@ export default Vue.extend({
             language
           )
         }
-        this.tagTreeTextArea = ''
+        this.tagTreeText = ''
         this.textTree = []
         this.shouldShowAddTreeDialog = false
       } catch (error) {
@@ -589,10 +588,10 @@ export default Vue.extend({
       element.selectionEnd = posOfCursor - 1
     },
     showErrorMessage(message: string) {
-      this.tagTreeTextAreaErrorMessage = message
+      this.tagTreeTextErrorMessage = message
     },
     hideErrorMessage() {
-      this.tagTreeTextAreaErrorMessage = ''
+      this.tagTreeTextErrorMessage = ''
     },
     tagNameIncludeingSynonyms(name: string, synonyms: string[]): string {
       if (synonyms.length === 0) {
