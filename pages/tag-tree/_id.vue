@@ -389,7 +389,6 @@ export default Vue.extend({
     },
   },
   methods: {
-    // TODO: 同義語の登録
     async addTree(language: Language) {
       try {
         this.$nuxt.$loading.start()
