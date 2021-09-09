@@ -1,5 +1,71 @@
 <template>
   <div>
+    <v-dialog v-model="shouldShowAddTreeDialog" hide-overlay>
+      <v-card>
+        <v-app-bar>
+          <v-toolbar-title>{{
+            `「${activeTree.name_ja}」タグにタグツリーをまとめて追加`
+          }}</v-toolbar-title>
+        </v-app-bar>
+        <v-container>
+          <v-row>
+            <v-col cols="6">
+              <h4>編集エリア</h4>
+              <v-textarea
+                v-model="tagTreeTextArea"
+                name="input-7-1"
+                auto-grow
+                :style="{
+                  background: 'url(/img/line_number.png)',
+                  backgroundAttachment: 'local',
+                  'background-repeat': 'no-repeat',
+                  paddingLeft: '50px',
+                  paddingTop: '2px',
+                }"
+                :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
+                :error-messages="tagTreeTextAreaErrorMessage"
+                @input="handleInputAddedTree"
+                @keydown.tab.exact="handleKeyDownTab"
+                @keydown.shift.tab.exact="handleKeyDownShiftTab"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <h4>表示エリア</h4>
+              <v-treeview ref="addedTree" :items="textTree">
+                <template slot="label" slot-scope="{ item }">
+                  <v-chip>{{ item.name }}</v-chip>
+                  <span class="ma-2">
+                    {{ item.synonyms.join(' | ') }}
+                  </span>
+                </template>
+              </v-treeview>
+            </v-col>
+          </v-row>
+
+          <v-card-actions>
+            <v-btn text @click="shouldShowAddTreeDialog = false">
+              キャンセル
+            </v-btn>
+            <v-btn
+              text
+              :disabled="
+                tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
+              "
+              @click="addTree('ja')"
+              >まとめて追加（日）</v-btn
+            >
+            <v-btn
+              text
+              :disabled="
+                tagTreeTextArea === '' || tagTreeTextAreaErrorMessage.length > 0
+              "
+              @click="addTree('en')"
+              >まとめて追加（英）</v-btn
+            >
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="shouldShowNodeDeleteDialog" hide-overlay>
       <v-card>
         <v-app-bar>
@@ -165,7 +231,7 @@
             <v-text-field
               v-model="newChildTagName"
               append-icon="mdi-tag-plus"
-              :label="`「${activeTree.name_ja}」タグに子タグを追加`"
+              :label="`「${activeTree.name_ja}」タグに子タグを１つ追加`"
               @click:append="addTagAndNode"
               @keypress="filterTags()"
             ></v-text-field>
@@ -182,44 +248,9 @@
                 }}</v-chip
               >
             </div>
-            <!-- TODO: まとめて追加は、別モーダルで行う。画面が小さくて見にくいので. -->
-            <h4>{{ `「${activeTree.name_ja}」タグにツリーをまとめて追加` }}</h4>
-            <!-- INFO: styleは行番号を表示するため -->
-            <v-textarea
-              v-model="tagTreeTextArea"
-              name="input-7-1"
-              auto-grow
-              :style="{
-                background: 'url(/img/line_number.png)',
-                backgroundAttachment: 'local',
-                'background-repeat': 'no-repeat',
-                paddingLeft: '50px',
-                paddingTop: '2px',
-              }"
-              :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
-              :error-messages="tagTreeTextAreaErrorMessage"
-              @input="handleInputAddedTree"
-              @keydown.tab.exact="handleKeyDownTab"
-              @keydown.shift.tab.exact="handleKeyDownShiftTab"
-            ></v-textarea>
-            <v-treeview ref="addedTree" :items="textTree">
-              <template slot="label" slot-scope="{ item }">
-                <v-chip>{{ item.name }}</v-chip>
-                <span class="ma-2">
-                  {{ item.synonyms.join(' | ') }}
-                </span>
-              </template>
-            </v-treeview>
-            <v-btn
-              :disabled="tagTreeTextAreaErrorMessage.length > 0"
-              @click="addTree('ja')"
-              >まとめて追加（日）</v-btn
-            >
-            <v-btn
-              :disabled="tagTreeTextAreaErrorMessage.length > 0"
-              @click="addTree('en')"
-              >まとめて追加（英）</v-btn
-            >
+            <v-btn @click="shouldShowAddTreeDialog = true">
+              {{ `「${activeTree.name_ja}」タグにタグツリーをまとめて追加` }}
+            </v-btn>
           </v-container>
         </v-col>
       </v-row>
@@ -302,6 +333,7 @@ export default Vue.extend({
       removedSynonym: {} as TermAttributes,
       shouldShowNodeDeleteDialog: false,
       shouldShowSynonymDialog: false,
+      shouldShowAddTreeDialog: false,
       activeTreeId: '',
       activeTag: {} as Tag,
       newChildTagName: '',
