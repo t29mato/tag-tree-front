@@ -107,23 +107,6 @@
         </v-container>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="shouldShowAddChildren" hide-overlay>
-      <v-card>
-        <v-app-bar>
-          <v-toolbar-title>{{ removedSynonym.name }}</v-toolbar-title>
-        </v-app-bar>
-        <v-container>
-          <v-card-actions>
-            <v-btn text @click="shouldShowAddChildren = false">
-              キャンセル
-            </v-btn>
-            <v-btn text color="error" @click="removeSynonym(removedSynonym)">
-              削除する
-            </v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
     <v-container>
       <v-row>
         <v-col cols="6">
@@ -353,7 +336,6 @@ export default Vue.extend({
       filterKeyword: '',
       tagTreeText: '',
       tagTreeTextErrorMessage: '',
-      shouldShowAddChildren: false,
       textTree: [] as TextTree[],
       runningAddTreeJa: false,
       runningAddTreeEn: false,
