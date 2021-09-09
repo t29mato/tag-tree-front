@@ -531,10 +531,6 @@ export default Vue.extend({
       e.preventDefault()
       const element = e.target as HTMLInputElement
       const posOfCursor = element.selectionStart
-      if (!posOfCursor) {
-        console.error('カーソル位置の特定不可')
-        return
-      }
       const currentText = element.value
       const lastLineBreakPos = currentText
         .substr(0, posOfCursor)
@@ -549,10 +545,6 @@ export default Vue.extend({
       e.preventDefault()
       const element = e.target as HTMLInputElement
       const posOfCursor = element.selectionStart
-      if (!posOfCursor) {
-        console.error('カーソル位置の特定不可')
-        return
-      }
       const text = element.value
       const cursorIsFirstLine =
         text.substring(0, posOfCursor).lastIndexOf('\n') === -1
