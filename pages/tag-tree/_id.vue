@@ -353,8 +353,6 @@ export default Vue.extend({
       filterKeyword: '',
       tagTreeText: '',
       tagTreeTextErrorMessage: '',
-      tagTreeTextAreaParseErrorLines: [] as number[],
-      customToolbar: [[], [], []],
       shouldShowAddChildren: false,
       textTree: [] as TextTree[],
       runningAddTreeJa: false,
