@@ -569,12 +569,6 @@ export default Vue.extend({
     hideErrorMessage() {
       this.tagTreeTextErrorMessage = ''
     },
-    tagNameIncludeingSynonyms(name: string, synonyms: string[]): string {
-      if (synonyms.length === 0) {
-        return name
-      }
-      return name + synonyms.reduce((prev, cur) => prev + ' | ' + cur, '')
-    },
     async updateTagName(language: 'ja' | 'en') {
       let attributes = {}
       switch (language) {
@@ -749,25 +743,6 @@ export default Vue.extend({
       } finally {
         //
       }
-    },
-    searchTreeById(targetTreeId: string, rootTree: TagTreeAttributes) {
-      let targetTree: TagTreeAttributes = {} as TagTreeAttributes
-      const search = (tree: TagTreeAttributes): void => {
-        // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
-        if (targetTree.node_id) {
-          return
-        }
-        if (!tree) {
-          return
-        }
-        if (tree.node_id === targetTreeId) {
-          targetTree = tree
-        }
-        tree.children.map((child) => search(child))
-      }
-      search(rootTree)
-      // loadTag(targetTree.tag_id)
-      return targetTree
     },
     generateColor(treeLevel: number): string {
       // INFO: https://iro-color.com/colorchart/tint/rainbow-color.html
