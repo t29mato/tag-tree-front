@@ -342,9 +342,6 @@ export default Vue.extend({
     }
   },
   computed: {
-    shouldShowNewTag(): boolean {
-      return this.newChildTagName.length > 0
-    },
     filterTree() {
       return (item: TagTreeAttributes, search: string) => {
         if (!item.name_ja) {
