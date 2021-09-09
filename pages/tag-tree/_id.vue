@@ -182,6 +182,7 @@
                 }}</v-chip
               >
             </div>
+            <!-- TODO: まとめて追加は、別モーダルで行う。画面が小さくて見にくいので. -->
             <h4>{{ `「${activeTree.name_ja}」タグにツリーをまとめて追加` }}</h4>
             <!-- INFO: styleは行番号を表示するため -->
             <v-textarea
@@ -196,13 +197,12 @@
                 paddingTop: '2px',
               }"
               :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
-              :error="tagTreeTextAreaError"
               :error-messages="tagTreeTextAreaErrorMessage"
               @input="handleInputAddedTree"
               @keydown.tab.exact="handleKeyDownTab"
               @keydown.shift.tab.exact="handleKeyDownShiftTab"
             ></v-textarea>
-            <v-treeview ref="addedTree" :items="generateTreeFromPlainText">
+            <v-treeview ref="addedTree" :items="textTree">
               <template slot="label" slot-scope="{ item }">
                 <v-chip>{{ item.name }}</v-chip>
                 <span class="ma-2">
@@ -210,14 +210,10 @@
                 </span>
               </template>
             </v-treeview>
-            <v-btn
-              :disabled="tagTreeTextAreaError || tagTreeTextArea.length === 0"
-              @click="addTree('ja')"
+            <v-btn :disabled="textTree.length === 0" @click="addTree('ja')"
               >まとめて追加（日）</v-btn
             >
-            <v-btn
-              :disabled="tagTreeTextAreaError || tagTreeTextArea.length === 0"
-              @click="addTree('en')"
+            <v-btn :disabled="textTree.length === 0" @click="addTree('en')"
               >まとめて追加（英）</v-btn
             >
           </v-container>
@@ -320,12 +316,13 @@ export default Vue.extend({
         process.env.STARRYDATA_API_URL
       ),
       filterKeyword: '',
+      // REFACTOR: 変数名がわかりにくいので修正する
       tagTreeTextArea: '',
-      tagTreeTextAreaError: false,
       tagTreeTextAreaErrorMessage: '',
       tagTreeTextAreaParseErrorLines: [] as number[],
       customToolbar: [[], [], []],
       shouldShowAddChildren: false,
+      textTree: [] as TextTree[],
     }
   },
   computed: {
@@ -377,62 +374,13 @@ export default Vue.extend({
         (synonym) => synonym.language === 'en'
       )
     },
-    generateTreeFromPlainText(): textTree[] {
-      this.showErrorMessage(false, '')
-      const result = [] as textTree[]
-      const pushChild = (
-        target: textTree[],
-        child: textTree,
-        count: number
-      ): void => {
-        if (count === 0) {
-          target.push(child)
-          return
-        }
-        if (!target.slice(-1)[0]) {
-          throw new Error('パースに失敗')
-        }
-        pushChild(target.slice(-1)[0].children, child, count - 1)
-      }
-      const errorLines = [] as number[]
-      this.tagTreeTextArea
-        .trimEnd()
-        .split('\n')
-        .forEach((text, index) => {
-          const indentCount = text.search(/\S|$/)
-          const words = text
-            .trim()
-            .split('|')
-            .map((item) => item.trim())
-          const child = {
-            name: words[0],
-            synonyms: words.slice(1),
-            children: [],
-          }
-          try {
-            pushChild(result, child, indentCount)
-          } catch (error) {
-            console.error(index, error)
-            errorLines.push(index + 1)
-          } finally {
-            //
-          }
-        })
-      if (errorLines.length > 0) {
-        this.showErrorMessage(
-          true,
-          '次の行でパースに失敗しました。' + errorLines.join(', ')
-        )
-      }
-      return result
-    },
   },
   methods: {
     // TODO: 同義語の登録
     async addTree(language: Language) {
       try {
         this.$nuxt.$loading.start()
-        for (const tree of this.generateTreeFromPlainText) {
+        for (const tree of this.textTree) {
           await this.addTreeRecursively(
             this.activeTree.node_id,
             language === 'ja'
@@ -585,9 +533,11 @@ export default Vue.extend({
         text.substring(currentLineStart + tabInCurrentLine + 1)
       element.selectionEnd = posOfCursor - 1
     },
-    showErrorMessage(isError: boolean, message: string) {
-      this.tagTreeTextAreaError = isError
+    showErrorMessage(message: string) {
       this.tagTreeTextAreaErrorMessage = message
+    },
+    hideErrorMessage() {
+      this.tagTreeTextAreaErrorMessage = ''
     },
     tagNameIncludeingSynonyms(name: string, synonyms: string[]): string {
       if (synonyms.length === 0) {
@@ -653,7 +603,59 @@ export default Vue.extend({
     },
     handleInputAddedTree(input: string) {
       // INFO: transnoからのコピーが半角スペース4文字がインデントになるため
-      this.tagTreeTextArea = input.replace(/ {4}/g, '\t')
+      input = input.replace(/ {4}/g, '\t')
+
+      this.hideErrorMessage()
+      const textTree = [] as textTree[]
+      const pushChildToChildren = (
+        children: textTree[],
+        child: textTree,
+        count: number
+      ): void => {
+        if (count === 0) {
+          if (children.map((item) => item.name).includes(child.name)) {
+            throw new Error(`同名の子タグ「${child.name}」が存在`)
+          }
+          children.push(child)
+          return
+        }
+        if (!children.slice(-1)[0]) {
+          throw new Error('パースに失敗')
+        }
+        pushChildToChildren(children.slice(-1)[0].children, child, count - 1)
+      }
+      const errorLines = [] as { lineNumber: number; message: string }[]
+      input
+        .trimEnd()
+        .split('\n')
+        .forEach((text, index) => {
+          const indentCount = text.search(/\S|$/)
+          const words = text
+            .trim()
+            .split('|')
+            .map((item) => item.trim())
+          const child = {
+            name: words[0],
+            synonyms: words.slice(1),
+            children: [],
+          }
+          try {
+            pushChildToChildren(textTree, child, indentCount)
+          } catch (error) {
+            errorLines.push({ lineNumber: index + 1, message: error.message })
+          } finally {
+            //
+          }
+        })
+      if (errorLines.length > 0) {
+        this.showErrorMessage(
+          errorLines.reduce(
+            (prev, cur) => prev + `${cur.lineNumber}.${cur.message} `,
+            ''
+          )
+        )
+      }
+      this.textTree = textTree
       const addedTree = this.$refs.addedTree as unknown as VTreeView
       addedTree.updateAll(true)
     },
