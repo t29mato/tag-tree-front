@@ -427,6 +427,7 @@ export default Vue.extend({
         }
         this.tagTreeTextArea = ''
         this.textTree = []
+        this.shouldShowAddTreeDialog = false
       } catch (error) {
         window.alert(
           JSON.stringify(error.response?.data.errors) ||
@@ -435,6 +436,8 @@ export default Vue.extend({
         )
       } finally {
         await this.loadTree()
+        const allTree = this.$refs.allTree as unknown as VTreeView
+        allTree.updateAll(true)
         this.$nuxt.$loading.finish()
       }
     },
