@@ -188,7 +188,7 @@
             </div>
             <div v-if="activeTagSynonymJa.length === 0">なし</div>
             <v-text-field
-              v-model="newSynonymNameJa"
+              v-model="newSynonymName.ja"
               append-icon="mdi-text-box-plus"
               :label="activeTree.name_ja + 'の同義語を追加'"
               class="mb-2"
@@ -206,7 +206,7 @@
             </div>
             <div v-if="activeTagSynonymEn.length === 0">なし</div>
             <v-text-field
-              v-model="newSynonymNameEn"
+              v-model="newSynonymName.en"
               append-icon="mdi-text-box-plus"
               :label="activeTree.name_en + 'の同義語（英）を追加'"
               class="mb-2"
@@ -329,8 +329,6 @@ export default Vue.extend({
   data() {
     return {
       allTree: {} as TagTreeAttributes,
-      AddedTree: {} as TagTreeAttributes,
-      updatedTree: {} as TagTreeAttributes,
       deletedTree: {} as TagTreeAttributes,
       removedSynonym: {} as TermAttributes,
       shouldShowNodeDeleteDialog: false,
@@ -343,11 +341,11 @@ export default Vue.extend({
         ja: '',
         en: '',
       },
-      newSynonymNameJa: '',
-      newSynonymNameEn: '',
-      updatedName: '',
+      newSynonymName: {
+        ja: '',
+        en: '',
+      },
       filteredTags: [] as Tag[],
-      filteredTerms: [] as Term[],
       apiClient: StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
@@ -987,7 +985,7 @@ export default Vue.extend({
     },
     async addTermAndSynonym(language: 'ja' | 'en') {
       const newName =
-        language === 'ja' ? this.newSynonymNameJa : this.newSynonymNameEn
+        language === 'ja' ? this.newSynonymName.ja : this.newSynonymName.en
       if (
         this.activeTag.attributes.term_ja &&
         this.activeTag.attributes.term_ja.name === newName
@@ -1030,10 +1028,10 @@ export default Vue.extend({
         await this.loadActiveTag()
         switch (language) {
           case 'ja':
-            this.newSynonymNameJa = ''
+            this.newSynonymName.ja = ''
             break
           case 'en':
-            this.newSynonymNameEn = ''
+            this.newSynonymName.en = ''
         }
       } catch (error) {
         window.alert(
