@@ -622,7 +622,7 @@ export default Vue.extend({
       ): void => {
         if (count === 0) {
           if (children.map((item) => item.name).includes(child.name)) {
-            throw new Error(`同名の子タグ「${child.name}」が存在`)
+            throw new Error(`「${child.name}」タグが重複`)
           }
           children.push(child)
           return
