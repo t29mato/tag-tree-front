@@ -210,10 +210,14 @@
                 </span>
               </template>
             </v-treeview>
-            <v-btn :disabled="textTree.length === 0" @click="addTree('ja')"
+            <v-btn
+              :disabled="tagTreeTextAreaErrorMessage.length > 0"
+              @click="addTree('ja')"
               >まとめて追加（日）</v-btn
             >
-            <v-btn :disabled="textTree.length === 0" @click="addTree('en')"
+            <v-btn
+              :disabled="tagTreeTextAreaErrorMessage.length > 0"
+              @click="addTree('en')"
               >まとめて追加（英）</v-btn
             >
           </v-container>
@@ -240,11 +244,10 @@ interface VTreeView {
 
 type Language = 'ja' | 'en'
 
-// REFACTOR: interfaceはPascalCase
-interface textTree {
+interface TextTree {
   name: string
   synonyms: string[]
-  children: textTree[]
+  children: TextTree[]
 }
 
 export default Vue.extend({
@@ -391,8 +394,8 @@ export default Vue.extend({
           )
         }
         this.tagTreeTextArea = ''
+        this.textTree = []
       } catch (error) {
-        console.error(error)
         window.alert(
           JSON.stringify(error.response?.data.errors) ||
             error ||
@@ -406,23 +409,12 @@ export default Vue.extend({
     async addTreeRecursively(
       parentNode: string,
       parentName: string,
-      tree: textTree,
+      tree: TextTree,
       language: Language
     ) {
       if (parentName === tree.name) {
         throw new Error(
           `親タグ「${parentName}」と子タグ「${tree.name}」の名前が同一です`
-        )
-      }
-      if (
-        this.activeTree.children
-          .map((child) => {
-            return language === 'ja' ? child.name_ja : child.name_en
-          })
-          .includes(tree.name)
-      ) {
-        throw new Error(
-          `既に同じ名前の子タグ「${tree.name}」が登録されています`
         )
       }
       if (tree.name === '') {
@@ -450,6 +442,22 @@ export default Vue.extend({
           },
         })
       ).data
+      await this.apiClient.partialUpdateApiTagsId(newTag.id, {
+        data: {
+          type: 'Tag',
+          id: newTag.id,
+          attributes: {
+            synonyms: newTag.attributes.synonyms.concat(
+              tree.synonyms.map((synonym) => {
+                return {
+                  name: synonym,
+                  language,
+                }
+              })
+            ),
+          },
+        },
+      })
       const { data: newNode } = (
         await this.apiClient.createApiNodes({
           data: {
@@ -606,10 +614,10 @@ export default Vue.extend({
       input = input.replace(/ {4}/g, '\t')
 
       this.hideErrorMessage()
-      const textTree = [] as textTree[]
+      const textTree = [] as TextTree[]
       const pushChildToChildren = (
-        children: textTree[],
-        child: textTree,
+        children: TextTree[],
+        child: TextTree,
         count: number
       ): void => {
         if (count === 0) {
@@ -640,6 +648,19 @@ export default Vue.extend({
             children: [],
           }
           try {
+            if (
+              indentCount === 0 &&
+              this.activeTree.children
+                .map((child) => child.name_ja)
+                .concat(this.activeTree.children.map((child) => child.name_en))
+                .includes(child.name)
+            ) {
+              throw new Error(
+                `「${
+                  this.activeTree.name_ja || this.activeTree.name_en
+                }」タグに同名の子タグ「${child.name}」が存在`
+              )
+            }
             pushChildToChildren(textTree, child, indentCount)
           } catch (error) {
             errorLines.push({ lineNumber: index + 1, message: error.message })
