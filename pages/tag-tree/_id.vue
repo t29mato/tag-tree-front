@@ -648,6 +648,7 @@ export default Vue.extend({
             children: [],
           }
           try {
+            // INFO: アクティブタグ（親タグ）と子タグ名が同一の場合にエラー
             if (
               indentCount === 0 &&
               this.activeTree.children
@@ -658,8 +659,19 @@ export default Vue.extend({
               throw new Error(
                 `「${
                   this.activeTree.name_ja || this.activeTree.name_en
-                }」タグに同名の子タグ「${child.name}」が存在`
+                }」タグの子タグ「${child.name}」が重複`
               )
+            }
+            // INFO: 同義語が重複してる場合はエラー
+            if (
+              Array.from(new Set(child.synonyms)).length !==
+              child.synonyms.length
+            ) {
+              throw new Error('同義語が重複')
+            }
+            // INFO: 同義語がタグ名と重複してる場合はエラー
+            if (child.synonyms.includes(child.name)) {
+              throw new Error('タグ名と同義語が重複')
             }
             pushChildToChildren(textTree, child, indentCount)
           } catch (error) {
