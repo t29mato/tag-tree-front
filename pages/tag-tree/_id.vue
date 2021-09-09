@@ -312,12 +312,12 @@ export default Vue.extend({
   data() {
     return {
       allTree: {} as TagTreeAttributes,
-      deletedTree: {} as TagTreeAttributes,
       removedSynonym: {} as TermAttributes,
       shouldShowNodeDeleteDialog: false,
       shouldShowSynonymDialog: false,
       shouldShowAddTreeDialog: false,
       activeTreeId: '',
+      deletedTreeId: '',
       activeTag: {} as Tag,
       newChildTagName: '',
       newTagName: {
@@ -355,6 +355,28 @@ export default Vue.extend({
         return this.allTree
       }
       let targetTree: TagTreeAttributes = {} as TagTreeAttributes
+      const search = (treeId: string, tree: TagTreeAttributes): void => {
+        // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
+        if (targetTree.node_id) {
+          return
+        }
+        if (!tree) {
+          return
+        }
+        if (tree.node_id === treeId) {
+          targetTree = tree
+        }
+        tree.children.map((childTree) => search(treeId, childTree))
+      }
+      search(this.activeTreeId, this.allTree)
+      return targetTree
+    },
+    deletedTree(): TagTreeAttributes {
+      if (!this.deletedTreeId) {
+        return {} as TagTreeAttributes
+      }
+      let targetTree: TagTreeAttributes = {} as TagTreeAttributes
+      // REFACTOR: search function重複。副作用あるメソッドのためリファクタ時、注意。
       const search = (treeId: string, tree: TagTreeAttributes): void => {
         // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
         if (targetTree.node_id) {
@@ -758,20 +780,9 @@ export default Vue.extend({
       // INFO: ツリーレベルが1から開始するので、順番通りにするため1を引いた
       return colors[(treeLevel - 1) % 7]
     },
-    // TODO: APIコールせずにツリーを表示できるように修正
-    async openNodeDeleteDialog(nodeId: string) {
-      this.deletedTree = {} as TagTreeAttributes
+    openNodeDeleteDialog(nodeId: string) {
       this.shouldShowNodeDeleteDialog = true
-      try {
-        const { data: tagTree } = (
-          await this.apiClient.retrieveApiTagTreeId(nodeId)
-        ).data
-        this.deletedTree = tagTree.attributes
-      } catch (error) {
-        window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
-      } finally {
-        //
-      }
+      this.deletedTreeId = nodeId
     },
     openSynonymDialog(term: TermAttributes) {
       this.removedSynonym = term
@@ -783,7 +794,7 @@ export default Vue.extend({
     async deleteTree() {
       this.$nuxt.$loading.start()
       try {
-        await this.apiClient.destroyApiNodesId(this.deletedTree.node_id)
+        await this.apiClient.destroyApiNodesId(this.deletedTreeId)
         this.shouldShowNodeDeleteDialog = false
         await this.loadTree()
       } catch (error) {
