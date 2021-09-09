@@ -715,7 +715,7 @@ export default Vue.extend({
     shouldShowFilteredTag(tag: Tag): boolean {
       return !this.activeTree.children
         .map((child) => child.name_ja)
-        .includes(tag.attributes.term_ja.name || '')
+        .includes(tag.attributes.term_ja?.name || '')
     },
     // INFO: 同じタグに同じ同義語を登録するのはできないので。
     shouldShowFilteredTerm(term: Term): boolean {
