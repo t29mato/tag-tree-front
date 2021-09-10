@@ -4,7 +4,7 @@
       <v-card>
         <v-app-bar>
           <v-toolbar-title>{{
-            `「${activeTree.name_ja}」タグにタグツリーをまとめて追加`
+            `「${showTagName(activeTree)}」タグにタグツリーをまとめて追加`
           }}</v-toolbar-title>
         </v-app-bar>
         <v-container>
@@ -122,13 +122,13 @@
             :items="[allTree]"
             item-key="node_id"
             :search="filterKeyword"
-            :filter="filterTree"
+            :filter="filterAllTree"
             activatable
             @update:active="activateTree"
           >
             <template slot="label" slot-scope="{ item }">
               <v-chip class="ma-2" :color="generateColor(item.tree_level)">
-                {{ item | tagName }}
+                {{ showTagName(item) }}
               </v-chip>
               <v-chip v-if="item.children.length > 0" x-small>{{
                 item.children.length
@@ -145,7 +145,7 @@
         </v-col>
         <v-col v-if="activeTreeId" cols="6">
           <v-chip large class="mb-2">
-            <h3>{{ activeTree.name_ja || activeTree.name_en }}</h3>
+            <h3>{{ showTagName(activeTree) }}</h3>
           </v-chip>
           <v-container>
             <h4>タグ名（日）</h4>
@@ -197,7 +197,7 @@
             ></v-text-field>
           </v-container>
 
-          <h3>{{ `「${activeTree.name_ja}」タグの子タグ` }}</h3>
+          <h3>{{ `「${showTagName(activeTree)}」タグの子タグ` }}</h3>
           <v-container>
             <div v-for="child in activeTree.children" :key="child.node_id">
               <v-chip
@@ -206,7 +206,7 @@
                 @click="activateTree([child.node_id])"
                 @click:close="openNodeDeleteDialog(child.node_id)"
               >
-                {{ child.name_ja || child.name_en }}
+                {{ showTagName(child) }}
               </v-chip>
               <v-chip v-if="child.children.length > 0" x-small>{{
                 child.children.length
@@ -216,9 +216,9 @@
             <v-text-field
               v-model="newChildTagName"
               append-icon="mdi-tag-plus"
-              :label="`「${activeTree.name_ja}」タグに子タグを１つ追加`"
+              :label="`「${showTagName(activeTree)}」タグに子タグを１つ追加`"
               @click:append="addTagAndNode"
-              @keypress="filterTags()"
+              @input="filterTags()"
             ></v-text-field>
             <div v-for="tag in filteredTags" :key="tag.id">
               <v-chip
@@ -229,12 +229,16 @@
                 close-icon="mdi-plus-circle"
                 @click:close="addNode(tag)"
                 >{{
-                  tag.attributes.term_ja && tag.attributes.term_ja.name
+                  (tag.attributes.term_ja && tag.attributes.term_ja.name) ||
+                  (tag.attributes.term_en && tag.attributes.term_en.name) ||
+                  'タグ名なし'
                 }}</v-chip
               >
             </div>
             <v-btn @click="shouldShowAddTreeDialog = true">
-              {{ `「${activeTree.name_ja}」タグにタグツリーをまとめて追加` }}
+              {{
+                `「${showTagName(activeTree)}」タグにタグツリーをまとめて追加`
+              }}
             </v-btn>
           </v-container>
         </v-col>
@@ -279,15 +283,6 @@ export default Vue.extend({
         return ''
       }
       return String(num)
-    },
-    tagName(tree: TagTreeAttributes): string {
-      if (tree.name_ja) {
-        return tree.name_ja
-      }
-      if (tree.name_en) {
-        return tree.name_en
-      }
-      return ''
     },
   },
   async asyncData({ params }) {
@@ -337,17 +332,22 @@ export default Vue.extend({
       tagTreeText: '',
       tagTreeTextErrorMessage: '',
       textTree: [] as TextTree[],
+      // REFACTOR: 変数ではなくてオブジェクトにする
       runningAddTreeJa: false,
       runningAddTreeEn: false,
     }
   },
   computed: {
-    filterTree() {
+    filterAllTree() {
       return (item: TagTreeAttributes, search: string) => {
-        if (!item.name_ja) {
-          return false
+        if (item.name_ja && item.name_en) {
+          return item.name_ja.includes(search) || item.name_en.includes(search)
         }
-        return item.name_ja.includes(search)
+        if (item.name_ja || item.name_en) {
+          return (item.name_ja || item.name_en).includes(search)
+        }
+        // INFO: タグ名が入力されていないので検索にヒットさせない
+        return false
       }
     },
     activeTree(): TagTreeAttributes {
@@ -411,6 +411,9 @@ export default Vue.extend({
     },
   },
   methods: {
+    showTagName(tree: TagTreeAttributes): string {
+      return tree.name_ja || tree.name_en
+    },
     async addTree(language: Language) {
       try {
         this.$nuxt.$loading.start()
@@ -647,6 +650,7 @@ export default Vue.extend({
         allTree.updateAll(false)
       }
     },
+    // REFACTOR: 関数名のAddedTreeがtextareと一貫性ないので修正する
     handleInputAddedTree(input: string) {
       // INFO: transnoからのコピーが半角スペース4文字がインデントになるため
       input = input.replace(/ {4}/g, '\t')
@@ -874,7 +878,11 @@ export default Vue.extend({
         this.activeTree.children.map((child) => child.tag_id).includes(tag.id)
       ) {
         window.alert(
-          `既に「${this.activeTree.name_ja}」ノードに「${tag.attributes.term_ja.name}」タグは登録されています。`
+          `既に「${this.showTagName(this.activeTree)}」ノードに「${
+            tag.attributes.term_ja?.name ||
+            tag.attributes.term_en?.name ||
+            'タグ名なし'
+          }」タグは登録されています。`
         )
         return
       }
