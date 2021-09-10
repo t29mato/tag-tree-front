@@ -912,29 +912,41 @@ export default Vue.extend({
         this.$nuxt.$loading.finish()
       }
     },
-    async addTermAndSynonym(language: 'ja' | 'en') {
-      const newName =
-        language === 'ja' ? this.newSynonymName.ja : this.newSynonymName.en
+    async addTermAndSynonym(language: string) {
+      const newSynonyms =
+        language === 'ja'
+          ? this.newSynonymName.ja.split('|').map((name) => name.trim())
+          : this.newSynonymName.en.split('|').map((name) => name.trim())
       if (
-        this.activeTag.attributes.term_ja &&
-        this.activeTag.attributes.term_ja.name === newName
+        this.activeTag.attributes.term_ja?.name &&
+        newSynonyms.includes(this.activeTag.attributes.term_ja.name)
       ) {
-        window.alert(`${newName}はタグ名と同じです。`)
+        window.alert(
+          `タグ名「${this.activeTag.attributes.term_ja?.name}」と重複`
+        )
         return
       }
       if (
-        this.activeTag.attributes.term_en &&
-        this.activeTag.attributes.term_en.name === newName
+        this.activeTag.attributes.term_en?.name &&
+        newSynonyms.includes(this.activeTag.attributes.term_en.name)
       ) {
-        window.alert(`${newName}はタグ名（英）と同じです。`)
+        window.alert(
+          `タグ名「${this.activeTag.attributes.term_en?.name}」と重複`
+        )
         return
       }
-      if (
-        this.activeTag.attributes.synonyms
-          .map((term) => term.name)
-          .includes(newName)
-      ) {
-        window.alert(`${newName}は既に登録されている同義語です。`)
+      let isDuplicated = false
+      newSynonyms.forEach((synonym) => {
+        if (
+          this.activeTag.attributes.synonyms
+            .map((term) => term.name)
+            .includes(synonym)
+        ) {
+          isDuplicated = true
+        }
+      })
+      if (isDuplicated) {
+        window.alert('既存同義語と重複')
         return
       }
       try {
@@ -944,13 +956,14 @@ export default Vue.extend({
             type: 'Tag',
             id: this.activeTag.id,
             attributes: {
-              synonyms: [
-                {
-                  name: newName,
-                  language,
-                },
-                ...this.activeTag.attributes.synonyms,
-              ],
+              synonyms: newSynonyms
+                .map((synonym) => {
+                  return {
+                    name: synonym,
+                    language,
+                  }
+                })
+                .concat(this.activeTag.attributes.synonyms),
             },
           },
         })
