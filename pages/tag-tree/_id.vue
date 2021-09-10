@@ -215,9 +215,9 @@
             <div v-if="activeTree.children.length === 0">なし</div>
             <v-text-field
               v-model="newChildTagName"
-              append-icon="mdi-tag-plus"
-              :label="`「${showTagName(activeTree)}」タグに子タグを１つ追加`"
-              @click:append="addTagAndNode"
+              append-icon="mdi-magnify"
+              :label="`「${showTagName(activeTree)}」タグに既存タグを追加`"
+              @click:append="filterTags"
               @input="filterTags()"
             ></v-text-field>
             <div v-for="tag in filteredTags" :key="tag.id">
@@ -868,7 +868,6 @@ export default Vue.extend({
       }
     },
     async addNode(tag: Tag) {
-      this.$nuxt.$loading.start()
       // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
       if (this.activeTree.tag_id === tag.id) {
         window.alert(`親ノードと同じタグの子を登録することはできません。`)
@@ -887,6 +886,7 @@ export default Vue.extend({
         return
       }
       try {
+        this.$nuxt.$loading.start()
         await this.apiClient.createApiNodes({
           data: {
             type: 'Node',
@@ -909,54 +909,6 @@ export default Vue.extend({
         )
       } finally {
         await this.loadTree()
-        this.$nuxt.$loading.finish()
-      }
-    },
-    async addTagAndNode() {
-      this.$nuxt.$loading.start()
-      // TODO: 既に登録されているタグでもそのまま登録できるようにする。
-      if (
-        this.filteredTags
-          .map((tag) => tag.attributes.term_ja.name)
-          .includes(this.newChildTagName)
-      ) {
-        window.alert(`${this.newChildTagName}は既に登録されているタグです。`)
-        return
-      }
-      try {
-        const { data: newTag } = (
-          await this.apiClient.createApiTags({
-            data: {
-              type: 'Tag',
-              attributes: {
-                term_ja: {
-                  name: this.newChildTagName,
-                  language: 'ja',
-                },
-              },
-            },
-          })
-        ).data
-        await this.apiClient.createApiNodes({
-          data: {
-            type: 'Node',
-            attributes: {
-              parent: {
-                type: 'Node',
-                id: this.activeTree.node_id,
-              },
-              tag: newTag,
-            },
-          },
-        })
-        await this.loadTree()
-        this.newChildTagName = ''
-      } catch (error) {
-        window.alert(
-          JSON.stringify(error.response.data.errors) ||
-            '予期しないエラーです。管理者に問い合わせください。'
-        )
-      } finally {
         this.$nuxt.$loading.finish()
       }
     },
