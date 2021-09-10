@@ -34,9 +34,11 @@
               <v-treeview ref="addedTree" :items="textTree">
                 <template slot="label" slot-scope="{ item }">
                   <v-chip>{{ item.name }}</v-chip>
-                  <span class="ma-2">
-                    {{ item.synonyms.join(' | ') }}
-                  </span>
+                  <template v-for="synonym in item.synonyms">
+                    <v-chip :key="synonym" label="true" class="ml-2" outlined>{{
+                      synonym
+                    }}</v-chip>
+                  </template>
                 </template>
               </v-treeview>
             </v-col>
@@ -76,7 +78,7 @@
         <v-container>
           <v-treeview :items="[deletedTree]">
             <template slot="label" slot-scope="{ item }">
-              <v-chip class="ma-2" :to="{ path: '/tags/' + item.tag_id }">
+              <v-chip :to="{ path: '/tags/' + item.tag_id }">
                 {{ item.name_ja }}
               </v-chip>
             </template>
@@ -127,10 +129,10 @@
             @update:active="activateTree"
           >
             <template slot="label" slot-scope="{ item }">
-              <v-chip class="ma-2" :color="generateColor(item.tree_level)">
+              <v-chip :color="generateColor(item.tree_level)">
                 {{ showTagName(item) }}
               </v-chip>
-              <v-chip v-if="item.children.length > 0" x-small>{{
+              <v-chip v-if="item.children.length > 0" class="ml-2" x-small>{{
                 item.children.length
               }}</v-chip>
               <!-- INFO 魚類ツリーの時だけ魚図鑑のURL表示 -->
@@ -162,11 +164,15 @@
             ></v-text-field>
             <h4 class="mt-2">同義語（日）</h4>
             <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
-              <template v-for="(synonym, index) in activeTagSynonymJa">
-                <template v-if="index > 0">|</template>
-                <span :key="synonym.name" @click="openSynonymDialog(synonym)"
-                  >{{ synonym.name }}
-                </span>
+              <template v-for="synonym in activeTagSynonymJa">
+                <v-chip
+                  :key="synonym.name"
+                  label="true"
+                  class="ma-2"
+                  outlined
+                  @click="openSynonymDialog(synonym)"
+                  >{{ synonym.name }}</v-chip
+                >
               </template>
             </div>
             <div v-if="activeTagSynonymJa.length === 0">なし</div>
@@ -180,11 +186,15 @@
 
             <h4 class="mt-2">同義語（英）</h4>
             <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
-              <template v-for="(synonym, index) in activeTagSynonymEn">
-                <template v-if="index > 0">|</template>
-                <span :key="synonym.name" @click="openSynonymDialog(synonym)"
-                  >{{ synonym.name }}
-                </span>
+              <template v-for="synonym in activeTagSynonymEn">
+                <v-chip
+                  :key="synonym.name"
+                  label="true"
+                  class="ma-2"
+                  outlined
+                  @click="openSynonymDialog(synonym)"
+                  >{{ synonym.name }}</v-chip
+                >
               </template>
             </div>
             <div v-if="activeTagSynonymEn.length === 0">なし</div>
@@ -201,7 +211,7 @@
           <v-container>
             <div v-for="child in activeTree.children" :key="child.node_id">
               <v-chip
-                class="mt-2 mr-2 mb-2"
+                class="ma-2"
                 close
                 @click="activateTree([child.node_id])"
                 @click:close="openNodeDeleteDialog(child.node_id)"
@@ -338,6 +348,7 @@ export default Vue.extend({
     }
   },
   computed: {
+    // TODO: 同義語も検索対象に加える。APIの修正も必要
     filterAllTree() {
       return (item: TagTreeAttributes, search: string) => {
         if (item.name_ja && item.name_en) {
