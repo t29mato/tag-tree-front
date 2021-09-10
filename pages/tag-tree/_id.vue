@@ -34,6 +34,9 @@
               <v-treeview ref="addedTree" :items="textTree">
                 <template slot="label" slot-scope="{ item }">
                   <v-chip>{{ item.name }}</v-chip>
+                  <v-chip v-if="item.children.length > 0" x-small outlined>{{
+                    item.children.length
+                  }}</v-chip>
                   <template v-for="synonym in item.synonyms">
                     <v-chip :key="synonym" label="true" class="ml-2" outlined>{{
                       synonym
@@ -132,7 +135,7 @@
               <v-chip :color="generateColor(item.tree_level)">
                 {{ showTagName(item) }}
               </v-chip>
-              <v-chip v-if="item.children.length > 0" class="ml-2" x-small>{{
+              <v-chip v-if="item.children.length > 0" x-small outlined>{{
                 item.children.length
               }}</v-chip>
               <!-- INFO 魚類ツリーの時だけ魚図鑑のURL表示 -->
@@ -142,6 +145,13 @@
                 @click="openZukanCom(item.node_id)"
                 >mdi-fish</v-icon
               >
+              <template
+                v-for="synonym in item.synonyms_ja.concat(item.synonyms_en)"
+              >
+                <v-chip :key="synonym" label="true" class="ml-2" outlined>{{
+                  synonym
+                }}</v-chip>
+              </template>
             </template>
           </v-treeview>
         </v-col>
@@ -218,7 +228,7 @@
               >
                 {{ showTagName(child) }}
               </v-chip>
-              <v-chip v-if="child.children.length > 0" x-small>{{
+              <v-chip v-if="child.children.length > 0" x-small outlined>{{
                 child.children.length
               }}</v-chip>
             </div>
@@ -833,6 +843,7 @@ export default Vue.extend({
           },
         })
         await this.loadActiveTag()
+        await this.loadTree()
       } catch (error) {
         window.alert('同義語の削除に失敗しました' + JSON.stringify(error))
       } finally {
@@ -979,6 +990,7 @@ export default Vue.extend({
           },
         })
         await this.loadActiveTag()
+        await this.loadTree()
         switch (language) {
           case 'ja':
             this.newSynonymName.ja = ''
