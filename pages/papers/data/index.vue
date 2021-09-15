@@ -1,12 +1,5 @@
 <template>
   <v-container>
-    <h3>
-      1. 画像を選択<v-icon
-        class="ml-2 mb-1"
-        :color="!!uploadImageUrl ? 'green' : 'grey'"
-        >mdi-check-circle</v-icon
-      >
-    </h3>
     <v-file-input
       accept="image/*"
       label="file input"
@@ -213,7 +206,7 @@ const [indexX1, indexX2, indexY1, indexY2] = [0, 1, 2, 3]
 export default Vue.extend({
   data() {
     return {
-      uploadImageUrl: '',
+      uploadImageUrl: '/img/sample_graph.png',
       isPointing: false,
       image: {
         width: null,
