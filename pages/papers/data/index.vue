@@ -32,7 +32,7 @@
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color': 'red',
+                  'background-color': axesPixel.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <!-- INFO: 座標軸名 -->
@@ -125,7 +125,7 @@
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color': 'red',
+                  'background-color': axesPixel.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <span
