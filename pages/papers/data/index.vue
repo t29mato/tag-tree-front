@@ -151,61 +151,47 @@
             }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
+          <div v-if="axesPixel.length === 4">
+            <v-row>
+              <v-col vols="6">
+                <v-text-field
+                  label="x1"
+                  type="number"
+                  :value="axesValues[indexX1]"
+                  @input="inputX1Value"
+                ></v-text-field>
+              </v-col>
+              <v-col vols="6">
+                <v-text-field
+                  label="x2"
+                  type="number"
+                  :value="axesValues[indexX2]"
+                  @input="inputX2Value"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col vols="6">
+                <v-text-field
+                  label="y1"
+                  type="number"
+                  :value="axesValues[indexY1]"
+                  @input="inputY1Value"
+                ></v-text-field>
+              </v-col>
+              <v-col vols="6">
+                <v-text-field
+                  label="y2"
+                  type="number"
+                  :value="axesValues[indexY2]"
+                  @input="inputY2Value"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </div>
         </v-col>
       </v-row>
     </template>
-    <h3>
-      2. XY座標軸をセット<v-icon
-        class="ml-2 mb-1"
-        :color="axesPixel.length === 4 ? 'green' : 'grey'"
-        >mdi-check-circle</v-icon
-      >
-    </h3>
-    <h3>
-      3. XY座標軸の値をセット<v-icon
-        class="ml-2 mb-1"
-        :color="
-          axesValues.filter((value) => value !== null).length === 4
-            ? 'green'
-            : 'grey'
-        "
-        >mdi-check-circle</v-icon
-      >
-    </h3>
-    <v-row v-if="axesPixel.length === 4">
-      <v-col vols="3">
-        <v-text-field
-          label="x1"
-          type="number"
-          :value="axesValues[indexX1]"
-          @input="inputX1Value"
-        ></v-text-field>
-      </v-col>
-      <v-col vols="3">
-        <v-text-field
-          label="x2"
-          type="number"
-          :value="axesValues[indexX2]"
-          @input="inputX2Value"
-        ></v-text-field>
-      </v-col>
-      <v-col vols="3">
-        <v-text-field
-          label="y1"
-          type="number"
-          :value="axesValues[indexY1]"
-          @input="inputY1Value"
-        ></v-text-field>
-      </v-col>
-      <v-col vols="3">
-        <v-text-field
-          label="y2"
-          type="number"
-          :value="axesValues[indexY2]"
-          @input="inputY2Value"
-        ></v-text-field>
-      </v-col>
-    </v-row>
     {{
       points.map(
         (point) => calculateValueX(point.x) + ', ' + calculateValueY(point.y)
