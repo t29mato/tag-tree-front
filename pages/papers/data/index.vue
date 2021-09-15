@@ -46,6 +46,21 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
+            <div v-for="(point, index) in points" :key="index">
+              <!-- INFO: プロットデータ -->
+              <div
+                :style="{
+                  position: 'absolute',
+                  top: `${point.y}px`,
+                  left: `${point.x}px`,
+                  'pointer-events': 'none',
+                  width: '10px',
+                  height: '10px',
+                  'border-radius': '50%',
+                  'background-color': 'red',
+                }"
+              ></div>
+            </div>
             <!-- INFO: カーソル横の文字 -->
             <div
               v-if="axesPixel.length < 4"
@@ -58,13 +73,6 @@
             >
               {{ showAxisName(axesPixel.length) }}
             </div>
-            <v-chip color="red" @click="changeColor('red')">red</v-chip>
-            <v-chip color="green" @click="changeColor('green')">green</v-chip>
-            <v-chip color="blue" @click="changeColor('blue')">blue</v-chip>
-            <v-chip color="purple" @click="changeColor('purple')"
-              >purple</v-chip
-            >
-            <v-chip color="pink" @click="changeColor('pink')">pink</v-chip>
           </div>
         </v-col>
         <!-- INFO: 拡大鏡 -->
@@ -142,6 +150,25 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
+            <div v-for="(point, index) in points" :key="index">
+              <!-- INFO: プロットデータ -->
+              <div
+                :style="{
+                  position: 'absolute',
+                  top: `${point.y * scale}px`,
+                  left: `${point.x * scale}px`,
+                  transform: `scale(${scale}) translate(-${
+                    posOnImage.x - circleRadius
+                  }px, -${posOnImage.y - circleRadius}px)`,
+                  'transform-origin': 'top left',
+                  'pointer-events': 'none',
+                  width: '10px',
+                  height: '10px',
+                  'border-radius': '50%',
+                  'background-color': 'red',
+                }"
+              ></div>
+            </div>
           </div>
           <div v-if="axesPixel.length === 4">
             {{ `x: ${calculateValueX(posOnImage.x)}` }}<br />
@@ -189,11 +216,22 @@
         </v-col>
       </v-row>
     </template>
-    {{
-      points.map(
-        (point) => calculateValueX(point.x) + ', ' + calculateValueY(point.y)
-      )
-    }}
+    <v-simple-table>
+      <template #default>
+        <thead>
+          <tr>
+            <th>X</th>
+            <th>Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="point in points" :key="point.id">
+            <td>{{ calculateValueX(point.x) }}</td>
+            <td>{{ calculateValueY(point.y) }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
   </v-container>
 </template>
 
