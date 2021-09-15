@@ -216,7 +216,7 @@
         </v-col>
       </v-row>
     </template>
-    <v-simple-table v-if="points.length > 0">
+    <v-simple-table v-if="points.length > 0 && axesPixel.length === 4">
       <template #default>
         <thead>
           <tr>
