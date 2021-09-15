@@ -140,13 +140,7 @@
               calculateValueY(posOnImage.y)
             }}
           </div>
-          <v-slider
-            :value="scale"
-            dense
-            hint="Im a hint"
-            max="10"
-            min="2"
-          ></v-slider>
+          <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
         </v-col>
       </v-row>
     </template>
