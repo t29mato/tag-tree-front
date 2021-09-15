@@ -51,8 +51,8 @@
               v-if="axesPixel.length < 4"
               :style="{
                 position: 'absolute',
-                left: `${posOnImage.x + 10}px`,
-                top: `${posOnImage.y - 10}px`,
+                left: `${posOnImage.x + 7}px`,
+                top: `${posOnImage.y - 12}px`,
                 'pointer-events': 'none',
               }"
             >
