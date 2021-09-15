@@ -46,6 +46,18 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
+            <!-- INFO: カーソル横の文字 -->
+            <div
+              v-if="axesPixel.length < 4"
+              :style="{
+                position: 'absolute',
+                left: `${posOnImage.x + 10}px`,
+                top: `${posOnImage.y - 10}px`,
+                'pointer-events': 'none',
+              }"
+            >
+              {{ showAxisName(axesPixel.length) }}
+            </div>
             <v-chip color="red" @click="changeColor('red')">red</v-chip>
             <v-chip color="green" @click="changeColor('green')">green</v-chip>
             <v-chip color="blue" @click="changeColor('blue')">blue</v-chip>
