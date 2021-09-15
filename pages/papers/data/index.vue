@@ -11,7 +11,11 @@
           <div :style="{ position: 'relative' }">
             <!-- INFO: plot対象画像 -->
             <img
-              :style="{ cursor: 'crosshair', 'user-drag': 'none' }"
+              :style="{
+                cursor: 'crosshair',
+                'user-drag': 'none',
+                border: 'solid 1px grey',
+              }"
               :src="uploadImageUrl"
               @click="plot"
               @mousemove="mouseMove"
