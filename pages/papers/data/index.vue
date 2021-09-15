@@ -144,11 +144,8 @@
             </div>
           </div>
           <div v-if="axesPixel.length === 4">
-            {{
-              calculateValueX(posOnImage.x) +
-              ' ' +
-              calculateValueY(posOnImage.y)
-            }}
+            {{ `x: ${calculateValueX(posOnImage.x)}` }}<br />
+            {{ `y: ${calculateValueY(posOnImage.y)}` }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
           <div v-if="axesPixel.length === 4">
