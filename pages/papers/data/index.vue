@@ -59,6 +59,7 @@
               width: '200px',
               height: '200px',
               position: 'relative',
+              border: '1px solid grey',
             }"
           >
             <!-- INFO: 拡大鏡の画像 -->
@@ -79,7 +80,7 @@
                 left: '0px',
                 width: '99px',
                 height: '200px',
-                'border-right': '1px solid black',
+                'border-right': '1px solid grey',
               }"
             ></div>
             <!-- INFO: 拡大鏡の横線 -->
@@ -90,7 +91,7 @@
                 left: '0px',
                 width: '200px',
                 height: '99px',
-                'border-bottom': '1px solid black',
+                'border-bottom': '1px solid grey',
               }"
             ></div>
             <!-- INFO: 拡大鏡の座標軸 -->
