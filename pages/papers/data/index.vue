@@ -11,7 +11,7 @@
           <div :style="{ position: 'relative' }">
             <!-- INFO: plot対象画像 -->
             <canvas
-              id="canvas"
+              id="graph"
               :style="{
                 cursor: 'crosshair',
                 'user-drag': 'none',
@@ -23,6 +23,9 @@
             ></canvas>
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
             <v-btn @click="clearPoints">プロットをクリア</v-btn>
+            <v-btn @click="shouldShowPoints = !shouldShowPoints">{{
+              shouldShowPoints ? 'プロットを非表示' : 'プロットを表示'
+            }}</v-btn>
             <div v-for="(axis, index) in coordAxes" :key="'coordAxes' + index">
               <!-- INFO: 座標軸の点 -->
               <div
@@ -48,7 +51,11 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
-            <div v-for="point in points" :key="point.id">
+            <div
+              v-for="point in points"
+              v-show="shouldShowPoints"
+              :key="point.id"
+            >
               <!-- INFO: プロットデータ -->
               <div
                 :style="{
@@ -152,7 +159,11 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
-            <div v-for="point in points" :key="point.id">
+            <div
+              v-for="point in points"
+              v-show="shouldShowPoints"
+              :key="point.id"
+            >
               <!-- INFO: プロットデータ -->
               <div
                 :style="{
@@ -235,7 +246,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="point in points" :key="point.id">
+          <tr v-for="point in points" v-show="shouldShowPoints" :key="point.id">
             <td>{{ calculateValueFromPixel(point.xPx, point.yPx).xV }}</td>
             <td>{{ calculateValueFromPixel(point.xPx, point.yPx).yV }}</td>
           </tr>
@@ -247,7 +258,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import diff from 'color-diff'
 
+const color = { R: 255, G: 255, B: 255 }
+// red, green, blue
+const palette = { R: 0, G: 0, B: 0 }
+
+console.log(diff.diff(diff.rgb_to_lab(color), diff.rgb_to_lab(palette)))
 const circleRadiusPx = 5
 const [indexX1, indexX2, indexY1, indexY2] = [0, 1, 2, 3]
 
@@ -271,7 +288,8 @@ export default Vue.extend({
       indexX2,
       indexY1,
       indexY2,
-      colors: [] as { r: number; g: number; b: number }[][],
+      colors: [] as { R: number; G: number; B: number }[][],
+      shouldShowPoints: true,
     }
   },
   computed: {
@@ -283,7 +301,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    const element: HTMLCanvasElement | null = document.querySelector('#canvas')
+    const element: HTMLCanvasElement | null = document.querySelector('#graph')
     if (element === null) {
       console.log('element is null')
       return
@@ -297,15 +315,26 @@ export default Vue.extend({
       element.setAttribute('width', String(width))
       element.setAttribute('height', String(height))
       ctx?.drawImage(image, 0, 0)
+      console.log({ width })
+      console.log({ height })
       for (let h = 0; h < height; h++) {
-        this.colors.push([])
         for (let w = 0; w < width; w++) {
-          const imageData = ctx?.getImageData(h, w, 1, 1).data
+          const imageData = ctx?.getImageData(w, h, 1, 1).data
           if (!imageData) {
             window.alert('カラーの読み込みに失敗')
           } else {
-            const [r, g, b] = imageData
-            this.colors[h].push({ r, g, b })
+            const [R, G, B] = imageData
+            const colorDiff = diff.diff(
+              diff.rgb_to_lab({ R, G, B }),
+              diff.rgb_to_lab({ R: 0, G: 0, B: 255 })
+            )
+            if (colorDiff < 30) {
+              this.points.push({
+                id: this.points.length + 1,
+                xPx: w - circleRadiusPx,
+                yPx: h - circleRadiusPx,
+              })
+            }
           }
         }
       }

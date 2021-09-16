@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.1",
+    "@types/color-diff": "^1.2.1",
+    "color-diff": "^1.2.0",
     "core-js": "^3.9.1",
     "cross-env": "^7.0.3",
     "nuxt": "^2.15.8",
