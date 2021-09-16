@@ -10,7 +10,8 @@
         <v-col cols="9">
           <div :style="{ position: 'relative' }">
             <!-- INFO: plot対象画像 -->
-            <img
+            <canvas
+              id="canvas"
               :style="{
                 cursor: 'crosshair',
                 'user-drag': 'none',
@@ -19,7 +20,7 @@
               :src="uploadImageUrl"
               @click="plot"
               @mousemove="mouseMove"
-            />
+            ></canvas>
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
             <v-btn @click="clearPoints">プロットをクリア</v-btn>
             <div v-for="(axis, index) in coordAxes" :key="'coordAxes' + index">
@@ -270,6 +271,7 @@ export default Vue.extend({
       indexX2,
       indexY1,
       indexY2,
+      colors: [] as { r: number; g: number; b: number }[][],
     }
   },
   computed: {
@@ -280,7 +282,35 @@ export default Vue.extend({
       return magicNumber / this.scale
     },
   },
-  mounted() {},
+  mounted() {
+    const element: HTMLCanvasElement | null = document.querySelector('#canvas')
+    if (element === null) {
+      console.log('element is null')
+      return
+    }
+    const ctx = element.getContext('2d')
+    const image = new Image()
+    image.src = this.uploadImageUrl
+    image.onload = () => {
+      const width = image.width
+      const height = image.height
+      element.setAttribute('width', String(width))
+      element.setAttribute('height', String(height))
+      ctx?.drawImage(image, 0, 0)
+      for (let h = 0; h < height; h++) {
+        this.colors.push([])
+        for (let w = 0; w < width; w++) {
+          const imageData = ctx?.getImageData(h, w, 1, 1).data
+          if (!imageData) {
+            window.alert('カラーの読み込みに失敗')
+          } else {
+            const [r, g, b] = imageData
+            this.colors[h].push({ r, g, b })
+          }
+        }
+      }
+    }
+  },
   created() {},
   methods: {
     inputX1Value(input: string) {
@@ -311,7 +341,6 @@ export default Vue.extend({
       })
     },
     plot(e: MouseEvent): void {
-      console.log(e.offsetX, e.offsetY)
       if (this.coordAxes.length < 4) {
         this.coordAxes.push({
           xPx: e.offsetX - circleRadiusPx,
