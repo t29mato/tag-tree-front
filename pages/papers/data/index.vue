@@ -66,8 +66,8 @@
               v-if="axesPixel.length < 4"
               :style="{
                 position: 'absolute',
-                left: `${posOnImage[indexX] + 7}px`,
-                top: `${posOnImage[indexY] - 12}px`,
+                left: `${posOnImage.x + 7}px`,
+                top: `${posOnImage.y - 12}px`,
                 'pointer-events': 'none',
               }"
             >
@@ -91,8 +91,8 @@
               :src="uploadImageUrl"
               :style="{
                 transform: `scale(${scale}) translate(-${
-                  posOnImage[indexX] - circleRadius
-                }px, -${posOnImage[indexY] - circleRadius}px)`,
+                  posOnImage.x - circleRadius
+                }px, -${posOnImage.y - circleRadius}px)`,
                 'transform-origin': 'top left',
               }"
             />
@@ -127,8 +127,8 @@
                   left: `${axis.x * scale}px`,
                   'pointer-events': 'none',
                   transform: `scale(${scale}) translate(-${
-                    posOnImage[indexX] - circleRadius
-                  }px, -${posOnImage[indexY] - circleRadius}px)`,
+                    posOnImage.x - circleRadius
+                  }px, -${posOnImage.y - circleRadius}px)`,
                   'transform-origin': 'top left',
                   width: '10px',
                   height: '10px',
@@ -143,8 +143,8 @@
                   left: `${(axis.x + 12) * scale}px`,
                   'pointer-events': 'none',
                   transform: `scale(${scale}) translate(-${
-                    posOnImage[indexX] - circleRadius
-                  }px, -${posOnImage[indexY] - circleRadius}px)`,
+                    posOnImage.x - circleRadius
+                  }px, -${posOnImage.y - circleRadius}px)`,
                   'transform-origin': 'top left',
                 }"
                 >{{ showAxisName(index) }}</span
@@ -158,8 +158,8 @@
                   top: `${point.y * scale}px`,
                   left: `${point.x * scale}px`,
                   transform: `scale(${scale}) translate(-${
-                    posOnImage[indexX] - circleRadius
-                  }px, -${posOnImage[indexY] - circleRadius}px)`,
+                    posOnImage.x - circleRadius
+                  }px, -${posOnImage.y - circleRadius}px)`,
                   'transform-origin': 'top left',
                   'pointer-events': 'none',
                   width: '10px',
@@ -171,8 +171,8 @@
             </div>
           </div>
           <div v-if="axesPixel.length === 4">
-            {{ `x: ${calculateValueX(posOnImage[indexX])}` }}<br />
-            {{ `y: ${calculateValueY(posOnImage[indexY])}` }}
+            {{ `x: ${calculateValueX(posOnImage.x)}` }}<br />
+            {{ `y: ${calculateValueY(posOnImage.y)}` }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
           <div v-if="axesPixel.length === 4">
@@ -251,12 +251,15 @@ export default Vue.extend({
         width: null,
         height: null,
       },
-      axesPixel: [] as {
+      axesPixel: {} as {
         x: number
         y: number
       }[],
       axesValues: [0, 1, 0, 1] as number[],
-      posOnImage: [] as number[],
+      posOnImage: {
+        x: 0,
+        y: 0,
+      },
       color: 'red',
       scale: 5,
       points: [] as { id: number; x: number; y: number }[],
@@ -356,7 +359,10 @@ export default Vue.extend({
       this.axesPixel = []
     },
     mouseMove(e: MouseEvent) {
-      this.posOnImage = [e.offsetX, e.offsetY]
+      this.posOnImage = {
+        x: e.offsetX,
+        y: e.offsetY,
+      }
     },
   },
 })
