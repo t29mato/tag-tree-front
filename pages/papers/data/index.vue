@@ -21,7 +21,7 @@
               @mousemove="mouseMove"
             />
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
-            <div v-for="(axis, index) in coordAxes" :key="index">
+            <div v-for="(axis, index) in coordAxes" :key="'coordAxes' + index">
               <!-- INFO: 座標軸の点 -->
               <div
                 :style="{
@@ -46,7 +46,7 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
-            <div v-for="(point, index) in points" :key="index">
+            <div v-for="point in points" :key="point.id">
               <!-- INFO: プロットデータ -->
               <div
                 :style="{
@@ -119,7 +119,7 @@
               }"
             ></div>
             <!-- INFO: 拡大鏡の座標軸 -->
-            <div v-for="(axis, index) in coordAxes" :key="index">
+            <div v-for="(axis, index) in coordAxes" :key="'coordAxes' + index">
               <div
                 :style="{
                   position: 'absolute',
@@ -150,7 +150,7 @@
                 >{{ showAxisName(index) }}</span
               >
             </div>
-            <div v-for="(point, index) in points" :key="index">
+            <div v-for="point in points" :key="point.id">
               <!-- INFO: プロットデータ -->
               <div
                 :style="{
@@ -171,9 +171,16 @@
             </div>
           </div>
           <div v-if="coordAxes.length === 4">
-            {{ `x: ${calculateValueX(cursorOnGraph.xPx, cursorOnGraph.yPx)}`
+            {{
+              `x: ${
+                calculateValueFromPixel(cursorOnGraph.xPx, cursorOnGraph.yPx).xV
+              }`
             }}<br />
-            {{ `y: ${calculateValueY(cursorOnGraph.xPx, cursorOnGraph.yPx)}` }}
+            {{
+              `y: ${
+                calculateValueFromPixel(cursorOnGraph.xPx, cursorOnGraph.yPx).yV
+              }`
+            }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
           <div v-if="coordAxes.length === 4">
@@ -198,7 +205,7 @@
             <v-row>
               <v-col vols="6">
                 <v-text-field
-                  label="y1"
+                  label="y1b"
                   type="number"
                   :value="coordAxesValue[indexY1]"
                   @input="inputY1Value"
@@ -227,8 +234,8 @@
         </thead>
         <tbody>
           <tr v-for="point in points" :key="point.id">
-            <td>{{ calculateValueX(point.xPx, point.yPx) }}</td>
-            <td>{{ calculateValueY(point.xPx, point.yPx) }}</td>
+            <td>{{ calculateValueFromPixel(point.xPx, point.yPx).xV }}</td>
+            <td>{{ calculateValueFromPixel(point.xPx, point.yPx).yV }}</td>
           </tr>
         </tbody>
       </template>
@@ -317,27 +324,31 @@ export default Vue.extend({
         yPx: e.offsetY - circleRadiusPx,
       })
     },
-    calculateValueX(a3: number, b3: number): number {
-      const [a1, b1, a2, b2, x1v, x2v] = [
+    calculateValueFromPixel(x: number, y: number): { xV: number; yV: number } {
+      // INFO: 点x1と点x2を通る直線が、点tと垂直に交わる点のx値を計算
+      const calculateVerticalCrossPoint = (
+        x1x: number,
+        x1y: number,
+        x2x: number,
+        x2y: number,
+        tx: number,
+        ty: number
+      ): number => {
+        return (
+          (x2x * x1y * (x1y - x2y - ty) +
+            x1x * x2y * (x2y - x1y - ty) +
+            tx * (x2x - x1x) ** 2 +
+            ty * (x1x * x1y + x2x * x2y)) /
+          ((x2x - x1x) ** 2 + (x2y - x1y) ** 2)
+        )
+      }
+      const [x1x, x1y, x2x, x2y, x1v, x2v, y1x, y1y, y2x, y2y, y1v, y2v] = [
         this.coordAxes[indexX1].xPx,
         this.coordAxes[indexX1].yPx,
         this.coordAxes[indexX2].xPx,
         this.coordAxes[indexX2].yPx,
         this.coordAxesValue[indexX1],
         this.coordAxesValue[indexX2],
-      ]
-      // console.log('x: ', a1, a2, b1, b2, x1v, x2v)
-      const x =
-        (a2 * b1 * (b1 - b2 - b3) +
-          a1 * b2 * (b2 - b1 - b3) +
-          a3 * (a2 - a1) ** 2 +
-          b3 * (a1 * b1 + a2 * b2)) /
-        ((a2 - a1) ** 2 + (b2 - b1) ** 2)
-      const xv = ((x - a1) / (a2 - a1)) * (x2v - x1v) + x1v
-      return xv
-    },
-    calculateValueY(a3: number, b3: number): number {
-      const [a1, b1, a2, b2, y1v, y2v] = [
         this.coordAxes[indexY1].xPx,
         this.coordAxes[indexY1].yPx,
         this.coordAxes[indexY2].xPx,
@@ -345,24 +356,12 @@ export default Vue.extend({
         this.coordAxesValue[indexY1],
         this.coordAxesValue[indexY2],
       ]
-      const y =
-        (a2 * b1 * (b1 - b2 - b3) +
-          a1 * b2 * (b2 - b1 - b3) +
-          a3 * (a2 - a1) ** 2 +
-          b3 * (a1 * b1 + a2 * b2)) /
-        ((a2 - a1) ** 2 + (b2 - b1) ** 2)
-      const yv = ((y - a1) / (a2 - a1)) * (y2v - y1v) + y1v
-      return yv
+      const xPx = calculateVerticalCrossPoint(x1x, x1y, x2x, x2y, x, y)
+      const yPx = calculateVerticalCrossPoint(y1x, y1y, y2x, y2y, x, y)
+      const xV = ((xPx - x1x) / (x2x - x1x)) * (x2v - x1v) + x1v
+      const yV = ((yPx - y1x) / (y2x - y1x)) * (y2v - y1v) + y1v
+      return { xV, yV }
     },
-    // calculateValueY(x: number): number {
-    //   const [x1, x2, y1, y2] = [
-    //     this.coordAxes[indexY1].yPx,
-    //     this.coordAxes[indexY2].yPx,
-    //     this.coordAxesValue[indexY1],
-    //     this.coordAxesValue[indexY2],
-    //   ]
-    //   return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
-    // },
     showAxisName(index: number): string {
       switch (index) {
         case 0:
