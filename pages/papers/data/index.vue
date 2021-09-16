@@ -21,26 +21,27 @@
               @mousemove="mouseMove"
             />
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
-            <div v-for="(axis, index) in axesPixel" :key="index">
+            <div v-for="(axis, index) in coordAxesPx" :key="index">
               <!-- INFO: 座標軸の点 -->
               <div
                 :style="{
                   position: 'absolute',
-                  top: `${axis.y}px`,
-                  left: `${axis.x}px`,
+                  top: `${axis.yPx}px`,
+                  left: `${axis.xPx}px`,
                   'pointer-events': 'none',
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color': axesPixel.length === 4 ? 'black' : 'red',
+                  'background-color':
+                    coordAxesPx.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <!-- INFO: 座標軸名 -->
               <span
                 :style="{
                   position: 'absolute',
-                  top: `${axis.y - 7}px`,
-                  left: `${axis.x + 12}px`,
+                  top: `${axis.yPx - 7}px`,
+                  left: `${axis.xPx + 12}px`,
                   'pointer-events': 'none',
                 }"
                 >{{ showAxisName(index) }}</span
@@ -51,8 +52,8 @@
               <div
                 :style="{
                   position: 'absolute',
-                  top: `${point.y}px`,
-                  left: `${point.x}px`,
+                  top: `${point.yPx}px`,
+                  left: `${point.xPx}px`,
                   'pointer-events': 'none',
                   width: '10px',
                   height: '10px',
@@ -63,15 +64,15 @@
             </div>
             <!-- INFO: カーソル横の文字 -->
             <div
-              v-if="axesPixel.length < 4"
+              v-if="coordAxesPx.length < 4"
               :style="{
                 position: 'absolute',
-                left: `${posOnImage.x + 7}px`,
-                top: `${posOnImage.y - 12}px`,
+                left: `${cursorOnGraph.xPx + 7}px`,
+                top: `${cursorOnGraph.yPx - 12}px`,
                 'pointer-events': 'none',
               }"
             >
-              {{ showAxisName(axesPixel.length) }}
+              {{ showAxisName(coordAxesPx.length) }}
             </div>
           </div>
         </v-col>
@@ -91,8 +92,8 @@
               :src="uploadImageUrl"
               :style="{
                 transform: `scale(${scale}) translate(-${
-                  posOnImage.x - circleRadius
-                }px, -${posOnImage.y - circleRadius}px)`,
+                  cursorOnGraph.xPx - circleRadiusScaledPx
+                }px, -${cursorOnGraph.yPx - circleRadiusScaledPx}px)`,
                 'transform-origin': 'top left',
               }"
             />
@@ -119,32 +120,33 @@
               }"
             ></div>
             <!-- INFO: 拡大鏡の座標軸 -->
-            <div v-for="(axis, index) in axesPixel" :key="index">
+            <div v-for="(axis, index) in coordAxesPx" :key="index">
               <div
                 :style="{
                   position: 'absolute',
-                  top: `${axis.y * scale}px`,
-                  left: `${axis.x * scale}px`,
+                  top: `${axis.yPx * scale}px`,
+                  left: `${axis.xPx * scale}px`,
                   'pointer-events': 'none',
                   transform: `scale(${scale}) translate(-${
-                    posOnImage.x - circleRadius
-                  }px, -${posOnImage.y - circleRadius}px)`,
+                    cursorOnGraph.xPx - circleRadiusScaledPx
+                  }px, -${cursorOnGraph.yPx - circleRadiusScaledPx}px)`,
                   'transform-origin': 'top left',
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color': axesPixel.length === 4 ? 'black' : 'red',
+                  'background-color':
+                    coordAxesPx.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <span
                 :style="{
                   position: 'absolute',
-                  top: `${(axis.y - 7) * scale}px`,
-                  left: `${(axis.x + 12) * scale}px`,
+                  top: `${(axis.yPx - 7) * scale}px`,
+                  left: `${(axis.xPx + 12) * scale}px`,
                   'pointer-events': 'none',
                   transform: `scale(${scale}) translate(-${
-                    posOnImage.x - circleRadius
-                  }px, -${posOnImage.y - circleRadius}px)`,
+                    cursorOnGraph.xPx - circleRadiusScaledPx
+                  }px, -${cursorOnGraph.yPx - circleRadiusScaledPx}px)`,
                   'transform-origin': 'top left',
                 }"
                 >{{ showAxisName(index) }}</span
@@ -155,11 +157,11 @@
               <div
                 :style="{
                   position: 'absolute',
-                  top: `${point.y * scale}px`,
-                  left: `${point.x * scale}px`,
+                  top: `${point.yPx * scale}px`,
+                  left: `${point.xPx * scale}px`,
                   transform: `scale(${scale}) translate(-${
-                    posOnImage.x - circleRadius
-                  }px, -${posOnImage.y - circleRadius}px)`,
+                    cursorOnGraph.xPx - circleRadiusScaledPx
+                  }px, -${cursorOnGraph.yPx - circleRadiusScaledPx}px)`,
                   'transform-origin': 'top left',
                   'pointer-events': 'none',
                   width: '10px',
@@ -170,18 +172,18 @@
               ></div>
             </div>
           </div>
-          <div v-if="axesPixel.length === 4">
-            {{ `x: ${calculateValueX(posOnImage.x)}` }}<br />
-            {{ `y: ${calculateValueY(posOnImage.y)}` }}
+          <div v-if="coordAxesPx.length === 4">
+            {{ `x: ${calculateValueX(cursorOnGraph.xPx)}` }}<br />
+            {{ `y: ${calculateValueY(cursorOnGraph.yPx)}` }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
-          <div v-if="axesPixel.length === 4">
+          <div v-if="coordAxesPx.length === 4">
             <v-row>
               <v-col vols="6">
                 <v-text-field
                   label="x1"
                   type="number"
-                  :value="axesValues[indexX1]"
+                  :value="coordAxesValue.x1"
                   @input="inputX1Value"
                 ></v-text-field>
               </v-col>
@@ -189,7 +191,7 @@
                 <v-text-field
                   label="x2"
                   type="number"
-                  :value="axesValues[indexX2]"
+                  :value="coordAxesValue.x2"
                   @input="inputX2Value"
                 ></v-text-field>
               </v-col>
@@ -199,7 +201,7 @@
                 <v-text-field
                   label="y1"
                   type="number"
-                  :value="axesValues[indexY1]"
+                  :value="coordAxesValue.y1"
                   @input="inputY1Value"
                 ></v-text-field>
               </v-col>
@@ -207,7 +209,7 @@
                 <v-text-field
                   label="y2"
                   type="number"
-                  :value="axesValues[indexY2]"
+                  :value="coordAxesValue.y2"
                   @input="inputY2Value"
                 ></v-text-field>
               </v-col>
@@ -216,7 +218,7 @@
         </v-col>
       </v-row>
     </template>
-    <v-simple-table v-if="points.length > 0 && axesPixel.length === 4">
+    <v-simple-table v-if="points.length > 0 && coordAxesPx.length === 4">
       <template #default>
         <thead>
           <tr>
@@ -226,8 +228,8 @@
         </thead>
         <tbody>
           <tr v-for="point in points" :key="point.id">
-            <td>{{ calculateValueX(point.x) }}</td>
-            <td>{{ calculateValueY(point.y) }}</td>
+            <td>{{ calculateValueX(point.xPx) }}</td>
+            <td>{{ calculateValueY(point.yPx) }}</td>
           </tr>
         </tbody>
       </template>
@@ -238,59 +240,58 @@
 <script lang="ts">
 import Vue from 'vue'
 
-const circleRadius = 5
+const circleRadiusPx = 5
 const [indexX1, indexX2, indexY1, indexY2] = [0, 1, 2, 3]
-const [indexX, indexY] = [0, 1]
 
 export default Vue.extend({
   data() {
     return {
       uploadImageUrl: '/img/sample_graph.png',
-      isPointing: false,
-      image: {
-        width: null,
-        height: null,
-      },
-      axesPixel: {} as {
-        x: number
-        y: number
+      coordAxesPx: [] as {
+        xPx: number
+        yPx: number
       }[],
-      axesValues: [0, 1, 0, 1] as number[],
-      posOnImage: {
-        x: 0,
-        y: 0,
+      coordAxesValue: {
+        x1: 0,
+        x2: 1,
+        y1: 0,
+        y2: 1,
+      },
+      cursorOnGraph: {
+        xPx: 0,
+        yPx: 0,
       },
       color: 'red',
       scale: 5,
-      points: [] as { id: number; x: number; y: number }[],
+      points: [] as { id: number; xPx: number; yPx: number }[],
       indexX1,
       indexX2,
       indexY1,
       indexY2,
-      indexX,
-      indexY,
     }
   },
   computed: {
-    circleRadius(): number {
-      // INFO: 99をScaleで割るとMagnifierのプロットの位置がちょうど良くなる
-      return 99 / this.scale
+    circleRadiusScaledPx(): number {
+      // INFO: 99をScaleで割るとMagnifierのプロットの位置がちょうど良くなる。
+      // DBに格納される数値ではなくstyle用のものなので、MagicNumberだがよしと考えてる。
+      const magicNumber = 99
+      return magicNumber / this.scale
     },
   },
   mounted() {},
   created() {},
   methods: {
     inputX1Value(input: string) {
-      this.axesValues[indexX1] = Number(input)
+      this.coordAxesValue.x1 = Number(input)
     },
     inputX2Value(input: string) {
-      this.axesValues[indexX2] = Number(input)
+      this.coordAxesValue.x2 = Number(input)
     },
     inputY1Value(input: string) {
-      this.axesValues[indexY1] = Number(input)
+      this.coordAxesValue.y1 = Number(input)
     },
     inputY2Value(input: string) {
-      this.axesValues[indexY2] = Number(input)
+      this.coordAxesValue.y2 = Number(input)
     },
     changeColor(color: string) {
       this.color = color
@@ -308,36 +309,34 @@ export default Vue.extend({
       })
     },
     plot(e: MouseEvent): void {
-      if (this.axesPixel.length < 4) {
-        this.axesPixel.push({
-          x: e.offsetX - circleRadius,
-          y: e.offsetY - circleRadius,
+      if (this.coordAxesPx.length < 4) {
+        this.coordAxesPx.push({
+          xPx: e.offsetX - circleRadiusPx,
+          yPx: e.offsetY - circleRadiusPx,
         })
         return
       }
-      if (this.axesValues.filter((value) => value !== null).length === 4) {
-        this.points.push({
-          id: this.points.length + 1,
-          x: e.offsetX - circleRadius,
-          y: e.offsetY - circleRadius,
-        })
-      }
+      this.points.push({
+        id: this.points.length + 1,
+        xPx: e.offsetX - circleRadiusPx,
+        yPx: e.offsetY - circleRadiusPx,
+      })
     },
     calculateValueX(x: number): number {
       const [x1, x2, y1, y2] = [
-        this.axesPixel[indexX1].x,
-        this.axesPixel[indexX2].x,
-        this.axesValues[indexX1],
-        this.axesValues[indexX2],
+        this.coordAxesPx[indexX1].xPx,
+        this.coordAxesPx[indexX2].xPx,
+        this.coordAxesValue.x1,
+        this.coordAxesValue.x2,
       ]
       return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
     },
     calculateValueY(x: number): number {
       const [x1, x2, y1, y2] = [
-        this.axesPixel[indexY1].y,
-        this.axesPixel[indexY2].y,
-        this.axesValues[indexY1],
-        this.axesValues[indexY2],
+        this.coordAxesPx[indexY1].yPx,
+        this.coordAxesPx[indexY2].yPx,
+        this.coordAxesValue.y1,
+        this.coordAxesValue.y2,
       ]
       return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
     },
@@ -356,12 +355,12 @@ export default Vue.extend({
       }
     },
     clearAxes() {
-      this.axesPixel = []
+      this.coordAxesPx = []
     },
     mouseMove(e: MouseEvent) {
-      this.posOnImage = {
-        x: e.offsetX,
-        y: e.offsetY,
+      this.cursorOnGraph = {
+        xPx: e.offsetX,
+        yPx: e.offsetY,
       }
     },
   },
