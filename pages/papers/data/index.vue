@@ -327,12 +327,17 @@ export default Vue.extend({
             h,
             this.detectRangePx,
             this.detectRangePx
-          ).data
-          const [rList, gList, bList] = [[], [], []]
-          for (let i = 0; i < this.detectRangePx; i++) {
-            rList.push(imageData[i * 4])
-            gList.push(imageData[i * 4 + 1])
-            bList.push(imageData[i * 4 + 2])
+          )
+          const imageRGB = imageData?.data
+          const [rList, gList, bList] = [[], [], []] as number[][]
+          if (imageRGB instanceof Uint8ClampedArray) {
+            for (let i = 0; i < this.detectRangePx; i++) {
+              rList.push(imageRGB[i * 4])
+              gList.push(imageRGB[i * 4 + 1])
+              bList.push(imageRGB[i * 4 + 2])
+            }
+          } else {
+            throw new TypeError('imageRGB is not instanceof Uint8ClampedArray')
           }
           const calcAverage = (numbers: number[]): number => {
             return numbers.reduce((prev, cur) => prev + cur, 0) / numbers.length
