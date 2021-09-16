@@ -171,8 +171,9 @@
             </div>
           </div>
           <div v-if="coordAxes.length === 4">
-            {{ `x: ${calculateValueX(cursorOnGraph.xPx)}` }}<br />
-            {{ `y: ${calculateValueY(cursorOnGraph.yPx)}` }}
+            {{ `x: ${calculateValueX(cursorOnGraph.xPx, cursorOnGraph.yPx)}`
+            }}<br />
+            {{ `y: ${calculateValueY(cursorOnGraph.xPx, cursorOnGraph.yPx)}` }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
           <div v-if="coordAxes.length === 4">
@@ -226,8 +227,8 @@
         </thead>
         <tbody>
           <tr v-for="point in points" :key="point.id">
-            <td>{{ calculateValueX(point.xPx) }}</td>
-            <td>{{ calculateValueY(point.yPx) }}</td>
+            <td>{{ calculateValueX(point.xPx, point.yPx) }}</td>
+            <td>{{ calculateValueY(point.xPx, point.yPx) }}</td>
           </tr>
         </tbody>
       </template>
@@ -244,7 +245,7 @@ const [indexX1, indexX2, indexY1, indexY2] = [0, 1, 2, 3]
 export default Vue.extend({
   data() {
     return {
-      uploadImageUrl: '/img/sample_graph.png',
+      uploadImageUrl: '/img/sample_graph_slanted.png',
       coordAxes: [] as {
         xPx: number
         yPx: number
@@ -302,6 +303,7 @@ export default Vue.extend({
       })
     },
     plot(e: MouseEvent): void {
+      console.log(e.offsetX, e.offsetY)
       if (this.coordAxes.length < 4) {
         this.coordAxes.push({
           xPx: e.offsetX - circleRadiusPx,
@@ -315,24 +317,52 @@ export default Vue.extend({
         yPx: e.offsetY - circleRadiusPx,
       })
     },
-    calculateValueX(x: number): number {
-      const [x1, x2, y1, y2] = [
+    calculateValueX(a3: number, b3: number): number {
+      const [a1, b1, a2, b2, x1v, x2v] = [
         this.coordAxes[indexX1].xPx,
+        this.coordAxes[indexX1].yPx,
         this.coordAxes[indexX2].xPx,
+        this.coordAxes[indexX2].yPx,
         this.coordAxesValue[indexX1],
         this.coordAxesValue[indexX2],
       ]
-      return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
+      // console.log('x: ', a1, a2, b1, b2, x1v, x2v)
+      const x =
+        (a2 * b1 * (b1 - b2 - b3) +
+          a1 * b2 * (b2 - b1 - b3) +
+          a3 * (a2 - a1) ** 2 +
+          b3 * (a1 * b1 + a2 * b2)) /
+        ((a2 - a1) ** 2 + (b2 - b1) ** 2)
+      const xv = ((x - a1) / (a2 - a1)) * (x2v - x1v) + x1v
+      return xv
     },
-    calculateValueY(x: number): number {
-      const [x1, x2, y1, y2] = [
+    calculateValueY(a3: number, b3: number): number {
+      const [a1, b1, a2, b2, y1v, y2v] = [
+        this.coordAxes[indexY1].xPx,
         this.coordAxes[indexY1].yPx,
+        this.coordAxes[indexY2].xPx,
         this.coordAxes[indexY2].yPx,
         this.coordAxesValue[indexY1],
         this.coordAxesValue[indexY2],
       ]
-      return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
+      const y =
+        (a2 * b1 * (b1 - b2 - b3) +
+          a1 * b2 * (b2 - b1 - b3) +
+          a3 * (a2 - a1) ** 2 +
+          b3 * (a1 * b1 + a2 * b2)) /
+        ((a2 - a1) ** 2 + (b2 - b1) ** 2)
+      const yv = ((y - a1) / (a2 - a1)) * (y2v - y1v) + y1v
+      return yv
     },
+    // calculateValueY(x: number): number {
+    //   const [x1, x2, y1, y2] = [
+    //     this.coordAxes[indexY1].yPx,
+    //     this.coordAxes[indexY2].yPx,
+    //     this.coordAxesValue[indexY1],
+    //     this.coordAxesValue[indexY2],
+    //   ]
+    //   return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
+    // },
     showAxisName(index: number): string {
       switch (index) {
         case 0:
