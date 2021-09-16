@@ -21,6 +21,7 @@
               @mousemove="mouseMove"
             />
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
+            <v-btn @click="clearPoints">プロットをクリア</v-btn>
             <div v-for="(axis, index) in coordAxes" :key="'coordAxes' + index">
               <!-- INFO: 座標軸の点 -->
               <div
@@ -378,6 +379,9 @@ export default Vue.extend({
     },
     clearAxes() {
       this.coordAxes = []
+    },
+    clearPoints() {
+      this.points = []
     },
     mouseMove(e: MouseEvent) {
       this.cursorOnGraph = {
