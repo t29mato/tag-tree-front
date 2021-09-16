@@ -21,7 +21,7 @@
               @mousemove="mouseMove"
             />
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
-            <div v-for="(axis, index) in coordAxesPx" :key="index">
+            <div v-for="(axis, index) in coordAxes" :key="index">
               <!-- INFO: 座標軸の点 -->
               <div
                 :style="{
@@ -32,8 +32,7 @@
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color':
-                    coordAxesPx.length === 4 ? 'black' : 'red',
+                  'background-color': coordAxes.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <!-- INFO: 座標軸名 -->
@@ -64,7 +63,7 @@
             </div>
             <!-- INFO: カーソル横の文字 -->
             <div
-              v-if="coordAxesPx.length < 4"
+              v-if="coordAxes.length < 4"
               :style="{
                 position: 'absolute',
                 left: `${cursorOnGraph.xPx + 7}px`,
@@ -72,7 +71,7 @@
                 'pointer-events': 'none',
               }"
             >
-              {{ showAxisName(coordAxesPx.length) }}
+              {{ showAxisName(coordAxes.length) }}
             </div>
           </div>
         </v-col>
@@ -120,7 +119,7 @@
               }"
             ></div>
             <!-- INFO: 拡大鏡の座標軸 -->
-            <div v-for="(axis, index) in coordAxesPx" :key="index">
+            <div v-for="(axis, index) in coordAxes" :key="index">
               <div
                 :style="{
                   position: 'absolute',
@@ -134,8 +133,7 @@
                   width: '10px',
                   height: '10px',
                   'border-radius': '50%',
-                  'background-color':
-                    coordAxesPx.length === 4 ? 'black' : 'red',
+                  'background-color': coordAxes.length === 4 ? 'black' : 'red',
                 }"
               ></div>
               <span
@@ -172,18 +170,18 @@
               ></div>
             </div>
           </div>
-          <div v-if="coordAxesPx.length === 4">
+          <div v-if="coordAxes.length === 4">
             {{ `x: ${calculateValueX(cursorOnGraph.xPx)}` }}<br />
             {{ `y: ${calculateValueY(cursorOnGraph.yPx)}` }}
           </div>
           <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
-          <div v-if="coordAxesPx.length === 4">
+          <div v-if="coordAxes.length === 4">
             <v-row>
               <v-col vols="6">
                 <v-text-field
                   label="x1"
                   type="number"
-                  :value="coordAxesValue.x1"
+                  :value="coordAxesValue[indexX1]"
                   @input="inputX1Value"
                 ></v-text-field>
               </v-col>
@@ -191,7 +189,7 @@
                 <v-text-field
                   label="x2"
                   type="number"
-                  :value="coordAxesValue.x2"
+                  :value="coordAxesValue[indexX2]"
                   @input="inputX2Value"
                 ></v-text-field>
               </v-col>
@@ -201,7 +199,7 @@
                 <v-text-field
                   label="y1"
                   type="number"
-                  :value="coordAxesValue.y1"
+                  :value="coordAxesValue[indexY1]"
                   @input="inputY1Value"
                 ></v-text-field>
               </v-col>
@@ -209,7 +207,7 @@
                 <v-text-field
                   label="y2"
                   type="number"
-                  :value="coordAxesValue.y2"
+                  :value="coordAxesValue[indexY2]"
                   @input="inputY2Value"
                 ></v-text-field>
               </v-col>
@@ -218,7 +216,7 @@
         </v-col>
       </v-row>
     </template>
-    <v-simple-table v-if="points.length > 0 && coordAxesPx.length === 4">
+    <v-simple-table v-if="points.length > 0 && coordAxes.length === 4">
       <template #default>
         <thead>
           <tr>
@@ -247,16 +245,11 @@ export default Vue.extend({
   data() {
     return {
       uploadImageUrl: '/img/sample_graph.png',
-      coordAxesPx: [] as {
+      coordAxes: [] as {
         xPx: number
         yPx: number
       }[],
-      coordAxesValue: {
-        x1: 0,
-        x2: 1,
-        y1: 0,
-        y2: 1,
-      },
+      coordAxesValue: [0, 1, 0, 1] as number[],
       cursorOnGraph: {
         xPx: 0,
         yPx: 0,
@@ -282,16 +275,16 @@ export default Vue.extend({
   created() {},
   methods: {
     inputX1Value(input: string) {
-      this.coordAxesValue.x1 = Number(input)
+      this.coordAxesValue[indexX1] = Number(input)
     },
     inputX2Value(input: string) {
-      this.coordAxesValue.x2 = Number(input)
+      this.coordAxesValue[indexX2] = Number(input)
     },
     inputY1Value(input: string) {
-      this.coordAxesValue.y1 = Number(input)
+      this.coordAxesValue[indexY1] = Number(input)
     },
     inputY2Value(input: string) {
-      this.coordAxesValue.y2 = Number(input)
+      this.coordAxesValue[indexY2] = Number(input)
     },
     changeColor(color: string) {
       this.color = color
@@ -309,8 +302,8 @@ export default Vue.extend({
       })
     },
     plot(e: MouseEvent): void {
-      if (this.coordAxesPx.length < 4) {
-        this.coordAxesPx.push({
+      if (this.coordAxes.length < 4) {
+        this.coordAxes.push({
           xPx: e.offsetX - circleRadiusPx,
           yPx: e.offsetY - circleRadiusPx,
         })
@@ -324,19 +317,19 @@ export default Vue.extend({
     },
     calculateValueX(x: number): number {
       const [x1, x2, y1, y2] = [
-        this.coordAxesPx[indexX1].xPx,
-        this.coordAxesPx[indexX2].xPx,
-        this.coordAxesValue.x1,
-        this.coordAxesValue.x2,
+        this.coordAxes[indexX1].xPx,
+        this.coordAxes[indexX2].xPx,
+        this.coordAxesValue[indexX1],
+        this.coordAxesValue[indexX2],
       ]
       return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
     },
     calculateValueY(x: number): number {
       const [x1, x2, y1, y2] = [
-        this.coordAxesPx[indexY1].yPx,
-        this.coordAxesPx[indexY2].yPx,
-        this.coordAxesValue.y1,
-        this.coordAxesValue.y2,
+        this.coordAxes[indexY1].yPx,
+        this.coordAxes[indexY2].yPx,
+        this.coordAxesValue[indexY1],
+        this.coordAxesValue[indexY2],
       ]
       return ((x - x1) / (x2 - x1)) * (y2 - y1) + y1
     },
@@ -355,7 +348,7 @@ export default Vue.extend({
       }
     },
     clearAxes() {
-      this.coordAxesPx = []
+      this.coordAxes = []
     },
     mouseMove(e: MouseEvent) {
       this.cursorOnGraph = {
