@@ -22,6 +22,8 @@
               @mousemove="mouseMove"
             ></canvas>
             <v-btn @click="clearAxes">座標軸をクリア</v-btn>
+            <!-- TODO: プロットの透明度を変更できるようにする -->
+            <!-- TODO: プロットの色を変更できるようにする -->
             <v-btn @click="clearPoints">プロットをクリア</v-btn>
             <v-btn @click="shouldShowPoints = !shouldShowPoints">{{
               shouldShowPoints ? 'プロットを非表示' : 'プロットを表示'
@@ -260,18 +262,13 @@
 import Vue from 'vue'
 import diff from 'color-diff'
 
-const color = { R: 255, G: 255, B: 255 }
-// red, green, blue
-const palette = { R: 0, G: 0, B: 0 }
-
-console.log(diff.diff(diff.rgb_to_lab(color), diff.rgb_to_lab(palette)))
 const circleRadiusPx = 5
 const [indexX1, indexX2, indexY1, indexY2] = [0, 1, 2, 3]
 
 export default Vue.extend({
   data() {
     return {
-      uploadImageUrl: '/img/sample_graph_slanted.png',
+      uploadImageUrl: '/img/sample_graph.png',
       coordAxes: [] as {
         xPx: number
         yPx: number
@@ -290,6 +287,10 @@ export default Vue.extend({
       indexY2,
       colors: [] as { R: number; G: number; B: number }[][],
       shouldShowPoints: true,
+      detectRangePx: 3,
+      detectDistance: 20,
+      detectDistancePx: 10,
+      targetColor: { R: 100, G: 100, B: 255 },
     }
   },
   computed: {
@@ -303,37 +304,66 @@ export default Vue.extend({
   mounted() {
     const element: HTMLCanvasElement | null = document.querySelector('#graph')
     if (element === null) {
-      console.log('element is null')
+      window.alert('element is null')
       return
     }
     const ctx = element.getContext('2d')
     const image = new Image()
     image.src = this.uploadImageUrl
     image.onload = () => {
-      const width = image.width
-      const height = image.height
-      element.setAttribute('width', String(width))
-      element.setAttribute('height', String(height))
+      const widthPx = image.width
+      const heightPx = image.height
+      element.setAttribute('width', String(widthPx))
+      element.setAttribute('height', String(heightPx))
       ctx?.drawImage(image, 0, 0)
-      console.log({ width })
-      console.log({ height })
-      for (let h = 0; h < height; h++) {
-        for (let w = 0; w < width; w++) {
-          const imageData = ctx?.getImageData(w, h, 1, 1).data
+      const paintedArea = [] as { w: number; h: number }[]
+      for (let h = 0; h < heightPx; h++) {
+        for (let w = 0; w < widthPx; w++) {
+          if (paintedArea.some((area) => area.w === w && area.h === h)) {
+            continue
+          }
+          const imageData = ctx?.getImageData(
+            w,
+            h,
+            this.detectRangePx,
+            this.detectRangePx
+          ).data
+          const [rList, gList, bList] = [[], [], []]
+          for (let i = 0; i < this.detectRangePx; i++) {
+            rList.push(imageData[i * 4])
+            gList.push(imageData[i * 4 + 1])
+            bList.push(imageData[i * 4 + 2])
+          }
+          const calcAverage = (numbers: number[]): number => {
+            return numbers.reduce((prev, cur) => prev + cur, 0) / numbers.length
+          }
+          const canvasColor = {
+            R: calcAverage(rList),
+            B: calcAverage(bList),
+            G: calcAverage(gList),
+          }
           if (!imageData) {
             window.alert('カラーの読み込みに失敗')
           } else {
-            const [R, G, B] = imageData
-            const colorDiff = diff.diff(
-              diff.rgb_to_lab({ R, G, B }),
-              diff.rgb_to_lab({ R: 0, G: 0, B: 255 })
+            const colorDiffDistance = this.diffColor(
+              canvasColor,
+              this.targetColor
             )
-            if (colorDiff < 30) {
+            if (colorDiffDistance < this.detectDistance) {
               this.points.push({
                 id: this.points.length + 1,
-                xPx: w - circleRadiusPx,
-                yPx: h - circleRadiusPx,
+                xPx: w + this.detectRangePx / 2 - circleRadiusPx,
+                yPx: h + this.detectRangePx / 2 - circleRadiusPx,
               })
+              for (let i = 0; i < this.detectDistancePx; i++) {
+                for (let j = 0; j < this.detectDistancePx; j++) {
+                  if (i + j === 0) {
+                    continue
+                  }
+                  paintedArea.push({ w: w - i, h: h + j })
+                  paintedArea.push({ w: w + i, h: h + j })
+                }
+              }
             }
           }
         }
@@ -342,6 +372,12 @@ export default Vue.extend({
   },
   created() {},
   methods: {
+    diffColor(
+      color1: { R: number; G: number; B: number },
+      color2: { R: number; G: number; B: number }
+    ): number {
+      return diff.diff(diff.rgb_to_lab(color1), diff.rgb_to_lab(color2))
+    },
     inputX1Value(input: string) {
       this.coordAxesValue[indexX1] = Number(input)
     },
@@ -358,14 +394,13 @@ export default Vue.extend({
       this.color = color
     },
     loadImage(file: File) {
-      console.log('loadImage')
       const fr = new FileReader()
       fr.readAsDataURL(file)
       fr.addEventListener('load', () => {
         if (typeof fr.result === 'string') {
           this.uploadImageUrl = fr.result
         } else {
-          console.error('string以外の型')
+          window.alert('string以外の型')
         }
       })
     },
