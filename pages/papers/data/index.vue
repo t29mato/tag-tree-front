@@ -197,7 +197,38 @@
               }`
             }}
           </div>
-          <v-slider v-model="scale" thumb-label max="10" min="2"></v-slider>
+          <v-slider
+            v-model="scale"
+            thumb-label="always"
+            max="10"
+            min="2"
+            label="拡大鏡倍率"
+          ></v-slider>
+          <v-slider
+            v-model="detectRangePx"
+            thumb-label="always"
+            max="10"
+            min="2"
+            label="検出範囲（px）"
+          ></v-slider>
+          <v-slider
+            v-model="detectDifferencePct"
+            thumb-label="always"
+            max="100"
+            min="1"
+            label="検出色誤差（%）"
+          ></v-slider>
+          <v-slider
+            v-model="detectDistance"
+            thumb-label="always"
+            max="10"
+            min="2"
+            label="点間距離 （px）"
+          ></v-slider>
+          <v-color-picker v-model="colorPicker" class="ma-2"></v-color-picker>
+          <v-btn :loading="isDetecting" @click="detectPointByColor"
+            >検出する</v-btn
+          >
           <div v-if="coordAxes.length === 4">
             <v-row>
               <v-col vols="6">
@@ -280,6 +311,7 @@ export default Vue.extend({
       },
       color: 'red',
       scale: 5,
+      // REFACTOR: points -> dots
       points: [] as { id: number; xPx: number; yPx: number }[],
       indexX1,
       indexX2,
@@ -289,8 +321,10 @@ export default Vue.extend({
       shouldShowPoints: true,
       detectRangePx: 3,
       detectDistance: 20,
+      detectDifferencePct: 20,
       detectDistancePx: 10,
-      targetColor: { R: 100, G: 100, B: 255 },
+      colorPicker: '',
+      isDetecting: false,
     }
   },
   computed: {
@@ -299,6 +333,13 @@ export default Vue.extend({
       // DBに格納される数値ではなくstyle用のものなので、MagicNumberだがよしと考えてる。
       const magicNumber = 99
       return magicNumber / this.scale
+    },
+    targetColor(): { R: number; G: number; B: number } {
+      return {
+        R: parseInt(this.colorPicker.slice(1, 3), 16),
+        G: parseInt(this.colorPicker.slice(3, 5), 16),
+        B: parseInt(this.colorPicker.slice(5, 7), 16),
+      }
     },
   },
   mounted() {
@@ -316,67 +357,92 @@ export default Vue.extend({
       element.setAttribute('width', String(widthPx))
       element.setAttribute('height', String(heightPx))
       ctx?.drawImage(image, 0, 0)
-      const paintedArea = [] as { w: number; h: number }[]
-      for (let h = 0; h < heightPx; h++) {
-        for (let w = 0; w < widthPx; w++) {
-          if (paintedArea.some((area) => area.w === w && area.h === h)) {
-            continue
-          }
-          const imageData = ctx?.getImageData(
-            w,
-            h,
-            this.detectRangePx,
-            this.detectRangePx
-          )
-          const imageRGB = imageData?.data
-          const [rList, gList, bList] = [[], [], []] as number[][]
-          if (imageRGB instanceof Uint8ClampedArray) {
-            for (let i = 0; i < this.detectRangePx; i++) {
-              rList.push(imageRGB[i * 4])
-              gList.push(imageRGB[i * 4 + 1])
-              bList.push(imageRGB[i * 4 + 2])
+    }
+  },
+  created() {},
+  methods: {
+    detectPointByColor() {
+      this.clearPoints()
+      this.isDetecting = true
+      const element: HTMLCanvasElement | null = document.querySelector('#graph')
+      if (element === null) {
+        window.alert('element is null')
+        return
+      }
+      const ctx = element.getContext('2d')
+      const image = new Image()
+      image.src = this.uploadImageUrl
+      image.onload = () => {
+        const widthPx = image.width
+        const heightPx = image.height
+        element.setAttribute('width', String(widthPx))
+        element.setAttribute('height', String(heightPx))
+        ctx?.drawImage(image, 0, 0)
+        const paintedArea = [] as { w: number; h: number }[]
+        for (let h = 0; h < heightPx; h++) {
+          for (let w = 0; w < widthPx; w++) {
+            if (paintedArea.some((area) => area.w === w && area.h === h)) {
+              continue
             }
-          } else {
-            throw new TypeError('imageRGB is not instanceof Uint8ClampedArray')
-          }
-          const calcAverage = (numbers: number[]): number => {
-            return numbers.reduce((prev, cur) => prev + cur, 0) / numbers.length
-          }
-          const canvasColor = {
-            R: calcAverage(rList),
-            B: calcAverage(bList),
-            G: calcAverage(gList),
-          }
-          if (!imageData) {
-            window.alert('カラーの読み込みに失敗')
-          } else {
-            const colorDiffDistance = this.diffColor(
-              canvasColor,
-              this.targetColor
+            const imageData = ctx?.getImageData(
+              w,
+              h,
+              this.detectRangePx,
+              this.detectRangePx
             )
-            if (colorDiffDistance < this.detectDistance) {
-              this.points.push({
-                id: this.points.length + 1,
-                xPx: w + this.detectRangePx / 2 - circleRadiusPx,
-                yPx: h + this.detectRangePx / 2 - circleRadiusPx,
-              })
-              for (let i = 0; i < this.detectDistancePx; i++) {
-                for (let j = 0; j < this.detectDistancePx; j++) {
-                  if (i + j === 0) {
-                    continue
+            const imageRGB = imageData?.data
+            const [rList, gList, bList] = [[], [], []] as number[][]
+            if (imageRGB instanceof Uint8ClampedArray) {
+              for (let i = 0; i < this.detectRangePx; i++) {
+                rList.push(imageRGB[i * 4])
+                gList.push(imageRGB[i * 4 + 1])
+                bList.push(imageRGB[i * 4 + 2])
+              }
+            } else {
+              this.$nuxt.$loading.finish()
+              throw new TypeError(
+                'imageRGB is not instanceof Uint8ClampedArray'
+              )
+            }
+            const calcAverage = (numbers: number[]): number => {
+              return (
+                numbers.reduce((prev, cur) => prev + cur, 0) / numbers.length
+              )
+            }
+            const canvasColor = {
+              R: calcAverage(rList),
+              B: calcAverage(bList),
+              G: calcAverage(gList),
+            }
+            if (!imageData) {
+              window.alert('カラーの読み込みに失敗')
+            } else {
+              const colorDiffDistance = this.diffColor(
+                canvasColor,
+                this.targetColor
+              )
+              if (colorDiffDistance < this.detectDifferencePct) {
+                this.points.push({
+                  id: this.points.length + 1,
+                  xPx: w + this.detectRangePx / 2 - circleRadiusPx,
+                  yPx: h + this.detectRangePx / 2 - circleRadiusPx,
+                })
+                for (let i = 0; i < this.detectDistancePx; i++) {
+                  for (let j = 0; j < this.detectDistancePx; j++) {
+                    if (i + j === 0) {
+                      continue
+                    }
+                    paintedArea.push({ w: w - i, h: h + j })
+                    paintedArea.push({ w: w + i, h: h + j })
                   }
-                  paintedArea.push({ w: w - i, h: h + j })
-                  paintedArea.push({ w: w + i, h: h + j })
                 }
               }
             }
           }
         }
+        this.isDetecting = false
       }
-    }
-  },
-  created() {},
-  methods: {
+    },
     diffColor(
       color1: { R: number; G: number; B: number },
       color2: { R: number; G: number; B: number }
