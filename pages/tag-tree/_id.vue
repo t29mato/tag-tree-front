@@ -1,266 +1,62 @@
 <template>
   <div>
-    <v-dialog v-model="shouldShowAddTreeDialog" hide-overlay>
-      <v-card>
-        <v-app-bar>
-          <v-toolbar-title>{{
-            `「${showTagName(activeTree)}」タグにタグツリーをまとめて追加`
-          }}</v-toolbar-title>
-        </v-app-bar>
-        <v-container>
-          <v-row>
-            <v-col cols="6">
-              <h4>編集エリア</h4>
-              <v-textarea
-                v-model="tagTreeText"
-                name="input-7-1"
-                auto-grow
-                :style="{
-                  background: 'url(/img/line_number.png)',
-                  backgroundAttachment: 'local',
-                  'background-repeat': 'no-repeat',
-                  paddingLeft: '50px',
-                  paddingTop: '2px',
-                }"
-                :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
-                :error-messages="tagTreeTextErrorMessage"
-                @input="handleInputAddedTree"
-                @keydown.tab.exact="handleKeyDownTab"
-                @keydown.shift.tab.exact="handleKeyDownShiftTab"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="6">
-              <h4>表示エリア</h4>
-              <v-treeview ref="addedTree" :items="textTree">
-                <template slot="label" slot-scope="{ item }">
-                  <v-chip>{{ item.name }}</v-chip>
-                  <v-chip v-if="item.children.length > 0" x-small outlined>{{
-                    item.children.length
-                  }}</v-chip>
-                  <template v-for="synonym in item.synonyms">
-                    <v-chip :key="synonym" label="true" class="ml-2" outlined>{{
-                      synonym
-                    }}</v-chip>
-                  </template>
-                </template>
-              </v-treeview>
-            </v-col>
-          </v-row>
-
-          <v-card-actions>
-            <v-btn text @click="shouldShowAddTreeDialog = false">
-              キャンセル
-            </v-btn>
-            <v-btn
-              text
-              :disabled="
-                tagTreeText === '' || tagTreeTextErrorMessage.length > 0
-              "
-              :loading="runningAddTreeJa"
-              @click="addTree('ja')"
-              >まとめて追加（日）</v-btn
-            >
-            <v-btn
-              text
-              :disabled="
-                tagTreeText === '' || tagTreeTextErrorMessage.length > 0
-              "
-              :loading="runningAddTreeEn"
-              @click="addTree('en')"
-              >まとめて追加（英）</v-btn
-            >
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="shouldShowNodeDeleteDialog" hide-overlay>
-      <v-card>
-        <v-app-bar>
-          <v-toolbar-title>削除確認</v-toolbar-title>
-        </v-app-bar>
-        <v-container>
-          <v-treeview :items="[deletedTree]">
-            <template slot="label" slot-scope="{ item }">
-              <v-chip :to="{ path: '/tags/' + item.tag_id }">
-                {{ item.name_ja }}
-              </v-chip>
-            </template>
-          </v-treeview>
-          <v-card-actions>
-            <v-btn text @click="shouldShowNodeDeleteDialog = false">
-              キャンセル
-            </v-btn>
-            <v-btn text color="error" @click="deleteTree()"> 削除する </v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="shouldShowSynonymDialog" hide-overlay>
-      <v-card>
-        <v-app-bar>
-          <v-toolbar-title>{{ removedSynonym.name }}</v-toolbar-title>
-        </v-app-bar>
-        <v-container>
-          <v-card-actions>
-            <v-btn text @click="shouldShowSynonymDialog = false">
-              キャンセル
-            </v-btn>
-            <v-btn text color="error" @click="removeSynonym(removedSynonym)">
-              削除する
-            </v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
     <v-container>
+      <v-row justify="space-between">
+        <v-btn-toggle v-model="editMode" mandatory>
+          <v-btn>Edit </v-btn>
+          <v-btn>Edit & View </v-btn>
+          <v-btn>View </v-btn>
+        </v-btn-toggle>
+        <v-btn @click="saveTree">Save</v-btn>
+      </v-row>
       <v-row>
-        <v-col cols="6">
-          <v-text-field
+        <v-col v-if="showEditScreen" cols="colsOfViewAndEditScreen">
+          <v-textarea
+            v-model="treeText"
+            name="input-7-1"
+            auto-grow
+            :style="{
+              background: 'url(/img/line_number.png)',
+              backgroundAttachment: 'local',
+              'background-repeat': 'no-repeat',
+              paddingLeft: '50px',
+              paddingTop: '2px',
+            }"
+            :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
+            :error-messages="treeTextErrorMessage"
+            @input="handleInputAddedTree"
+            @keydown.tab.exact="handleKeyDownTab"
+            @keydown.shift.tab.exact="handleKeyDownShiftTab"
+          ></v-textarea>
+        </v-col>
+        <v-col v-if="showViewScreen" cols="colsOfViewAndEditScreen">
+          <!-- <v-text-field
+            v-show="!isEditMode"
             v-model="filterKeyword"
             label="キーワードでフィルタリング"
             clearable
             clear-icon="mdi-close-circle-outline"
             @input="openAllTree"
-          ></v-text-field>
+          ></v-text-field> -->
           <v-treeview
             ref="allTree"
             :items="[allTree]"
             item-key="node_id"
             :search="filterKeyword"
             :filter="filterAllTree"
-            activatable
-            @update:active="activateTree"
           >
             <template slot="label" slot-scope="{ item }">
               <v-chip :color="generateColor(item.tree_level)">
                 {{ showTagName(item) }}
               </v-chip>
-              <v-chip v-if="item.children.length > 0" x-small outlined>{{
-                item.children.length
-              }}</v-chip>
-              <!-- INFO 魚類ツリーの時だけ魚図鑑のURL表示 -->
-              <v-icon
-                v-if="allTree.node_id === '4851'"
-                class="ml-2"
-                @click="openZukanCom(item.node_id)"
-                >mdi-fish</v-icon
+              <v-chip
+                v-if="item.children && item.children.length > 0"
+                x-small
+                outlined
+                >{{ item.children.length }}</v-chip
               >
-              <template
-                v-for="synonym in item.synonyms_ja.concat(item.synonyms_en)"
-              >
-                <v-chip :key="synonym" label="true" class="ml-2" outlined>{{
-                  synonym
-                }}</v-chip>
-              </template>
             </template>
           </v-treeview>
-        </v-col>
-        <v-col v-if="activeTreeId" cols="6">
-          <v-chip large class="mb-2">
-            <h3>{{ showTagName(activeTree) }}</h3>
-          </v-chip>
-          <v-container>
-            <h4>タグ名（日）</h4>
-            <v-text-field
-              v-model="newTagName.ja"
-              append-icon="mdi-content-save"
-              @click:append="updateTagName('ja')"
-            ></v-text-field>
-            <h4>タグ名（英）</h4>
-            <v-text-field
-              v-model="newTagName.en"
-              append-icon="mdi-content-save"
-              @click:append="updateTagName('en')"
-            ></v-text-field>
-            <h4 class="mt-2">同義語（日）</h4>
-            <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
-              <template v-for="synonym in activeTagSynonymJa">
-                <v-chip
-                  :key="synonym.name"
-                  label="true"
-                  class="ma-2"
-                  outlined
-                  @click="openSynonymDialog(synonym)"
-                  >{{ synonym.name }}</v-chip
-                >
-              </template>
-            </div>
-            <div v-if="activeTagSynonymJa.length === 0">なし</div>
-            <v-text-field
-              v-model="newSynonymName.ja"
-              append-icon="mdi-text-box-plus"
-              :label="activeTree.name_ja + 'の同義語を追加'"
-              class="mb-2"
-              @click:append="addTermAndSynonym('ja')"
-            ></v-text-field>
-
-            <h4 class="mt-2">同義語（英）</h4>
-            <div v-if="activeTag.attributes && activeTag.attributes.synonyms">
-              <template v-for="synonym in activeTagSynonymEn">
-                <v-chip
-                  :key="synonym.name"
-                  label="true"
-                  class="ma-2"
-                  outlined
-                  @click="openSynonymDialog(synonym)"
-                  >{{ synonym.name }}</v-chip
-                >
-              </template>
-            </div>
-            <div v-if="activeTagSynonymEn.length === 0">なし</div>
-            <v-text-field
-              v-model="newSynonymName.en"
-              append-icon="mdi-text-box-plus"
-              :label="activeTree.name_en + 'の同義語（英）を追加'"
-              class="mb-2"
-              @click:append="addTermAndSynonym('en')"
-            ></v-text-field>
-          </v-container>
-
-          <h3>{{ `「${showTagName(activeTree)}」タグの子タグ` }}</h3>
-          <v-container>
-            <div v-for="child in activeTree.children" :key="child.node_id">
-              <v-chip
-                class="ma-2"
-                close
-                @click="activateTree([child.node_id])"
-                @click:close="openNodeDeleteDialog(child.node_id)"
-              >
-                {{ showTagName(child) }}
-              </v-chip>
-              <v-chip v-if="child.children.length > 0" x-small outlined>{{
-                child.children.length
-              }}</v-chip>
-            </div>
-            <div v-if="activeTree.children.length === 0">なし</div>
-            <v-text-field
-              v-model="newChildTagName"
-              append-icon="mdi-magnify"
-              :label="`「${showTagName(activeTree)}」タグに既存タグを追加`"
-              @click:append="filterTags"
-              @input="filterTags()"
-            ></v-text-field>
-            <div v-for="tag in filteredTags" :key="tag.id">
-              <v-chip
-                v-if="shouldShowFilteredTag(tag)"
-                color="light-green"
-                class="mt-2 mr-2 mb-2"
-                close
-                close-icon="mdi-plus-circle"
-                @click:close="addNode(tag)"
-                >{{
-                  (tag.attributes.term_ja && tag.attributes.term_ja.name) ||
-                  (tag.attributes.term_en && tag.attributes.term_en.name) ||
-                  'タグ名なし'
-                }}</v-chip
-              >
-            </div>
-            <v-btn @click="shouldShowAddTreeDialog = true">
-              {{
-                `「${showTagName(activeTree)}」タグにタグツリーをまとめて追加`
-              }}
-            </v-btn>
-          </v-container>
         </v-col>
       </v-row>
     </v-container>
@@ -269,43 +65,57 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  Tag,
-  StarrydataApiFactory,
-  TagTreeAttributes,
-  Term,
-  TermAttributes,
-  ApiTermsDataAttributes,
-} from 'starrydata-api-client'
+import { StarrydataApiFactory, TagTree } from 'starrydata-api-client'
 
 interface VTreeView {
   updateAll: (arg0: boolean) => void
 }
 
-type Language = 'ja' | 'en'
-
-interface TextTree {
-  name: string
-  synonyms: string[]
-  children: TextTree[]
-}
-
 export default Vue.extend({
-  filters: {
-    truncate(text: string, end: number): string {
-      if (text.length > end) {
-        return text.slice(0, end) + '...'
-      }
-      return text
+  filters: {},
+  data() {
+    return {
+      editMode: 1,
+      // REFACTOR: merge allTree and tree into one
+      allTree: {} as TagTree,
+      tree: {
+        name: '',
+        key: '',
+      },
+      apiClient: StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      ),
+      filterKeyword: '',
+      treeText: '',
+      treeTextErrorMessage: '',
+      textTree: [] as TagTree[],
+    }
+  },
+  computed: {
+    showEditScreen(): boolean {
+      const mode = this.editMode
+      return mode === 0 || mode === 1
     },
-    showIfNumberIsOverOne(num: number): string {
-      if (num === 0) {
-        return ''
+    showViewScreen(): boolean {
+      const mode = this.editMode
+      return mode === 1 || mode === 2
+    },
+    colsOfViewAndEditScreen(): number {
+      if (this.showViewScreen && this.showEditScreen) {
+        return 6
+      } else {
+        return 12
       }
-      return String(num)
+    },
+    // TODO: 同義語も検索対象に加える。APIの修正も必要
+    filterAllTree() {
+      return (item: TagTree, search: string) => {
+        return item.tag_name.includes(search)
+      }
     },
   },
-  async asyncData({ params }) {
+  async mounted() {
     const apiClient = StarrydataApiFactory(
       undefined,
       process.env.STARRYDATA_API_URL
@@ -313,238 +123,113 @@ export default Vue.extend({
     try {
       // ルートIDが1のため
       const { data: tagTree } = (
-        await apiClient.retrieveApiTagTreeId(params.id || '1')
+        await apiClient.retrieveApiTagTreeId(this.$route.params.id)
       ).data
-      return {
-        allTree: tagTree.attributes,
+      this.allTree = tagTree.attributes.tree
+      this.tree = {
+        name: tagTree.attributes.name,
+        key: tagTree.attributes.key,
       }
+      this.treeText = this.convertTree2String(this.allTree)
     } catch (error) {
       window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
     } finally {
       //
     }
   },
-  data() {
-    return {
-      allTree: {} as TagTreeAttributes,
-      removedSynonym: {} as TermAttributes,
-      shouldShowNodeDeleteDialog: false,
-      shouldShowSynonymDialog: false,
-      shouldShowAddTreeDialog: false,
-      activeTreeId: '',
-      deletedTreeId: '',
-      activeTag: {} as Tag,
-      newChildTagName: '',
-      newTagName: {
-        ja: '',
-        en: '',
-      },
-      newSynonymName: {
-        ja: '',
-        en: '',
-      },
-      filteredTags: [] as Tag[],
-      apiClient: StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      ),
-      filterKeyword: '',
-      tagTreeText: '',
-      tagTreeTextErrorMessage: '',
-      textTree: [] as TextTree[],
-      // REFACTOR: 変数ではなくてオブジェクトにする
-      runningAddTreeJa: false,
-      runningAddTreeEn: false,
-    }
-  },
-  computed: {
-    // TODO: 同義語も検索対象に加える。APIの修正も必要
-    filterAllTree() {
-      return (item: TagTreeAttributes, search: string) => {
-        if (item.name_ja && item.name_en) {
-          return item.name_ja.includes(search) || item.name_en.includes(search)
-        }
-        if (item.name_ja || item.name_en) {
-          return (item.name_ja || item.name_en).includes(search)
-        }
-        // INFO: タグ名が入力されていないので検索にヒットさせない
-        return false
-      }
-    },
-    activeTree(): TagTreeAttributes {
-      if (!this.activeTreeId) {
-        return this.allTree
-      }
-      let targetTree: TagTreeAttributes = {} as TagTreeAttributes
-      const search = (treeId: string, tree: TagTreeAttributes): void => {
-        // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
-        if (targetTree.node_id) {
-          return
-        }
-        if (!tree) {
-          return
-        }
-        if (tree.node_id === treeId) {
-          targetTree = tree
-        }
-        tree.children.map((childTree) => search(treeId, childTree))
-      }
-      search(this.activeTreeId, this.allTree)
-      return targetTree
-    },
-    deletedTree(): TagTreeAttributes {
-      if (!this.deletedTreeId) {
-        return {} as TagTreeAttributes
-      }
-      let targetTree: TagTreeAttributes = {} as TagTreeAttributes
-      // REFACTOR: search function重複。副作用あるメソッドのためリファクタ時、注意。
-      const search = (treeId: string, tree: TagTreeAttributes): void => {
-        // INFO: ID指定で検索してるのでtargetTreeが複数になることはないので、見つかった時点で再帰終了
-        if (targetTree.node_id) {
-          return
-        }
-        if (!tree) {
-          return
-        }
-        if (tree.node_id === treeId) {
-          targetTree = tree
-        }
-        tree.children.map((childTree) => search(treeId, childTree))
-      }
-      search(this.activeTreeId, this.allTree)
-      return targetTree
-    },
-    activeTagSynonymJa(): ApiTermsDataAttributes[] {
-      if (!this.activeTag?.attributes?.synonyms) {
-        return []
-      }
-      return this.activeTag?.attributes?.synonyms.filter(
-        (synonym) => synonym.language === 'ja'
-      )
-    },
-    activeTagSynonymEn(): ApiTermsDataAttributes[] {
-      if (!this.activeTag?.attributes?.synonyms) {
-        return []
-      }
-      return this.activeTag?.attributes?.synonyms.filter(
-        (synonym) => synonym.language === 'en'
-      )
-    },
-  },
   methods: {
-    showTagName(tree: TagTreeAttributes): string {
-      return tree.name_ja || tree.name_en
-    },
-    async addTree(language: Language) {
+    async saveTree(): void {
       try {
-        this.$nuxt.$loading.start()
-        if (language === 'ja') {
-          this.runningAddTreeJa = true
-        } else {
-          this.runningAddTreeEn = true
-        }
-        for (const tree of this.textTree) {
-          await this.addTreeRecursively(
-            this.activeTree.node_id,
-            language === 'ja'
-              ? this.activeTree.name_ja
-              : this.activeTree.name_en,
-            tree,
-            language
-          )
-        }
-        this.tagTreeText = ''
-        this.textTree = []
-        this.shouldShowAddTreeDialog = false
-      } catch (error) {
-        window.alert(
-          JSON.stringify(error.response?.data.errors) ||
-            error ||
-            '予期しないエラーです。管理者に問い合わせください。'
-        )
-      } finally {
-        await this.loadTree()
-        const allTree = this.$refs.allTree as unknown as VTreeView
-        allTree.updateAll(true)
-        this.$nuxt.$loading.finish()
-        if (language === 'ja') {
-          this.runningAddTreeJa = false
-        } else {
-          this.runningAddTreeEn = false
-        }
-      }
-    },
-    async addTreeRecursively(
-      parentNode: string,
-      parentName: string,
-      tree: TextTree,
-      language: Language
-    ) {
-      if (parentName === tree.name) {
-        throw new Error(
-          `親タグ「${parentName}」と子タグ「${tree.name}」の名前が同一です`
-        )
-      }
-      if (tree.name === '') {
-        throw new Error('タグ名が空白です')
-      }
-      const term =
-        language === 'ja'
-          ? {
-              term_ja: {
-                name: tree.name,
-                language,
-              },
-            }
-          : {
-              term_en: {
-                name: tree.name,
-                language,
-              },
-            }
-      const { data: newTag } = (
-        await this.apiClient.createApiTags({
+        // ルートIDが1のため
+        await this.apiClient.partialUpdateApiTagTreeId(this.$route.params.id, {
           data: {
-            type: 'Tag',
-            attributes: term,
-          },
-        })
-      ).data
-      await this.apiClient.partialUpdateApiTagsId(newTag.id, {
-        data: {
-          type: 'Tag',
-          id: newTag.id,
-          attributes: {
-            synonyms: newTag.attributes.synonyms.concat(
-              tree.synonyms.map((synonym) => {
-                return {
-                  name: synonym,
-                  language,
-                }
-              })
-            ),
-          },
-        },
-      })
-      const { data: newNode } = (
-        await this.apiClient.createApiNodes({
-          data: {
-            type: 'Node',
+            type: 'TagTreeDetailView',
+            id: this.$route.params.id,
             attributes: {
-              parent: {
-                type: 'Node',
-                id: parentNode,
-              },
-              tag: newTag,
+              name: this.tree.name,
+              key: this.tree.key,
+              tree: this.allTree,
             },
           },
         })
-      ).data
-      if (tree.children.length > 0) {
-        for (const child of tree.children) {
-          await this.addTreeRecursively(newNode.id, tree.name, child, language)
+      } catch (error) {
+        window.alert('ツリーの更新に失敗しました' + JSON.stringify(error))
+      } finally {
+        //
+      }
+    },
+    pushChildDeeply(child: TagTree, parent: TagTree, deepLevel: number): void {
+      if (deepLevel === 1) {
+        parent.children.push(child)
+      } else {
+        if (!parent.children.slice(-1)[0]) {
+          throw new Error('Failed to parse')
+        }
+        deepLevel--
+        return this.pushChildDeeply(
+          child,
+          parent.children.slice(-1)[0],
+          deepLevel
+        )
+      }
+    },
+    convertTree2String(tree: TagTree): string {
+      const result = '\t'.repeat(tree.tree_level) + tree.tag_name
+      if (tree.children.length === 0) {
+        return result
+      }
+      return (
+        result +
+        tree.children
+          .map((child) => {
+            return '\n' + this.convertTree2String(child)
+          })
+          .join('')
+      )
+    },
+    convertString2Tree(
+      treeText: string,
+      current: TagTree | null,
+      line: number = 0,
+      errors: string[] = []
+    ): TagTree {
+      const hasNext = treeText.includes('\n')
+      const firstLine = hasNext
+        ? treeText.substr(0, treeText.indexOf('\n'))
+        : treeText
+      const breakIndex = treeText.indexOf('\n')
+      const restOfLine = treeText.substr(breakIndex + 1)
+      const tabLastIndex = firstLine.lastIndexOf('\t')
+      const tagName = firstLine.substr(tabLastIndex + 1)
+      const tabCount = tabLastIndex === -1 ? 0 : tabLastIndex + 1
+      const treeObject: TagTree = {
+        tag_name: tagName,
+        tree_level: tabCount,
+        children: [],
+      }
+
+      if (!current) {
+        current = treeObject
+      } else {
+        try {
+          this.pushChildDeeply(treeObject, current, tabCount)
+        } catch (error) {
+          errors.push(`${line}: ${error}`)
+        } finally {
+          //
         }
       }
+      if (hasNext) {
+        return this.convertString2Tree(restOfLine, current, line + 1, errors)
+      }
+      if (errors.length > 0) {
+        throw new Error(JSON.stringify(errors))
+      }
+      return current
+    },
+    // REFACTOR: This method doesn't need because it return just only name
+    showTagName(tree: TagTree): string {
+      return tree.tag_name
     },
     handleKeyDownTab(e: KeyboardEvent) {
       e.preventDefault()
@@ -610,58 +295,10 @@ export default Vue.extend({
       element.selectionEnd = posOfCursor - 1
     },
     showErrorMessage(message: string) {
-      this.tagTreeTextErrorMessage = message
+      this.treeTextErrorMessage = message
     },
     hideErrorMessage() {
-      this.tagTreeTextErrorMessage = ''
-    },
-    async updateTagName(language: 'ja' | 'en') {
-      let attributes = {}
-      switch (language) {
-        case 'ja':
-          if (this.newTagName.ja === '') {
-            window.alert('タグ名を空欄にはできません')
-            this.newTagName.ja = this.activeTree.name_ja
-            return
-          }
-          attributes = {
-            term_ja: {
-              name: this.newTagName.ja,
-              language,
-            },
-          }
-          break
-
-        case 'en':
-          if (this.newTagName.en === '') {
-            window.alert('タグ名（英）を空欄にはできません')
-            this.newTagName.en = this.activeTree.name_en
-            return
-          }
-          attributes = {
-            term_en: {
-              name: this.newTagName.en,
-              language,
-            },
-          }
-          break
-      }
-
-      try {
-        this.$nuxt.$loading.start()
-        await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
-          data: {
-            type: 'Tag',
-            id: this.activeTag.id,
-            attributes,
-          },
-        })
-        await this.loadTree()
-      } catch (error) {
-        window.alert('タグ名の更新に失敗しました' + JSON.stringify(error))
-      } finally {
-        this.$nuxt.$loading.finish()
-      }
+      this.treeTextErrorMessage = ''
     },
     openAllTree(input: string) {
       const allTree = this.$refs.allTree as unknown as VTreeView
@@ -675,118 +312,16 @@ export default Vue.extend({
     handleInputAddedTree(input: string) {
       // INFO: transnoからのコピーが半角スペース4文字がインデントになるため
       input = input.replace(/ {4}/g, '\t')
-
       this.hideErrorMessage()
-      const textTree = [] as TextTree[]
-      const pushChildToChildren = (
-        children: TextTree[],
-        child: TextTree,
-        count: number
-      ): void => {
-        if (count === 0) {
-          if (children.map((item) => item.name).includes(child.name)) {
-            throw new Error(`「${child.name}」タグが重複`)
-          }
-          children.push(child)
-          return
-        }
-        if (!children.slice(-1)[0]) {
-          throw new Error('パースに失敗')
-        }
-        pushChildToChildren(children.slice(-1)[0].children, child, count - 1)
-      }
-      const errorLines = [] as { lineNumber: number; message: string }[]
-      input
-        .trimEnd()
-        .split('\n')
-        .forEach((text, index) => {
-          const indentCount = text.search(/\S|$/)
-          const words = text
-            .trim()
-            .split('|')
-            .map((item) => item.trim())
-          const child = {
-            name: words[0],
-            synonyms: words.slice(1),
-            children: [],
-          }
-          try {
-            // INFO: アクティブタグ（親タグ）と子タグ名が同一の場合にエラー
-            if (
-              indentCount === 0 &&
-              this.activeTree.children
-                .map((child) => child.name_ja)
-                .concat(this.activeTree.children.map((child) => child.name_en))
-                .includes(child.name)
-            ) {
-              throw new Error(
-                `「${
-                  this.activeTree.name_ja || this.activeTree.name_en
-                }」タグの子タグ「${child.name}」が重複`
-              )
-            }
-            // INFO: 同義語が重複してる場合はエラー
-            if (
-              Array.from(new Set(child.synonyms)).length !==
-              child.synonyms.length
-            ) {
-              throw new Error('同義語が重複')
-            }
-            // INFO: 同義語がタグ名と重複してる場合はエラー
-            if (child.synonyms.includes(child.name)) {
-              throw new Error('タグ名と同義語が重複')
-            }
-            pushChildToChildren(textTree, child, indentCount)
-          } catch (error) {
-            errorLines.push({ lineNumber: index + 1, message: error.message })
-          } finally {
-            //
-          }
-        })
-      if (errorLines.length > 0) {
-        this.showErrorMessage(
-          errorLines.reduce(
-            (prev, cur) => prev + `${cur.lineNumber}.${cur.message} `,
-            ''
-          )
-        )
-      }
-      this.textTree = textTree
-      const addedTree = this.$refs.addedTree as unknown as VTreeView
-      addedTree.updateAll(true)
-    },
-    openZukanCom(id: string) {
-      window.open('https://zukan.com/fish/internal' + id)
-    },
-    // INFO: 同じ親に同じ子を複数登録するのはできないので事前に非表示にするため
-    shouldShowFilteredTag(tag: Tag): boolean {
-      return !this.activeTree.children
-        .map((child) => child.name_ja)
-        .includes(tag.attributes.term_ja?.name || '')
-    },
-    // INFO: 同じタグに同じ同義語を登録するのはできないので。
-    shouldShowFilteredTerm(term: Term): boolean {
-      return !this.activeTag.relationships.synonyms_ids.data
-        .map((synonym) => synonym.id)
-        .includes(term.id)
-    },
-    activateTree(ids: string[]) {
-      const activatedTreeId = ids[0]
-      this.activeTreeId = activatedTreeId
-      this.newTagName = {
-        ja: this.activeTree.name_ja,
-        en: this.activeTree.name_en,
-      }
-      this.loadActiveTag()
-    },
-    async loadActiveTag() {
       try {
-        const { data: tag } = (
-          await this.apiClient.retrieveApiTagsId(this.activeTree.tag_id)
-        ).data
-        this.activeTag = tag
+        const tree = this.convertString2Tree(input, null)
+        this.allTree = tree
+        const allTree = this.$refs.allTree as unknown as VTreeView
+        allTree.updateAll(true)
       } catch (error) {
-        window.alert('タグの読み込みに失敗しました。' + JSON.stringify(error))
+        console.log('error:', error.message)
+        const message = JSON.parse(error.message)
+        this.showErrorMessage(message.join('\n'))
       } finally {
         //
       }
@@ -805,52 +340,6 @@ export default Vue.extend({
       // INFO: ツリーレベルが1から開始するので、順番通りにするため1を引いた
       return colors[(treeLevel - 1) % 7]
     },
-    openNodeDeleteDialog(nodeId: string) {
-      this.shouldShowNodeDeleteDialog = true
-      this.deletedTreeId = nodeId
-    },
-    openSynonymDialog(term: TermAttributes) {
-      this.removedSynonym = term
-      this.shouldShowSynonymDialog = true
-    },
-    closeSynonymDialog() {
-      this.shouldShowSynonymDialog = false
-    },
-    async deleteTree() {
-      this.$nuxt.$loading.start()
-      try {
-        await this.apiClient.destroyApiNodesId(this.deletedTreeId)
-        this.shouldShowNodeDeleteDialog = false
-        await this.loadTree()
-      } catch (error) {
-        window.alert('ツリーの削除に失敗しました。' + JSON.stringify(error))
-      } finally {
-        this.$nuxt.$loading.finish()
-      }
-    },
-    async removeSynonym(term: TermAttributes) {
-      this.$nuxt.$loading.start()
-      try {
-        await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
-          data: {
-            type: 'Tag',
-            id: this.activeTag.id,
-            attributes: {
-              synonyms: this.activeTag.attributes.synonyms.filter((synonym) => {
-                return term.name !== synonym.name
-              }),
-            },
-          },
-        })
-        await this.loadActiveTag()
-        await this.loadTree()
-      } catch (error) {
-        window.alert('同義語の削除に失敗しました' + JSON.stringify(error))
-      } finally {
-        this.closeSynonymDialog()
-        this.$nuxt.$loading.finish()
-      }
-    },
     async loadTree() {
       try {
         // ルートIDが1のため
@@ -859,152 +348,11 @@ export default Vue.extend({
             this.$route.params.id || '1'
           )
         ).data
-        this.allTree = tagTree.attributes
+        this.allTree = tagTree.attributes.tree
       } catch (error) {
         window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
       } finally {
         //
-      }
-    },
-    async filterTags() {
-      if (!this.newChildTagName) {
-        this.filteredTags = []
-        return
-      }
-      try {
-        const { data: tags } = (
-          await this.apiClient.listApiTags(
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.newChildTagName
-          )
-        ).data
-        this.filteredTags = tags
-      } catch (error) {
-        window.alert('タグの読み込みに失敗しました' + JSON.stringify(error))
-      } finally {
-        //
-      }
-    },
-    async addNode(tag: Tag) {
-      // TODO: 祖先に子供がいるかどうかの判定を行うかどうか。
-      if (this.activeTree.tag_id === tag.id) {
-        window.alert(`親ノードと同じタグの子を登録することはできません。`)
-        return
-      }
-      if (
-        this.activeTree.children.map((child) => child.tag_id).includes(tag.id)
-      ) {
-        window.alert(
-          `既に「${this.showTagName(this.activeTree)}」ノードに「${
-            tag.attributes.term_ja?.name ||
-            tag.attributes.term_en?.name ||
-            'タグ名なし'
-          }」タグは登録されています。`
-        )
-        return
-      }
-      try {
-        this.$nuxt.$loading.start()
-        await this.apiClient.createApiNodes({
-          data: {
-            type: 'Node',
-            attributes: {
-              parent: {
-                type: 'Node',
-                id: this.activeTree.node_id,
-              },
-              tag: {
-                type: 'Tag',
-                id: tag.id,
-              },
-            },
-          },
-        })
-      } catch (error) {
-        window.alert(
-          JSON.stringify(error.response.data.errors) ||
-            '予期しないエラーです。管理者に問い合わせください。'
-        )
-      } finally {
-        await this.loadTree()
-        this.$nuxt.$loading.finish()
-      }
-    },
-    async addTermAndSynonym(language: string) {
-      const newSynonyms =
-        language === 'ja'
-          ? this.newSynonymName.ja.split('|').map((name) => name.trim())
-          : this.newSynonymName.en.split('|').map((name) => name.trim())
-      if (
-        this.activeTag.attributes.term_ja?.name &&
-        newSynonyms.includes(this.activeTag.attributes.term_ja.name)
-      ) {
-        window.alert(
-          `タグ名「${this.activeTag.attributes.term_ja?.name}」と重複`
-        )
-        return
-      }
-      if (
-        this.activeTag.attributes.term_en?.name &&
-        newSynonyms.includes(this.activeTag.attributes.term_en.name)
-      ) {
-        window.alert(
-          `タグ名「${this.activeTag.attributes.term_en?.name}」と重複`
-        )
-        return
-      }
-      let isDuplicated = false
-      newSynonyms.forEach((synonym) => {
-        if (
-          this.activeTag.attributes.synonyms
-            .map((term) => term.name)
-            .includes(synonym)
-        ) {
-          isDuplicated = true
-        }
-      })
-      if (isDuplicated) {
-        window.alert('既存同義語と重複')
-        return
-      }
-      try {
-        this.$nuxt.$loading.start()
-        await this.apiClient.partialUpdateApiTagsId(this.activeTag.id, {
-          data: {
-            type: 'Tag',
-            id: this.activeTag.id,
-            attributes: {
-              synonyms: newSynonyms
-                .map((synonym) => {
-                  return {
-                    name: synonym,
-                    language,
-                  }
-                })
-                .concat(this.activeTag.attributes.synonyms),
-            },
-          },
-        })
-        await this.loadActiveTag()
-        await this.loadTree()
-        switch (language) {
-          case 'ja':
-            this.newSynonymName.ja = ''
-            break
-          case 'en':
-            this.newSynonymName.en = ''
-        }
-      } catch (error) {
-        window.alert(
-          JSON.stringify(error.response.data.errors) ||
-            '予期しないエラーです。管理者に問い合わせください。'
-        )
-      } finally {
-        this.$nuxt.$loading.finish()
       }
     },
   },

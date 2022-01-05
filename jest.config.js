@@ -10,9 +10,12 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
     '.*\\.(vue)$': 'vue-jest',
   },
-  collectCoverage: true,
+  transformIgnorePatterns: ['/node_modules/starrydata-api-client/*.ts'],
+  testEnvironment: 'jsdom',
+  collectCoverage: false,
   collectCoverageFrom: [
     '<rootDir>/components/**/*.vue',
     '<rootDir>/pages/**/*.vue',
   ],
+  setupFiles: ['./tests/setup.js'],
 }

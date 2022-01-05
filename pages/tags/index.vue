@@ -34,11 +34,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  StarrydataApiFactory,
-  Tag,
-  MetaPagination,
-} from 'starrydata-api-client'
+import { StarrydataApiFactory, Tag } from 'starrydata-api-client'
 
 interface DataOptions {
   page: number
@@ -57,7 +53,7 @@ export default Vue.extend({
       sortBy: 'age',
       sortDesc: false,
       tags: [] as Tag[],
-      pagination: {} as MetaPagination,
+      pagination: {},
       options: { itemsPerPage: 20 } as DataOptions,
       apiClient: StarrydataApiFactory(
         undefined,

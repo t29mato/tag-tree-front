@@ -2,9 +2,8 @@
   <v-container>
     <v-card>
       <v-container>
-        <v-card-title>{{ tag.attributes.name_ja }}</v-card-title>
-        <v-text-field v-model="updatedNameJa" label="タグ名"></v-text-field>
-        <v-text-field v-model="updatedNameEn" label="Tag Name"></v-text-field>
+        <v-card-title>{{ tag.attributes.name }}</v-card-title>
+        <v-text-field v-model="updatedName" label="タグ名"></v-text-field>
         <v-card-actions>
           <v-btn text color="success" @click="updateTag()"> 更新する </v-btn>
         </v-card-actions>
@@ -34,8 +33,7 @@ export default Vue.extend({
     const { data: tag } = (await apiClient.retrieveApiTagsId(params.id)).data
     return {
       tag,
-      updatedNameJa: tag.attributes.term_ja.name,
-      updatedNameEn: tag.attributes.term_en.name,
+      updatedName: tag.attributes.name,
     }
   },
   data() {
@@ -45,8 +43,7 @@ export default Vue.extend({
         undefined,
         process.env.STARRYDATA_API_URL
       ),
-      updatedNameJa: '',
-      updatedNameEn: '' as string | undefined,
+      updatedName: '',
       snackbar: false,
     }
   },
@@ -61,8 +58,7 @@ export default Vue.extend({
           await this.apiClient.retrieveApiTagsId(this.$route.params.id)
         ).data
         this.tag = tag
-        this.updatedNameJa = tag.attributes.term_ja.name || ''
-        this.updatedNameEn = tag.attributes.term_en.name || ''
+        this.updatedName = tag.attributes.name
       } catch (error) {
         window.alert(
           JSON.stringify(error.response.data.errors) ||
@@ -79,8 +75,7 @@ export default Vue.extend({
             type: 'Tag',
             id: this.$route.params.id,
             attributes: {
-              // name_ja: this.updatedNameJa,
-              // name_en: this.updatedNameEn,
+              name: this.updatedName,
             },
           },
         })

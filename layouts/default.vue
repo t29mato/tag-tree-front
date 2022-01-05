@@ -2,9 +2,9 @@
   <!-- App.vue -->
 
   <v-app>
-    <v-navigation-drawer app>
+    <!-- <v-navigation-drawer app>
       <Sidebar />
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
     <v-app-bar app>
       <!-- -->
