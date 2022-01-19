@@ -42,6 +42,7 @@ export default {
     'nuxt-basic-auth-module',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
   ],
 
   basic: {
@@ -51,8 +52,48 @@ export default {
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:8000',
+    headers: {
+      common: {
+        'Content-Type': 'application/vnd.api+json',
+      },
+    },
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  router: {
+    middleware: ['auth'],
+  },
+
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          property: false,
+          global: true,
+          // required: true,
+          // type: 'Bearer'
+        },
+        user: {
+          property: false,
+          // autoFetch: true
+        },
+        endpoints: {
+          login: {
+            url: '/api/auth/jwt/create/',
+            method: 'post',
+          },
+          user: false,
+        },
+      },
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      home: '/',
+    },
+  },
 }

@@ -66,6 +66,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { StarrydataApiFactory, TagTree } from 'starrydata-api-client'
+import Axios from 'axios'
 
 interface VTreeView {
   updateAll: (arg0: boolean) => void
@@ -121,9 +122,17 @@ export default Vue.extend({
       process.env.STARRYDATA_API_URL
     )
     try {
-      // ルートIDが1のため
+      const token = localStorage.getItem('auth._token.local')
+      if (token === null) {
+        throw new Error("It couldn't get the token from your local storage")
+      }
+      const jwt = 'JWT ' + JSON.parse(token).data.access
       const { data: tagTree } = (
-        await apiClient.retrieveApiTagTreeId(this.$route.params.id)
+        await apiClient.retrieveApiTagTreeId(this.$route.params.id, {
+          headers: {
+            Authorization: jwt,
+          },
+        })
       ).data
       this.allTree = tagTree.attributes.tree
       this.tree = {
@@ -132,26 +141,48 @@ export default Vue.extend({
       }
       this.treeText = this.convertTree2String(this.allTree)
     } catch (error) {
-      window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
+      if (Axios.isAxiosError(error)) {
+        switch (error.response?.status) {
+          case 401:
+            this.$auth.logout()
+            break
+          default:
+            window.alert('It failed to download tree' + JSON.stringify(error))
+        }
+      } else {
+        window.alert('It failed to download tree' + JSON.stringify(error))
+      }
     } finally {
       //
     }
   },
   methods: {
-    async saveTree(): void {
+    async saveTree(): Promise<void> {
       try {
-        // ルートIDが1のため
-        await this.apiClient.partialUpdateApiTagTreeId(this.$route.params.id, {
-          data: {
-            type: 'TagTreeDetailView',
-            id: this.$route.params.id,
-            attributes: {
-              name: this.tree.name,
-              key: this.tree.key,
-              tree: this.allTree,
+        const token = localStorage.getItem('auth._token.local')
+        if (token === null) {
+          throw new Error("It couldn't get the token from your local storage")
+        }
+        const jwt = 'JWT ' + JSON.parse(token).data.access
+        await this.apiClient.partialUpdateApiTagTreeId(
+          this.$route.params.id,
+          {
+            data: {
+              type: 'TagTreeDetailView',
+              id: this.$route.params.id,
+              attributes: {
+                name: this.tree.name,
+                key: this.tree.key,
+                tree: this.allTree,
+              },
             },
           },
-        })
+          {
+            headers: {
+              Authorization: jwt,
+            },
+          }
+        )
       } catch (error) {
         window.alert('ツリーの更新に失敗しました' + JSON.stringify(error))
       } finally {
