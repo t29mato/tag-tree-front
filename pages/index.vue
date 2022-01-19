@@ -21,11 +21,6 @@ export default Vue.extend({
       localStorage.json = newJson
     },
   },
-  mounted() {
-    console.error("It's mounted.")
-    if (localStorage.json) {
-      this.json = localStorage.json
-    }
-  },
+  mounted() {},
 })
 </script>

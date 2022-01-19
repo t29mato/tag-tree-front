@@ -1,26 +1,10 @@
 <template>
   <div>
-    <v-container fluid>
-      <v-row>
-        <v-col cols="12" sm="6">
-          <v-select
-            v-model="database"
-            :items="databases"
-            item-value="id"
-            item-text="attributes.name"
-            label="Database"
-          ></v-select>
-        </v-col>
-        <!-- TODO: 後々、検索機能を追加したときに利用する枠組み -->
-        <!-- <v-col cols="12" sm="6">
-          <v-text-field v-model="author" label="Authors"></v-text-field>
-        </v-col> -->
-      </v-row>
-    </v-container>
-
     <v-data-table :headers="headers" :items="items" item-key="SID">
-      <template #[`item.attributes.title`]="{ item }">
-        {{ item.attributes.title | truncate(120) }}
+      <template #[`item.actions`]="{ item }">
+        <nuxt-link :to="{ name: 'tag-tree-id', params: { id: item.id } }">
+          <v-icon class="small">mdi-pencil</v-icon>
+        </nuxt-link>
       </template>
     </v-data-table>
   </div>
@@ -29,62 +13,65 @@
 <script lang="ts">
 import Vue from 'vue'
 import { StarrydataApiFactory, TagTree } from 'starrydata-api-client'
+import Axios from 'axios'
 
 export default Vue.extend({
-  filters: {
-    truncate(text: string, end: number): string {
-      if (text.length > end) {
-        return text.slice(0, end) + '...'
-      }
-      return text
-    },
-  },
+  filters: {},
   data() {
     return {
       sortBy: 'SID',
       sortDesc: false,
       items: [] as TagTree[],
       author: '',
+      apiClient: StarrydataApiFactory(
+        undefined,
+        process.env.STARRYDATA_API_URL
+      ),
     }
   },
   computed: {
     headers() {
       return [
-        { text: 'SID', value: 'id' },
-        { text: 'DOI', value: 'attributes.DOI' },
-        { text: 'title', value: 'attributes.title' },
-        { text: 'author', value: 'attributes.authors' },
-        { text: 'Journal', value: 'attributes.container_title' },
-        { text: 'Publisher', value: 'attributes.publisher' },
-        {
-          text: 'Databases',
-          value: 'relationships.databases.data',
-          align: ' d-none',
-        },
-        { text: 'Figures', value: 'attributes.figure_count' },
-        { text: 'Samples', value: 'attributes.sample_count' },
+        { text: 'ID', value: 'id' },
+        { text: 'Name', value: 'attributes.name' },
+        { text: 'Key', value: 'attributes.key' },
+        { text: 'Actions', value: 'actions' },
       ]
     },
   },
-  created() {
-    this.loadTagTrees()
+  mounted() {
+    this.apiClient = StarrydataApiFactory(
+      undefined,
+      process.env.STARRYDATA_API_URL
+    )
+    this.loadTagTree()
   },
+  created() {},
   methods: {
-    async loadTagTrees() {
-      const api = StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      )
+    async loadTagTree() {
       try {
-        const { data: papers } = (await api.listApiTags()).data
-        if (papers) {
-          // this.items = papers
+        const { data: tagTree } = (await this.apiClient.listApiTagTree()).data
+        this.items = tagTree
+      } catch (error) {
+        if (Axios.isAxiosError(error)) {
+          switch (error.response?.status) {
+            case 401:
+              this.$auth.logout()
+              break
+            default:
+              window.alert(
+                'It failed to download trees' + JSON.stringify(error)
+              )
+          }
+        } else {
+          window.alert('It failed to download trees' + JSON.stringify(error))
         }
-      } catch {
-        //
       } finally {
         //
       }
+    },
+    toDetailScreen(item) {
+      this.$route.path = item.id
     },
   },
 })
