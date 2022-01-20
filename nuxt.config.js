@@ -70,16 +70,17 @@ export default {
 
   auth: {
     strategies: {
-      local: {
+      refresh: {
         token: {
-          property: false,
+          property: 'data.access',
           global: true,
-          // required: true,
-          // type: 'Bearer'
+        },
+        refreshToken: {
+          property: 'data.refresh',
+          data: 'data.refresh',
         },
         user: {
           property: false,
-          // autoFetch: true
         },
         endpoints: {
           login: {
@@ -88,12 +89,13 @@ export default {
           },
           user: false,
         },
+        autoLogout: true,
       },
     },
     redirect: {
       login: '/login',
       logout: '/',
-      home: '/',
+      home: '/tag-tree',
     },
   },
 }

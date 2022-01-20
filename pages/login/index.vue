@@ -79,11 +79,12 @@ export default Vue.extend({
             password: this.password,
           },
         }
-        await this.$auth.loginWith('local', {
+        await this.$auth.loginWith('refresh', {
           data: {
             data,
           },
         })
+        this.$router.push('/tag-tree')
       } catch (error) {
         if (Axios.isAxiosError(error)) {
           switch (error.response?.status) {

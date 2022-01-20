@@ -7,7 +7,7 @@
     </v-navigation-drawer> -->
 
     <v-app-bar app>
-      <!-- -->
+      <v-btn @click="$auth.logout()">logout</v-btn>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->

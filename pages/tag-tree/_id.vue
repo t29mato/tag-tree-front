@@ -65,7 +65,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { StarrydataApiFactory, TagTree } from 'starrydata-api-client'
+import {
+  AuthApiFactory,
+  StarrydataApiFactory,
+  TagTree,
+} from 'starrydata-api-client'
 import Axios from 'axios'
 
 interface VTreeView {
@@ -83,10 +87,11 @@ export default Vue.extend({
         name: '',
         key: '',
       },
-      apiClient: StarrydataApiFactory(
+      apiClientSTD: StarrydataApiFactory(
         undefined,
         process.env.STARRYDATA_API_URL
       ),
+      apiClientAuth: AuthApiFactory(undefined, process.env.STARRYDATA_API_URL),
       filterKeyword: '',
       treeText: '',
       treeTextErrorMessage: '',
@@ -117,22 +122,18 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    const apiClient = StarrydataApiFactory(
+    const apiClientSTD = StarrydataApiFactory(
       undefined,
       process.env.STARRYDATA_API_URL
     )
     try {
-      const token = localStorage.getItem('auth._token.local')
-      if (token === null) {
-        throw new Error("It couldn't get the token from your local storage")
-      }
-      const jwt = 'JWT ' + JSON.parse(token).data.access
+      // const token = localStorage.getItem('auth._token.refresh')
+      // if (token === null) {
+      //   throw new Error("It couldn't get the token from your local storage")
+      // }
+      // const jwt = 'JWT ' + JSON.parse(token).data.access
       const { data: tagTree } = (
-        await apiClient.retrieveApiTagTreeId(this.$route.params.id, {
-          headers: {
-            Authorization: jwt,
-          },
-        })
+        await apiClientSTD.retrieveApiTagTreeId(this.$route.params.id)
       ).data
       this.allTree = tagTree.attributes.tree
       this.tree = {
@@ -144,7 +145,7 @@ export default Vue.extend({
       if (Axios.isAxiosError(error)) {
         switch (error.response?.status) {
           case 401:
-            this.$auth.logout()
+            window.alert('It failed to download tree' + JSON.stringify(error))
             break
           default:
             window.alert('It failed to download tree' + JSON.stringify(error))
@@ -159,12 +160,8 @@ export default Vue.extend({
   methods: {
     async saveTree(): Promise<void> {
       try {
-        const token = localStorage.getItem('auth._token.local')
-        if (token === null) {
-          throw new Error("It couldn't get the token from your local storage")
-        }
-        const jwt = 'JWT ' + JSON.parse(token).data.access
-        await this.apiClient.partialUpdateApiTagTreeId(
+        const token = localStorage.getItem('auth._token.refresh')
+        await this.apiClientSTD.partialUpdateApiTagTreeId(
           this.$route.params.id,
           {
             data: {
@@ -179,12 +176,49 @@ export default Vue.extend({
           },
           {
             headers: {
-              Authorization: jwt,
+              Authorization: token,
             },
           }
         )
       } catch (error) {
-        window.alert('ツリーの更新に失敗しました' + JSON.stringify(error))
+        if (Axios.isAxiosError(error)) {
+          switch (error.response?.status) {
+            case 401:
+              try {
+                const refresh = localStorage.getItem(
+                  'auth._refresh_token.refresh'
+                )
+                if (refresh === null) {
+                  throw new Error('refresh token is null')
+                }
+                const data = (
+                  await this.apiClientAuth.createApiAuthJwtRefresh({
+                    data: {
+                      type: 'TokenRefreshView',
+                      attributes: {
+                        refresh,
+                      },
+                    },
+                  })
+                ).data
+                this.$auth.setUserToken(data.data.access)
+                this.saveTree()
+              } catch (e) {
+                window.alert('It failed to refresh token')
+                this.$auth.logout()
+              } finally {
+                //
+              }
+              window.alert(
+                '[401] It failed to save tree' + JSON.stringify(error)
+              )
+              break
+            default:
+              window.alert('It failed to save tree' + JSON.stringify(error))
+          }
+        } else {
+          window.alert('It failed to save tree' + JSON.stringify(error))
+        }
       } finally {
         //
       }
@@ -375,7 +409,7 @@ export default Vue.extend({
       try {
         // ルートIDが1のため
         const { data: tagTree } = (
-          await this.apiClient.retrieveApiTagTreeId(
+          await this.apiClientSTD.retrieveApiTagTreeId(
             this.$route.params.id || '1'
           )
         ).data
