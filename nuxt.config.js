@@ -88,6 +88,7 @@ export default {
             method: 'post',
           },
           user: false,
+          refresh: false,
         },
         autoLogout: true,
       },
