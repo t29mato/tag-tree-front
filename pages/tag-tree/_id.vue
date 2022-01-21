@@ -135,12 +135,14 @@ export default Vue.extend({
       const { data: tagTree } = (
         await apiClientSTD.retrieveApiTagTreeId(this.$route.params.id)
       ).data
-      this.allTree = tagTree.attributes.tree
+      if (tagTree.attributes.tree) {
+        this.allTree = tagTree.attributes.tree
+        this.treeText = this.convertTree2String(this.allTree)
+      }
       this.tree = {
         name: tagTree.attributes.name,
         key: tagTree.attributes.key,
       }
-      this.treeText = this.convertTree2String(this.allTree)
     } catch (error) {
       if (Axios.isAxiosError(error)) {
         switch (error.response?.status) {
