@@ -54,10 +54,6 @@ export default class Sidebar extends Vue {
       icon: 'mdi-fish',
       path: '/tag-tree/' + process.env.TREE_ID_FISH,
     },
-    { title: 'プロット', icon: 'mdi-chart-scatter-plot', path: '/papers/data' },
-    { title: 'タグ', icon: 'mdi-image', path: '/tags/' },
-    { title: 'データベース', icon: 'mdi-image', path: '/databases' },
-    { title: '論文', icon: 'mdi-image', path: '/papers' },
   ]
 
   right = null
