@@ -241,6 +241,11 @@ export default Vue.extend({
       }
     },
     convertTree2String(tree: TagTree): string {
+      if (!tree.tree_level) {
+        throw new Error(
+          "tree objects doesn't have tree_level, check the API response out"
+        )
+      }
       const result = '\t'.repeat(tree.tree_level) + tree.tag_name
       if (tree.children.length === 0) {
         return result
@@ -386,7 +391,6 @@ export default Vue.extend({
         const allTree = this.$refs.allTree as unknown as VTreeView
         allTree.updateAll(true)
       } catch (error) {
-        console.log('error:', error.message)
         const message = JSON.parse(error.message)
         this.showErrorMessage(message.join('\n'))
       } finally {
