@@ -407,21 +407,6 @@ export default Vue.extend({
       // INFO: ツリーレベルが1から開始するので、順番通りにするため1を引いた
       return colors[(treeLevel - 1) % 7]
     },
-    async loadTree() {
-      try {
-        // ルートIDが1のため
-        const { data: tagTree } = (
-          await this.apiClientSTD.retrieveApiTagTreeId(
-            this.$route.params.id || '1'
-          )
-        ).data
-        this.allTree = tagTree.attributes.tree
-      } catch (error) {
-        window.alert('ツリーの読み込みに失敗しました' + JSON.stringify(error))
-      } finally {
-        //
-      }
-    },
   },
 })
 </script>
