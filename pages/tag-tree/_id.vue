@@ -241,7 +241,7 @@ export default Vue.extend({
       }
     },
     convertTree2String(tree: TagTree): string {
-      if (!tree.tree_level) {
+      if (tree.tree_level === undefined) {
         throw new Error(
           "tree objects doesn't have tree_level, check the API response out"
         )
