@@ -3,7 +3,7 @@
     <v-navigation-drawer permanent>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="text-h6"> Starrydata </v-list-item-title>
+          <v-list-item-title class="text-h6"> TagTree </v-list-item-title>
           <v-list-item-subtitle>
             Plot Mining from Publications
           </v-list-item-subtitle>
