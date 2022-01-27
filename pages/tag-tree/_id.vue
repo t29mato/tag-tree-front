@@ -144,6 +144,7 @@ export default Vue.extend({
         key: tagTree.attributes.key,
       }
     } catch (error) {
+      console.error(error)
       if (Axios.isAxiosError(error)) {
         switch (error.response?.status) {
           case 401:
