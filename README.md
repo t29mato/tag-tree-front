@@ -31,8 +31,3 @@ $ docker-compose up
 - API Mock: https://virtserver.swaggerhub.com/t29mato/std3/1.0.0
 - API Docs: https://app.swaggerhub.com/apis/t29mato/std3/1.0.0
 
-## Generate Starrydata API Client
-
-```
-$ make api-client
-```
