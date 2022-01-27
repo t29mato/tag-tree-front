@@ -53,10 +53,7 @@ export default Vue.extend({
     return {
       username: '',
       password: '',
-      apiClient: StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      ),
+      apiClient: StarrydataApiFactory(undefined, process.env.TAG_TREE_API_URL),
       errorMessage: '',
     }
   },

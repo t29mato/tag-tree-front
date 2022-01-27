@@ -71,10 +71,7 @@ export default Vue.extend({
       sortDesc: false,
       items: [] as TagTree[],
       author: '',
-      apiClient: StarrydataApiFactory(
-        undefined,
-        process.env.STARRYDATA_API_URL
-      ),
+      apiClient: StarrydataApiFactory(undefined, process.env.TAG_TREE_API_URL),
       shouldShowModal: false,
       newTagTreeName: '',
       newTagTreeKey: '',
@@ -104,7 +101,7 @@ export default Vue.extend({
   mounted() {
     this.apiClient = StarrydataApiFactory(
       undefined,
-      process.env.STARRYDATA_API_URL
+      process.env.TAG_TREE_API_URL
     )
     this.loadTagTree()
   },

@@ -89,9 +89,9 @@ export default Vue.extend({
       },
       apiClientSTD: StarrydataApiFactory(
         undefined,
-        process.env.STARRYDATA_API_URL
+        process.env.TAG_TREE_API_URL
       ),
-      apiClientAuth: AuthApiFactory(undefined, process.env.STARRYDATA_API_URL),
+      apiClientAuth: AuthApiFactory(undefined, process.env.TAG_TREE_API_URL),
       filterKeyword: '',
       treeText: '',
       treeTextErrorMessage: '',
@@ -124,7 +124,7 @@ export default Vue.extend({
   async mounted() {
     const apiClientSTD = StarrydataApiFactory(
       undefined,
-      process.env.STARRYDATA_API_URL
+      process.env.TAG_TREE_API_URL
     )
     try {
       // const token = localStorage.getItem('auth._token.refresh')
