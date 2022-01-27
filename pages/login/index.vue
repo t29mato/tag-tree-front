@@ -32,7 +32,9 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="login">Login</v-btn>
+                <v-btn color="primary" :disabled="!isValidated" @click="login"
+                  >Login</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -60,6 +62,9 @@ export default Vue.extend({
   computed: {
     token() {
       return this.$store.state.token.token
+    },
+    isValidated(): boolean {
+      return this.username.length > 0 && this.password.length > 0
     },
   },
   methods: {
