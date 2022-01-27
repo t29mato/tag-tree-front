@@ -4,8 +4,7 @@
   },
   "cSpell.words": [
     "axios",
-    "nuxtjs",
-    "starrydata"
+    "nuxtjs"
   ],
   "vetur.experimental.templateInterpolationService": true
 }
