@@ -1,6 +1,6 @@
 {
   "name": "user-front",
-  "version": "1.0.0",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nuxt",
@@ -34,7 +34,7 @@
     "cross-env": "^7.0.3",
     "nuxt": "^2.15.8",
     "nuxt-basic-auth-module": "^1.4.0",
-    "starrydata-api-client": "git+https://github.com/t29mato/std3-api-client.git#v1.6.2",
+    "tag-tree-api-client": "git+https://github.com/t29mato/tag-tree-api-client.git#v1.7.0",
     "vue-class-component": "^7.2.6",
     "vue2-editor": "^2.10.3"
   },

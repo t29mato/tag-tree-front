@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { StarrydataApiFactory } from 'starrydata-api-client'
+import { TagTreeApiFactory } from 'tag-tree-api-client'
 import Axios from 'axios'
 import { mapMutations } from 'vuex'
 
@@ -53,7 +53,7 @@ export default Vue.extend({
     return {
       username: '',
       password: '',
-      apiClient: StarrydataApiFactory(undefined, process.env.TAG_TREE_API_URL),
+      apiClient: TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL),
       errorMessage: '',
     }
   },

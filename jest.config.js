@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
     '.*\\.(vue)$': 'vue-jest',
   },
-  transformIgnorePatterns: ['/node_modules/starrydata-api-client/*.ts'],
+  transformIgnorePatterns: ['/node_modules/tag-tree-api-client/*.ts'],
   testEnvironment: 'jsdom',
   collectCoverage: false,
   collectCoverageFrom: [

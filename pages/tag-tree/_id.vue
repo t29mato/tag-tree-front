@@ -65,11 +65,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  AuthApiFactory,
-  StarrydataApiFactory,
-  TagTree,
-} from 'starrydata-api-client'
+import { AuthApiFactory, TagTreeApiFactory, TagTree } from 'tag-tree-api-client'
 import Axios from 'axios'
 
 interface VTreeView {
@@ -87,10 +83,7 @@ export default Vue.extend({
         name: '',
         key: '',
       },
-      apiClientSTD: StarrydataApiFactory(
-        undefined,
-        process.env.TAG_TREE_API_URL
-      ),
+      apiClientSTD: TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL),
       apiClientAuth: AuthApiFactory(undefined, process.env.TAG_TREE_API_URL),
       filterKeyword: '',
       treeText: '',
@@ -122,7 +115,7 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    const apiClientSTD = StarrydataApiFactory(
+    const apiClientSTD = TagTreeApiFactory(
       undefined,
       process.env.TAG_TREE_API_URL
     )

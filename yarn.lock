@@ -11603,10 +11603,6 @@ stackframe@^1.1.1:
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.2.0.tgz#52429492d63c62eb989804c11552e3d22e779303"
   integrity sha512-GrdeshiRmS1YLMYgzF16olf2jJ/IzxXY9lhKOskuVziubpTYcYqyOwYeJKzQkwy7uN0fYSsbsC4RQaXf9LCrYA==
 
-"starrydata-api-client@git+https://github.com/t29mato/std3-api-client.git#v1.6.2":
-  version "1.6.2"
-  resolved "git+https://github.com/t29mato/std3-api-client.git#bd8cf6bbef50e5a4f6eb1a48c70e85fc144d52d7"
-
 static-extend@^0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/static-extend/-/static-extend-0.1.2.tgz#60809c39cbff55337226fd5e0b520f341f1fb5c6"
@@ -12007,6 +12003,10 @@ table@^6.0.9, table@^6.6.0:
     slice-ansi "^4.0.0"
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
+
+"tag-tree-api-client@git+https://github.com/t29mato/tag-tree-api-client.git#v1.7.0":
+  version "1.7.0"
+  resolved "git+https://github.com/t29mato/tag-tree-api-client.git#3b8a0a101b98b8755198e633b2a23ec10398ca06"
 
 tapable@^1.0.0, tapable@^1.0.0-beta.5, tapable@^1.1.3:
   version "1.1.3"
