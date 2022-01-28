@@ -27,6 +27,7 @@
             @input="handleInputAddedTree"
             @keydown.tab.exact="handleKeyDownTab"
             @keydown.shift.tab.exact="handleKeyDownShiftTab"
+            @keydown.enter.exact="handleKeyDownEnter"
           ></v-textarea>
         </v-col>
         <v-col v-if="showViewScreen" cols="colsOfViewAndEditScreen">
@@ -311,6 +312,31 @@ export default Vue.extend({
         '\t' +
         currentText.substr(lastLineBreakPos + 1)
       element.selectionEnd = posOfCursor + 1
+    },
+    /**
+     * handleKeyDownEnter
+     * Insert the same number of tabs in the next line as exist in the new line when the line is broken.
+     */
+    handleKeyDownEnter(e: KeyboardEvent) {
+      e.preventDefault()
+      const element = e.target as HTMLInputElement
+      const posOfCursor = element.selectionStart
+      if (posOfCursor === null) {
+        throw new Error("doesn't get cursor")
+      }
+      const text = element.value
+      const lines = text.split('\n')
+      const selectedLineIndex =
+        text.substring(0, posOfCursor).match(/\n/g)?.length || 0
+      const countIndentOnSelectedLine =
+        lines[selectedLineIndex].match(/\t/g)?.length || 0
+      lines.splice(
+        selectedLineIndex + 1,
+        0,
+        '\t'.repeat(countIndentOnSelectedLine)
+      )
+      element.value = lines.join('\n')
+      element.selectionEnd = posOfCursor + 1 + countIndentOnSelectedLine
     },
     handleKeyDownShiftTab(e: KeyboardEvent) {
       e.preventDefault()
