@@ -318,6 +318,11 @@ export default Vue.extend({
      * Insert the same number of tabs in the next line as exist in the new line when the line is broken.
      */
     handleKeyDownEnter(e: KeyboardEvent) {
+      // Skips Enter when you confirm a kanji conversion when typing Japanese.
+      if (e.keyCode === 299) {
+        return
+      }
+      console.info({ e })
       e.preventDefault()
       const element = e.target as HTMLInputElement
       const posOfCursor = element.selectionStart
