@@ -71,7 +71,7 @@ export default Vue.extend({
       sortDesc: false,
       items: [] as TagTree[],
       author: '',
-      apiClient: TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL),
+      apiClient: TagTreeApiFactory(undefined, process.env.tagTreeApiUrl),
       shouldShowModal: false,
       newTagTreeName: '',
       newTagTreeKey: '',
@@ -99,7 +99,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.apiClient = TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL)
+    this.apiClient = TagTreeApiFactory(undefined, process.env.tagTreeApiUrl)
     this.loadTagTree()
   },
   created() {},

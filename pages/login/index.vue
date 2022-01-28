@@ -55,7 +55,7 @@ export default Vue.extend({
     return {
       username: '',
       password: '',
-      apiClient: TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL),
+      apiClient: TagTreeApiFactory(undefined, process.env.tagTreeApiUrl),
       errorMessage: '',
     }
   },
