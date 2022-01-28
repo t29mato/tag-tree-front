@@ -319,7 +319,7 @@ export default Vue.extend({
      */
     handleKeyDownEnter(e: KeyboardEvent) {
       // Skips Enter when you confirm a kanji conversion when typing Japanese.
-      if (e.keyCode === 299) {
+      if (e.keyCode === 229) {
         return
       }
       console.info({ e })
