@@ -45,12 +45,6 @@ export default {
     '@nuxtjs/auth-next',
   ],
 
-  basic: {
-    name: process.env.BASIC_AUTH_USERNAME || 'admin',
-    pass: process.env.BASIC_AUTH_PASSWORD || 'admin',
-    enabled: process.env.BASIC_AUTH_IS_ENABLED === 'true',
-  },
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL: 'http://localhost:8000',
