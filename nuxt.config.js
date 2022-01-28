@@ -100,4 +100,9 @@ export default {
       home: '/tag-tree',
     },
   },
+
+  env: {
+    tagTreeApiUrl: process.env.TAG_TREE_API_URL,
+    authApiUrl: process.env.AUTH_API_URL,
+  },
 }

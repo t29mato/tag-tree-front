@@ -83,8 +83,8 @@ export default Vue.extend({
         name: '',
         key: '',
       },
-      apiClientSTD: TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL),
-      apiClientAuth: AuthApiFactory(undefined, process.env.TAG_TREE_API_URL),
+      apiClientSTD: TagTreeApiFactory(undefined, process.env.tagTreeApiUrl),
+      apiClientAuth: AuthApiFactory(undefined, process.env.authApiUrl),
       filterKeyword: '',
       treeText: '',
       treeTextErrorMessage: '',
@@ -115,10 +115,7 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    const apiClientSTD = TagTreeApiFactory(
-      undefined,
-      process.env.TAG_TREE_API_URL
-    )
+    const apiClientSTD = TagTreeApiFactory(undefined, process.env.tagTreeApiUrl)
     try {
       // const token = localStorage.getItem('auth._token.refresh')
       // if (token === null) {
