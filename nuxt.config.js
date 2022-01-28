@@ -87,6 +87,7 @@ export default {
             url: '/api/auth/jwt/create/',
             method: 'post',
           },
+          logout: false,
           user: false,
           refresh: false,
         },
@@ -95,7 +96,7 @@ export default {
     },
     redirect: {
       login: '/login',
-      logout: '/',
+      logout: '/login',
       home: '/tag-tree',
     },
   },

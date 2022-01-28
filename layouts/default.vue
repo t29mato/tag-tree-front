@@ -7,7 +7,7 @@
     </v-navigation-drawer> -->
 
     <v-app-bar app>
-      <v-btn @click="$auth.logout()">logout</v-btn>
+      <v-btn @click="logout()">logout</v-btn>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -23,3 +23,16 @@
     </v-footer>
   </v-app>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
+  methods: {
+    logout() {
+      this.$auth.logout()
+      this.$router.push('/login')
+    },
+  },
+})
+</script>
