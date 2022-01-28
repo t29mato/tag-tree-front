@@ -101,6 +101,8 @@ export default Vue.extend({
   mounted() {
     this.apiClient = TagTreeApiFactory(undefined, process.env.TAG_TREE_API_URL)
     this.loadTagTree()
+    console.log('TAG_TREE_API_URL', process.env.TAG_TREE_API_URL)
+    console.log('AUTH_API_URL', process.env.AUTH_API_URL)
   },
   created() {},
   methods: {
