@@ -18,9 +18,7 @@
       </v-container>
     </v-main>
 
-    <v-footer app>
-      <!-- -->
-    </v-footer>
+    <!-- <v-footer app> This is footer </v-footer> -->
   </v-app>
 </template>
 
