@@ -14,13 +14,13 @@
           <v-textarea
             v-model="treeText"
             name="input-7-1"
-            auto-grow
             :style="{
               background: 'url(/img/line_number.png)',
               backgroundAttachment: 'local',
               'background-repeat': 'no-repeat',
               paddingLeft: '50px',
               paddingTop: '2px',
+              'min-height': textareaHeight,
             }"
             :placeholder="`例：子タグは「タブ」。同義語は「 | 」\n親\n\t子供 | 同義語\n\t\t孫 | 同義語1 | 同義語2`"
             :error-messages="treeTextErrorMessage"
@@ -113,6 +113,9 @@ export default Vue.extend({
       return (item: TagTree, search: string) => {
         return item.tag_name.includes(search)
       }
+    },
+    textareaHeight(): number {
+      return window.innerHeight * 0.8
     },
   },
   async mounted() {
@@ -322,7 +325,6 @@ export default Vue.extend({
       if (e.keyCode === 229) {
         return
       }
-      console.info({ e })
       e.preventDefault()
       const element = e.target as HTMLInputElement
       const posOfCursor = element.selectionStart
@@ -340,8 +342,8 @@ export default Vue.extend({
         0,
         '\t'.repeat(countIndentOnSelectedLine)
       )
-      element.value = lines.join('\n')
-      element.selectionEnd = posOfCursor + 1 + countIndentOnSelectedLine
+      this.treeText = lines.join('\n')
+      element.selectionStart = posOfCursor + 1 + countIndentOnSelectedLine
     },
     handleKeyDownShiftTab(e: KeyboardEvent) {
       e.preventDefault()
